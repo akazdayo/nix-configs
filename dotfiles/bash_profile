@@ -1,0 +1,4 @@
+home.file = {
+    ".bashrc".source = /home/akazdayo/config/bashrc;
+    ".bash_profile".source = ./bash_profile;
+};

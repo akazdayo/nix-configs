@@ -1,0 +1,5 @@
+eval "$(starship init bash)"
+eval "$(direnv hook bash)"
+export PATH="/home/akazdayo/.bun/bin:$PATH"
+
+alias "rebuild"="sudo nixos-rebuild switch --flake /home/akazdayo/configs#nixos"

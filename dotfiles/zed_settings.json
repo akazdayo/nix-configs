@@ -1,0 +1,27 @@
+{
+  "icon_theme": "Catppuccin Frappé",
+  "agent": {
+    "default_profile": "ask",
+    "default_model": {
+      "provider": "lmstudio",
+      "model": "openai/gpt-oss-20b"
+    },
+    "model_parameters": []
+  },
+  "ui_font_size": 16,
+  "buffer_font_size": 16,
+  "theme": {
+    "mode": "system",
+    "light": "Catppuccin Macchiato",
+    "dark": "One Dark"
+  },
+  "lsp": {
+    "nil": {
+      "settings": {
+        "formatting": {
+          "command": ["alejandra"]
+        }
+      }
+    }
+  }
+}

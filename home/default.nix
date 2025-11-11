@@ -1,7 +1,7 @@
 {...}: {
   imports = [
     ./programs/git.nix
-    ./programs/shell.nix
+    ./programs/files.nix
     ./programs/packages.nix
     ./programs/gnome.nix
   ];

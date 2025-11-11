@@ -5,7 +5,7 @@
     ../../modules/networking
     ../../modules/locale
     ../../modules/desktop
-    ../../modules/hardware/nvidia.nix
+    ../../modules/hardware
     ../../modules/audio
     ../../modules/users
     ../../modules/gaming

@@ -1,10 +1,19 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  pkgs-xr,
+  ...
+}: {
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
-    extraPackages = with pkgs; [
-      proton-ge-bin
-    ];
+    extraCompatPackages =
+      (with pkgs; [
+        proton-ge-bin
+      ])
+      ++ (with pkgs-xr; [
+        # nixpkgs-xr
+        proton-ge-rtsp-bin
+      ]);
   };
 }

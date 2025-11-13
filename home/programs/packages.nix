@@ -1,6 +1,7 @@
 {
   pkgs,
-  pkgs-unstable,
+  pkgs-stable,
+  pkgs-xr,
   ...
 }: {
   home.packages =
@@ -23,9 +24,21 @@
       obsidian
       xdg-utils
       zoom-us
-    ])
-    ++ (with pkgs-unstable; [
-      # unstable
+      spotify
+      ollama-cuda
+      google-chrome
+      vrcx
+      _1password-gui
+      tor-browser
+      gh
+      alcom
+      unityhub
       claude-code
+    ])
+    ++ (with pkgs-stable; [
+      # stable 25.05
+    ])
+    ++ (with pkgs-xr; [
+      # nixpkgs-xr
     ]);
 }

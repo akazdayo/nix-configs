@@ -24,14 +24,6 @@
     ];
   };
 
-  # Environment variables for Fcitx 5 on Wayland (GNOME)
-  environment.sessionVariables = {
-    XMODIFIERS = "@im=fcitx";
-    QT_IM_MODULE = "fcitx";
-    QT_IM_MODULES = "wayland;fcitx";
-    GTK_IM_MODULE = "fcitx";
-  };
-
   fonts.packages = with pkgs; [
     noto-fonts-cjk-sans
     noto-fonts-cjk-serif

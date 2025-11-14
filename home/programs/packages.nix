@@ -34,6 +34,7 @@
       alcom
       unityhub
       claude-code
+      bs-manager
     ])
     ++ (with pkgs-stable; [
       # stable 25.05

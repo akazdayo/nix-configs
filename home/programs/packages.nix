@@ -32,6 +32,7 @@
       tor-browser
       gh
       alcom
+      vrc-get
       unityhub
       claude-code
       bs-manager

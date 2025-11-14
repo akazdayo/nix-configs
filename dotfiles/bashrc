@@ -3,3 +3,4 @@ eval "$(direnv hook bash)"
 export PATH="/home/akazdayo/.bun/bin:$PATH"
 
 alias "rebuild"="sudo nixos-rebuild switch --flake /home/akazdayo/configs#nixos"
+alias "alcom"="GDK_BACKEND=x11 __NV_DISABLE_EXPLICIT_SYNC=1 WEBKIT_DISABLE_DMABUF_RENDERER=1 ALCOM"

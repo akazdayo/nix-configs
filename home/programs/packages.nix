@@ -37,6 +37,7 @@
       bs-manager
       nix-index
       wl-clipboard
+      alcom
     ])
     ++ (with pkgs-stable; [
       # stable 25.05

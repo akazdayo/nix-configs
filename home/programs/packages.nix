@@ -31,7 +31,6 @@
       _1password-gui
       tor-browser
       gh
-      alcom
       vrc-get
       unityhub
       claude-code

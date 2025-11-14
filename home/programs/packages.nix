@@ -36,6 +36,8 @@
       unityhub
       claude-code
       bs-manager
+      nix-index
+      wl-clipboard
     ])
     ++ (with pkgs-stable; [
       # stable 25.05

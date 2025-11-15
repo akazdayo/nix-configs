@@ -12,4 +12,8 @@
   environment.systemPackages = with pkgs; [
     pipewire
   ];
+
+  programs.noisetorch = {
+    enable = true;
+  };
 }

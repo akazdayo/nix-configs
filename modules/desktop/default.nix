@@ -12,11 +12,4 @@
   services.desktopManager.gnome.enable = true;
 
   programs.dconf.enable = true;
-
-  services.displayManager.autoLogin.enable = true;
-  services.displayManager.autoLogin.user = "akazdayo";
-
-  # Workaround for GNOME autologin
-  systemd.services."getty@tty1".enable = false;
-  systemd.services."autovt@tty1".enable = false;
 }

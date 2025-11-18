@@ -41,6 +41,7 @@
       wineWowPackages.stable # 64bit + 32bit対応
       winetricks
       slack
+      lutris
     ])
     ++ (with pkgs-stable; [
       # stable 25.05

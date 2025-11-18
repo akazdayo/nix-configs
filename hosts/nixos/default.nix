@@ -17,6 +17,8 @@
 
   programs.firefox.enable = true;
 
+  programs.nix-ld.enable = true;
+
   services.printing.enable = true;
 
   environment.systemPackages = with pkgs; [

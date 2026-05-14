@@ -54,9 +54,11 @@
 
         services.caddy = {
           enable = true;
-          virtualHosts."http://search.home.arpa".extraConfig = ''
-            reverse_proxy unix//run/searx/searx.sock
-          '';
+          virtualHosts.":80" = {
+            extraConfig = ''
+              reverse_proxy unix//run/searx/searx.sock
+            '';
+          };
         };
 
         networking.firewall.allowedTCPPorts = [ 80 ];

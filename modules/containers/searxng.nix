@@ -35,8 +35,7 @@
           redisCreateLocally = true;
           environmentFile = "/run/secrets/searx-env";
           uwsgiConfig = {
-            socket = "/run/searx/searx.sock";
-            chmod-socket = "660";
+            http = "127.0.0.1:8888";
           };
           settings = {
             server = {
@@ -49,14 +48,11 @@
           };
         };
 
-        # Allow caddy to reach the searx socket
-        users.users.caddy.extraGroups = [ "searx" ];
-
         services.caddy = {
           enable = true;
           virtualHosts.":80" = {
             extraConfig = ''
-              reverse_proxy unix//run/searx/searx.sock
+              reverse_proxy 127.0.0.1:8888
             '';
           };
         };

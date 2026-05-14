@@ -54,6 +54,7 @@ in
               hosts = [
                 "${lanAddress} dns.home.arpa"
                 "192.168.11.63 nas.home.arpa"
+                "192.168.11.64 search.home.arpa"
               ];
               dnssec = true;
               bogusPriv = true;

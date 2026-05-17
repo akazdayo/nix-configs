@@ -54,6 +54,18 @@ let
         environmentHostPath = "/etc/searx-env";
       };
     };
+
+    # Cloudflare Tunnel: ingress rules declared here; DNS routes managed externally.
+    # Replace tunnelUuid after running `cloudflared tunnel create <name>`.
+    cloudflared = {
+      tunnelUuid = "00000000-0000-0000-0000-000000000000";
+      ingress = {
+        immich = {
+          hostname = "photos.odango.app";
+          service = "http://192.168.11.61:2283";
+        };
+      };
+    };
   };
 in
 {

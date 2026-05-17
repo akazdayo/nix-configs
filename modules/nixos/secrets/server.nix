@@ -16,6 +16,12 @@
       plugins = with pkgs; [ age-plugin-yubikey ];
     };
 
+    secrets.cloudflared-credentials = {
+      sopsFile = ../../../secrets/server/cloudflared.yaml;
+      owner = "root";
+      mode = "0400";
+    };
+
     # Server-level sops integration is configured here, but current
     # container /etc/... secret files remain legacy host-local paths.
   };

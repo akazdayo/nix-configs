@@ -5,7 +5,6 @@ in
 {
   imports = [
     ./tailscale.nix
-    ./cloudflared.nix
   ];
 
   networking.hostName = hostMeta.hostName;

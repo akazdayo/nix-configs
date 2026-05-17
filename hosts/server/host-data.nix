@@ -53,6 +53,17 @@ let
         # Legacy host-local secret path. Keep managed outside sops-nix for now.
         environmentHostPath = "/etc/searx-env";
       };
+
+      attic = {
+        address = "192.168.11.65";
+        prefixLength = 24;
+        hostName = "attic";
+        apiDomain = "attic.odango.app";
+        hostDataRoot = "/var/lib/attic-container";
+        # sops-nix decrypts to /run/secrets/atticd-env on host;
+        # bind-mounted read-only into the container.
+        environmentHostPath = "/run/secrets/atticd-env";
+      };
     };
 
     # Cloudflare Tunnel: ingress rules declared here; DNS routes managed externally.
@@ -63,6 +74,10 @@ let
         immich = {
           hostname = "photos.odango.app";
           service = "http://192.168.11.61:2283";
+        };
+        attic = {
+          hostname = "attic.odango.app";
+          service = "http://192.168.11.65:8080";
         };
       };
     };

@@ -1,3 +1,12 @@
+# Required secrets:
+#   GITHUB_TOKEN          - Auto-provided
+#   CACHIX_AUTH_TOKEN     - Cachix auth token (existing)
+#   ATTIC_ENDPOINT        - Attic server URL (e.g., https://attic.odango.app)
+#   ATTIC_TOKEN           - Attic API token (generated via atticd-atticadm make-token)
+# Required variables:
+#   CACHIX_CACHE_NAME     - Cachix cache name (existing, defaults to 'akazdayo')
+#   ATTIC_CACHE           - Attic cache name (e.g., 'akazdayo')
+
 name: flake update
 
 on:
@@ -32,7 +41,15 @@ jobs:
           name: ${{ vars.CACHIX_CACHE_NAME || 'akazdayo' }}
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - name: Update flake, build, push to Cachix, and commit
+      - name: Set up Attic cache
+        uses: ryanccn/attic-action@v0
+        with:
+          endpoint: ${{ secrets.ATTIC_ENDPOINT }}
+          cache: ${{ vars.ATTIC_CACHE }}
+          token: ${{ secrets.ATTIC_TOKEN }}
+
+      - name: Update flake, build, push to caches, and commit
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ATTIC_CACHE: ${{ vars.ATTIC_CACHE }}
         run: ./scripts/update-flake-and-cache.sh

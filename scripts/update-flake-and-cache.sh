@@ -18,6 +18,16 @@ nix build ".#nixosConfigurations.${host_name}.config.system.build.toplevel" --pr
 
 echo "Build completed. cachix-action will push built paths to Cachix via its post-build hook."
 
+if [[ -n "${ATTIC_CACHE:-}" ]]; then
+  if attic push "${ATTIC_CACHE}" ./result; then
+    echo "Pushed build result to Attic cache '${ATTIC_CACHE}'."
+  else
+    echo "Warning: failed to push build result to Attic cache '${ATTIC_CACHE}'; continuing because Cachix is the primary cache." >&2
+  fi
+else
+  echo "Warning: ATTIC_CACHE is not set; skipping Attic push." >&2
+fi
+
 git add flake.lock
 git commit -m "chore: update flake.lock"
 git push origin HEAD:${GITHUB_REF_NAME:-main}

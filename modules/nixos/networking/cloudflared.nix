@@ -1,10 +1,18 @@
-{ config, hostMeta, lib, ... }:
+{ config, hostMeta, lib, pkgs, ... }:
 let
   cloudflaredData = hostMeta.hostData.cloudflared;
+  cloudflaredWrapper = pkgs.writeShellScriptBin "cloudflared" ''
+    if [ "$1" = "tunnel" ]; then
+      exec ${pkgs.cloudflared}/bin/cloudflared "$@" --protocol http2
+    fi
+
+    exec ${pkgs.cloudflared}/bin/cloudflared "$@"
+  '';
 in
 {
   services.cloudflared = {
     enable = true;
+    package = cloudflaredWrapper;
 
     tunnels.${cloudflaredData.tunnelUuid} = {
       credentialsFile = config.sops.secrets.cloudflared-credentials.path;

@@ -1,8 +1,8 @@
-{ pkgs, inputs, ... }:
+{ pkgs, pkgs-unstable, inputs, ... }:
 {
   environment.systemPackages = with pkgs; [
     vim
-    cloudflared
+    pkgs-unstable.cloudflared
     inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }

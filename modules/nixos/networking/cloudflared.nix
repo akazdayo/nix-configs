@@ -1,12 +1,12 @@
-{ config, hostMeta, lib, pkgs, ... }:
+{ config, hostMeta, lib, pkgs, pkgs-unstable, ... }:
 let
   cloudflaredData = hostMeta.hostData.cloudflared;
   cloudflaredWrapper = pkgs.writeShellScriptBin "cloudflared" ''
     if [ "$1" = "tunnel" ]; then
-      exec ${pkgs.cloudflared}/bin/cloudflared "$@" --protocol http2
+      exec ${pkgs-unstable.cloudflared}/bin/cloudflared "$@" --protocol http2
     fi
 
-    exec ${pkgs.cloudflared}/bin/cloudflared "$@"
+    exec ${pkgs-unstable.cloudflared}/bin/cloudflared "$@"
   '';
 in
 {

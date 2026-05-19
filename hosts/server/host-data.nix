@@ -69,7 +69,7 @@ let
     # Cloudflare Tunnel: ingress rules declared here; DNS routes managed externally.
     # Replace tunnelUuid after running `cloudflared tunnel create <name>`.
     cloudflared = {
-      tunnelUuid = "00000000-0000-0000-0000-000000000000";
+      tunnelUuid = "9a22fd7b-44dd-4459-a360-52a5226b8216";
       ingress = {
         immich = {
           hostname = "photos.odango.app";

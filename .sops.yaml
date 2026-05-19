@@ -1,4 +1,7 @@
 keys:
+  # YubiKey master key - can decrypt all secrets when YubiKey is plugged in
+  - &master_key age1yubikey1q2n3yrsp0tx2azw6zyldx7x9umumzfdpu6mzy8l6gr3rvwhuduy7v0k7rul
+
   # Host SSH-derived age recipients (fallback for unattended boot)
   # Generate: ssh-to-age -i /etc/ssh/ssh_host_ed25519_key.pub
   - &nixos_host age17ruhp8fp4cnhpg8phtcsyf2s37ejt5qekpqkntx6f8j22uu9sg6s53ngxm
@@ -8,16 +11,19 @@ creation_rules:
   - path_regex: secrets/nixos/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
+          - *master_key
           - *nixos_host
 
   - path_regex: secrets/server/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
+          - *master_key
           - *server_host
 
   - path_regex: secrets/common/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
+          - *master_key
           - *nixos_host
           - *server_host
 
@@ -25,4 +31,5 @@ creation_rules:
   - path_regex: secrets/darwin/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
+          - *master_key
           - *nixos_host

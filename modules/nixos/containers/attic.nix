@@ -28,7 +28,12 @@ in
     privateNetwork = true;
     macvlans = [ containerData.hostInterface ];
     bindMounts = {
-      "/var/lib/atticd" = {
+      # /srv/atticd を使う理由:
+      # atticd の systemd service は StateDirectory=/var/lib/atticd と
+      # DynamicUser=yes を使う。bind mount が /var/lib/atticd だと
+      # systemd がディレクトリを移動できず STATE_DIRECTORY エラーになる。
+      # なので bind mount 先を /srv/atticd にずらして衝突を回避。
+      "/srv/atticd" = {
         hostPath = "${atticData.hostDataRoot}/data";
         isReadOnly = false;
       };
@@ -62,10 +67,10 @@ in
             listen = "0.0.0.0:8080";
             api-endpoint = "https://${atticData.apiDomain}/";
             allowed-hosts = [ atticData.apiDomain ];
-            database.url = "sqlite:///var/lib/atticd/server.db?mode=rwc";
+            database.url = "sqlite:///srv/atticd/server.db?mode=rwc";
             storage = {
               type = "local";
-              path = "/var/lib/atticd/storage";
+              path = "/srv/atticd/storage";
             };
             compression.type = "zstd";
             chunking = {

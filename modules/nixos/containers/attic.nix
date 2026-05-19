@@ -66,9 +66,13 @@ in
             api-endpoint = "https://${atticData.apiDomain}/";
             allowed-hosts = [
               atticData.apiDomain
+              "${atticData.apiDomain}:8080"
               "localhost"
+              "localhost:8080"
               "127.0.0.1"
+              "127.0.0.1:8080"
               atticData.address
+              "${atticData.address}:8080"
             ];
             database.url = "sqlite:///var/lib/atticd/server.db?mode=rwc";
             storage = {

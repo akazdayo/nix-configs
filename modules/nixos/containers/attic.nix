@@ -1,4 +1,4 @@
-{ hostMeta, ... }:
+{ hostMeta, pkgs, ... }:
 let
   containerData = hostMeta.hostData.containers;
   atticData = containerData.attic;
@@ -80,6 +80,10 @@ in
             };
           };
         };
+
+        environment.systemPackages = [
+          pkgs.attic-client
+        ];
 
         system.stateVersion = "25.11";
       };

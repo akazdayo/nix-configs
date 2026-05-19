@@ -17,7 +17,6 @@ let
         address = "192.168.11.70";
         prefixLength = 32;
         routeAddresses = [
-          "192.168.11.61"
           "192.168.11.65"
         ];
       };
@@ -84,10 +83,6 @@ let
     cloudflared = {
       tunnelUuid = "9a22fd7b-44dd-4459-a360-52a5226b8216";
       ingress = {
-        immich = {
-          hostname = "photos.odango.app";
-          service = "http://192.168.11.61:2283";
-        };
         attic = {
           hostname = "attic.odango.app";
           service = "http://192.168.11.65:8080";

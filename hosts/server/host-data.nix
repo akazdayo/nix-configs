@@ -2,7 +2,7 @@
 let
   hostData = {
     networking = {
-      nameservers = [ "192.168.11.62" ];
+      nameservers = [ "1.1.1.1" "1.0.0.1" ];
       unmanagedInterfaces = [ "eno1" ];
       primaryInterface = "eno1";
       address = "192.168.11.50";

@@ -23,5 +23,6 @@
     ../programs/immich_backups.nix
     ../programs/secrets.nix
   ];
+  home.sessionVariables.EDITOR = "nvim";
   home.stateVersion = "25.11";
 }

@@ -45,5 +45,8 @@ in
 {
   _module.args.hostData = hostData;
 
-  environment.variables.SOPS_AGE_KEY_FILE = "$HOME/.config/sops/age/keys.txt";
+  environment.variables = {
+    SOPS_AGE_KEY_FILE = "$HOME/.config/sops/age/keys.txt";
+    EDITOR = "nvim";
+  };
 }

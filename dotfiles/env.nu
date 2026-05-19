@@ -18,3 +18,4 @@ $env.NIX_LD_LIBRARY_PATH = if ("NIX_LD_LIBRARY_PATH" in $env) and (($env.NIX_LD_
 $env.SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt"
 $env.NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt"
 $env.TERM = "xterm-256color"
+$env.EDITOR = "nvim"

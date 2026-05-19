@@ -2,12 +2,25 @@
 let
   hostData = {
     networking = {
-      nameservers = [ "1.1.1.1" "1.0.0.1" ];
+      nameservers = [
+        "1.1.1.1"
+        "1.0.0.1"
+      ];
       unmanagedInterfaces = [ "eno1" ];
       primaryInterface = "eno1";
       address = "192.168.11.50";
       prefixLength = 24;
       defaultGateway = "192.168.11.1";
+      macvlanShim = {
+        name = "mv-shim";
+        parentInterface = "eno1";
+        address = "192.168.11.70";
+        prefixLength = 32;
+        routeAddresses = [
+          "192.168.11.61"
+          "192.168.11.65"
+        ];
+      };
     };
 
     users.${hostMeta.primaryUser}.authorizedKeys = [

@@ -29,4 +29,6 @@ in
   system.stateVersion = 6;
 
   users.users.${hostMeta.primaryUser}.home = "/Users/${hostMeta.primaryUser}";
+
+  environment.variables.SOPS_AGE_KEY_FILE = "$HOME/.config/sops/age/keys.txt";
 }

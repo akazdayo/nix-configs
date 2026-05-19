@@ -1,23 +1,9 @@
-{ hostMeta, pkgs, ... }:
+{ hostMeta, lib, pkgs, ... }:
 let
   containerData = hostMeta.hostData.containers;
   atticData = containerData.attic;
 in
 {
-  # Attic setup notes:
-  # - Generate the RS256 secret:
-  #     openssl genrsa -traditional 4096 | base64 -w0
-  # - Encrypt it with sops:
-  #     sops secrets/server/attic.yaml
-  #   with content:
-  #     ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64="<output>"
-  # - Generate a CI token:
-  #     atticd-atticadm make-token --sub "github-actions" --validity "10y" --pull "*" --push "*" --create-cache "*" --configure-cache "*" --configure-cache-retention "*"
-  # - Create a cache:
-  #     attic cache create <name>
-  # - Client usage:
-  #     attic login server https://attic.odango.app <token>
-  #     attic use server:<cache>
   systemd.tmpfiles.rules = [
     "d ${atticData.hostDataRoot} 0755 root root -"
     "d ${atticData.hostDataRoot}/data 0755 root root -"
@@ -28,12 +14,7 @@ in
     privateNetwork = true;
     macvlans = [ containerData.hostInterface ];
     bindMounts = {
-      # /srv/atticd を使う理由:
-      # atticd の systemd service は StateDirectory=/var/lib/atticd と
-      # DynamicUser=yes を使う。bind mount が /var/lib/atticd だと
-      # systemd がディレクトリを移動できず STATE_DIRECTORY エラーになる。
-      # なので bind mount 先を /srv/atticd にずらして衝突を回避。
-      "/srv/atticd" = {
+      "/var/lib/atticd" = {
         hostPath = "${atticData.hostDataRoot}/data";
         isReadOnly = false;
       };
@@ -60,6 +41,23 @@ in
         networking.nameservers = containerData.nameservers;
         networking.firewall.allowedTCPPorts = [ 8080 ];
 
+        users.groups.atticd = { };
+        users.users.atticd = {
+          isSystemUser = true;
+          group = "atticd";
+        };
+
+        systemd.services.atticd.serviceConfig = {
+          DynamicUser = lib.mkForce false;
+          User = "atticd";
+          Group = "atticd";
+        };
+
+        systemd.tmpfiles.rules = [
+          "d /var/lib/atticd 0750 atticd atticd -"
+          "d /var/lib/atticd/storage 0750 atticd atticd -"
+        ];
+
         services.atticd = {
           enable = true;
           environmentFile = "/run/secrets/atticd-env";
@@ -67,10 +65,10 @@ in
             listen = "0.0.0.0:8080";
             api-endpoint = "https://${atticData.apiDomain}/";
             allowed-hosts = [ atticData.apiDomain ];
-            database.url = "sqlite:///srv/atticd/server.db?mode=rwc";
+            database.url = "sqlite:///var/lib/atticd/server.db?mode=rwc";
             storage = {
               type = "local";
-              path = "/srv/atticd/storage";
+              path = "/var/lib/atticd/storage";
             };
             compression.type = "zstd";
             chunking = {

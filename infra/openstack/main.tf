@@ -1,3 +1,17 @@
+check "keypair_required" {
+  assert {
+    condition     = var.keypair_name != "" || var.public_key_path != ""
+    error_message = "Either keypair_name or public_key_path must be provided for SSH access."
+  }
+}
+
+check "floating_ip_pool_required" {
+  assert {
+    condition     = !var.allocate_floating_ip || var.external_network_name != ""
+    error_message = "external_network_name must be set when allocate_floating_ip is true."
+  }
+}
+
 data "openstack_networking_network_v2" "network" {
   name = var.network_name
 }

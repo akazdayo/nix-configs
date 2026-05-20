@@ -1,7 +1,9 @@
 { hostMeta, ... }:
 let
   hostData = {
-    networking = { };
+    networking = {
+      primaryInterface = "enp1s0";
+    };
 
     users.${hostMeta.primaryUser}.authorizedKeys = [
       "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIIuYLePldOwgtFXwo0sw48rBVzX2zHjzGshFq4V9xwMLAAAABHNzaDo= somanoda@25N1103630nodasoma.local"

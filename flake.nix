@@ -198,6 +198,63 @@
           ];
         };
 
+      mkOpenStackHost =
+        hostName:
+        {
+          system ? "x86_64-linux",
+          primaryUser ? defaultPrimaryUser,
+          flakeRoot ? null,
+          ...
+        }:
+        let
+          resolvedFlakeRoot = if flakeRoot == null then "/home/${primaryUser}/configs" else flakeRoot;
+          baseHostMeta = {
+            inherit hostName system primaryUser;
+            flakeRoot = resolvedFlakeRoot;
+          };
+          hostData =
+            (import (./hosts + "/${hostName}/host-data.nix") { hostMeta = baseHostMeta; })._module.args.hostData
+              or { };
+          hostMeta = baseHostMeta // {
+            inherit hostData;
+          };
+          pkgs-unstable = mkPkgsUnstable system;
+          pkgs-with-llm-agents = mkPkgsWithLlmAgents system;
+        in
+        lib.nixosSystem {
+          inherit system;
+          specialArgs = {
+            inherit
+              self
+              inputs
+              pkgs-unstable
+              hostMeta
+              ;
+          };
+          modules = [
+            ./packages
+            (./hosts + "/${hostName}")
+            lanzaboote.nixosModules.lanzaboote
+            sops-nix.nixosModules.default
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.${primaryUser} = import ./home/profiles/openstack.nix;
+              home-manager.extraSpecialArgs = {
+                inherit
+                  self
+                  pkgs-unstable
+                  pkgs-with-llm-agents
+                  inputs
+                  hostMeta
+                  ;
+                nixvim-module = nixvim.homeModules.nixvim;
+              };
+            }
+          ];
+        };
+
       mkDarwinHost =
         hostName:
         {
@@ -264,6 +321,10 @@
         };
       };
 
+      openstackHosts = {
+        openstack = { };
+      };
+
       darwinHosts = {
         macbook = { };
       };
@@ -295,7 +356,7 @@
         };
     in
     {
-      nixosConfigurations = (lib.mapAttrs mkHost hosts) // (lib.mapAttrs mkServer servers);
+      nixosConfigurations = (lib.mapAttrs mkHost hosts) // (lib.mapAttrs mkServer servers) // (lib.mapAttrs mkOpenStackHost openstackHosts);
 
       darwinConfigurations = lib.mapAttrs mkDarwinHost darwinHosts;
 
@@ -316,6 +377,7 @@
             packages = [
               deploy-rs.packages.${system}.default
               pkgs.nixfmt-rfc-style
+              pkgs.opentofu
               pkgs.sops
               pkgs.age
               pkgs.age-plugin-yubikey

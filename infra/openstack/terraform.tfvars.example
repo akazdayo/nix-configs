@@ -1,0 +1,26 @@
+instance_name = "openstack-example"
+host_name     = "openstack"
+config_ref    = "main"
+image_id      = "ac5fc61e-258b-4f8b-a06c-229c26f1e38f"
+flavor_name   = "<OPENSTACK_FLAVOR_NAME>"
+network_name  = "<OPENSTACK_NETWORK_NAME>"
+subnet_id     = ""
+keypair_name  = "<YOUR_KEYPAIR_NAME>"
+public_key_path = ""
+
+ssh_allowed_cidrs = ["<YOUR_IP>/32"]
+
+allocate_floating_ip = true
+external_network_name = "<EXTERNAL_NETWORK_NAME>"
+
+metadata = {
+  environment = "example"
+}
+
+tags = ["nixos", "openstack"]
+
+ssh_user = "akazdayo"
+
+# Alternative without a floating IP:
+# allocate_floating_ip   = false
+# external_network_name  = ""

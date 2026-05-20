@@ -64,6 +64,9 @@ jobs:
           - host: server
             runs-on: ubuntu-latest
             flake-attr: nixosConfigurations
+          - host: openstack
+            runs-on: ubuntu-latest
+            flake-attr: nixosConfigurations
           - host: macbook
             runs-on: macos-latest
             flake-attr: darwinConfigurations

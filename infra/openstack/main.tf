@@ -52,12 +52,6 @@ resource "openstack_networking_secgroup_rule_v2" "ssh_ingress" {
   security_group_id = openstack_networking_secgroup_v2.sg.id
 }
 
-resource "openstack_networking_secgroup_rule_v2" "egress_ipv4" {
-  direction         = "egress"
-  ethertype         = "IPv4"
-  security_group_id = openstack_networking_secgroup_v2.sg.id
-}
-
 resource "openstack_networking_port_v2" "port" {
   name               = "${var.instance_name}-port"
   network_id         = data.openstack_networking_network_v2.network.id

@@ -12,8 +12,16 @@ check "floating_ip_pool_required" {
   }
 }
 
+check "network_required" {
+  assert {
+    condition     = var.network_name != "" || var.network_id != ""
+    error_message = "Either network_name or network_id must be provided."
+  }
+}
+
 data "openstack_networking_network_v2" "network" {
-  name = var.network_name
+  network_id = var.network_id != "" ? var.network_id : null
+  name       = var.network_id == "" ? var.network_name : null
 }
 
 data "openstack_compute_keypair_v2" "existing" {

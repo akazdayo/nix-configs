@@ -31,6 +31,12 @@ variable "network_name" {
   description = "OpenStack network name to attach the port to"
 }
 
+variable "network_id" {
+  type        = string
+  description = "OpenStack network UUID to attach the port to (alternative to network_name)"
+  default     = ""
+}
+
 variable "subnet_id" {
   type        = string
   description = "Optional subnet UUID for fixed IP allocation"

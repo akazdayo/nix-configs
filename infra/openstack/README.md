@@ -1,6 +1,6 @@
 # OpenStack NixOS Provisioning with OpenTofu
 
-This module provisions a NixOS VM on OpenStack from qcow2 image `ac5fc61e-258b-4f8b-a06c-229c26f1e38f`, injects cloud-init, and runs `nixos-rebuild switch` from `github:akazdayo/nix-configs`.
+This module provisions a NixOS VM on OpenStack from qcow2 image `ac5fc61e-258b-4f8b-a06c-229c26f1e38f`. The NixOS image uses **amazon-init** (not cloud-init) to process userdata: a shell script is injected via config-drive and executed on first boot, which runs `nixos-rebuild switch` from `github:akazdayo/nix-configs`.
 
 ## Authentication
 
@@ -123,28 +123,45 @@ nix develop -c tofu -chdir=infra/openstack validate -var-file=terraform.tfvars.e
 
 ## Debugging Bootstrap
 
-Cloud-init writes bootstrap progress to `/var/log/cloud-init-output.log`, and the injected bootstrap script writes detailed rebuild logs to `/var/log/nixos-bootstrap.log`. Successful completion creates `/var/lib/nixos-bootstrap/success`.
+First boot uses **amazon-init** (NixOS's built-in init for EC2/OpenStack, **not** cloud-init). Amazon-init executes the shell script injected via config-drive. The script logs everything to `/var/log/nixos-bootstrap.log`. Successful completion creates `/var/lib/nixos-bootstrap/success`.
+
+**Note: on first boot, OpenStack keypair injection goes to `root`, not the configured user.** Use `ssh root@<ip>` for initial access; after `nixos-rebuild switch` succeeds, the NixOS user configuration takes over.
 
 ```bash
-# SSH and check cloud-init status
-ssh akazdayo@$(tofu -chdir=infra/openstack output -raw ssh_host) 'cloud-init status --long'
+# Quick status: did bootstrap succeed?
+ssh root@$(tofu -chdir=infra/openstack output -raw ssh_host) \
+  'sudo test -f /var/lib/nixos-bootstrap/success && echo SUCCESS || echo FAILED'
 
-# Read bootstrap logs
-ssh akazdayo@$(tofu -chdir=infra/openstack output -raw ssh_host) 'sudo tail -200 /var/log/cloud-init-output.log'
-ssh akazdayo@$(tofu -chdir=infra/openstack output -raw ssh_host) 'sudo tail -200 /var/log/nixos-bootstrap.log'
+# Read the bootstrap log
+ssh root@$(tofu -chdir=infra/openstack output -raw ssh_host) \
+  'sudo tail -200 /var/log/nixos-bootstrap.log'
 
-# Check if rebuild succeeded
-ssh akazdayo@$(tofu -chdir=infra/openstack output -raw ssh_host) 'sudo test -f /var/lib/nixos-bootstrap/success && echo SUCCESS || echo FAILED'
+# Check amazon-init status (run on the VM)
+sudo systemctl status amazon-init
+sudo journalctl -u amazon-init --no-pager -n 50
 
-# Verify NixOS is running the flake-built system
-ssh akazdayo@$(tofu -chdir=infra/openstack output -raw ssh_host) 'test -e /run/current-system && echo "NixOS: OK"'
+# After bootstrap, SSH as your configured user
+ssh akazdayo@$(tofu -chdir=infra/openstack output -raw ssh_host) \
+  'test -e /run/current-system && echo "NixOS: OK"'
+```
+
+### Manual Bootstrap (if userdata didn't run)
+
+If amazon-init failed and the script wasn't executed at all:
+
+```bash
+# SSH as root and run the rebuild manually
+ssh root@$(tofu -chdir=infra/openstack output -raw ssh_host)
+mkdir -p /etc/nix
+echo 'experimental-features = nix-command flakes' >> /etc/nix/nix.conf
+nixos-rebuild switch --flake github:akazdayo/nix-configs/main#openstack
 ```
 
 ## Instance Recreation Warning
 
 Changing these values destroys and recreates the instance, so treat the VM as ephemeral and assume all local data on it will be lost:
 
-- `user_data` / cloud-init changes
+- `user_data` changes
 - `config_drive`
 - `image_id`
 - `key_pair` / `keypair_name`

@@ -1,65 +1,34 @@
-#cloud-config
+#!/usr/bin/env bash
+set -euo pipefail
 
-final_message: "cloud-init finished for ${host_name}; review /var/log/nixos-bootstrap.log and connect as ${ssh_user}."
+LOGFILE="/var/log/nixos-bootstrap.log"
+MARKER="/var/lib/nixos-bootstrap/success"
+FLAKE_REF="github:akazdayo/nix-configs/${config_ref}#${host_name}"
 
-write_files:
-  - path: /usr/local/bin/nixos-bootstrap.sh
-    permissions: '0755'
-    owner: root:root
-    content: |
-      #!/usr/bin/env bash
-      set -euo pipefail
+mkdir -p "$(dirname "$LOGFILE")" "$(dirname "$MARKER")"
+exec > >(tee -a "$LOGFILE") 2>&1
 
-      LOGFILE="/var/log/nixos-bootstrap.log"
-      MARKER="/var/lib/nixos-bootstrap/success"
-      FLAKE_REF="github:akazdayo/nix-configs/${config_ref}#${host_name}"
+echo "=== NixOS bootstrap started at $(date -u) ==="
+echo "host_name=${host_name}"
+echo "config_ref=${config_ref}"
+echo "ssh_user=${ssh_user}"
 
-      mkdir -p "$(dirname "$LOGFILE")" "$(dirname "$MARKER")"
+if [ -f "$MARKER" ]; then
+  echo "Bootstrap already completed successfully; marker exists at $MARKER"
+  exit 0
+fi
 
-      exec > >(tee -a "$LOGFILE") 2>&1
+if ! command -v nixos-rebuild >/dev/null 2>&1; then
+  echo "ERROR: nixos-rebuild not found. Is this a NixOS image?"
+  exit 1
+fi
 
-      on_error() {
-        local exit_code=$?
-        echo "=== NixOS bootstrap FAILED at $(date -u) with exit code $${exit_code} ==="
-        echo "Check $LOGFILE for details. Original SSH access for ${ssh_user} should still work."
-        exit "$${exit_code}"
-      }
+export NIX_CONFIG='experimental-features = nix-command flakes'
 
-      trap on_error ERR
+echo "Running: nixos-rebuild switch --flake $FLAKE_REF"
+nixos-rebuild switch --flake "$FLAKE_REF"
 
-      echo "=== NixOS bootstrap started at $(date -u) ==="
-      echo "host_name=${host_name}"
-      echo "config_ref=${config_ref}"
-      echo "ssh_user=${ssh_user}"
-
-      if [ -f "$MARKER" ]; then
-        echo "Bootstrap already completed successfully; marker exists at $MARKER"
-        exit 0
-      fi
-
-      if ! nix show-config 2>/dev/null | grep -q 'experimental-features.*flakes'; then
-        echo "Enabling nix flakes..."
-        mkdir -p /etc/nix
-        if [ -f /etc/nix/nix.conf ] && grep -q '^experimental-features' /etc/nix/nix.conf; then
-          sed -i 's/^experimental-features.*/experimental-features = nix-command flakes/' /etc/nix/nix.conf
-        else
-          printf '\nexperimental-features = nix-command flakes\n' >> /etc/nix/nix.conf
-        fi
-      fi
-
-      if ! command -v nixos-rebuild >/dev/null 2>&1; then
-        echo "ERROR: nixos-rebuild not found. Is this a NixOS image?"
-        exit 1
-      fi
-
-      echo "Running: nixos-rebuild switch --flake $FLAKE_REF"
-      nixos-rebuild switch --flake "$FLAKE_REF"
-
-      date -u '+%Y-%m-%dT%H:%M:%SZ rebuild succeeded' > "$MARKER"
-      trap - ERR
-      echo "=== NixOS bootstrap completed successfully at $(date -u) ==="
-      echo "Success marker written to $MARKER"
-      echo "Reboot recommended to activate new kernel if updated."
-
-runcmd:
-  - [ /usr/local/bin/nixos-bootstrap.sh ]
+date -u '+%Y-%m-%dT%H:%M:%SZ rebuild succeeded' > "$MARKER"
+echo "=== NixOS bootstrap completed successfully at $(date -u) ==="
+echo "Success marker written to $MARKER"
+echo "Reboot recommended to activate new kernel if updated."

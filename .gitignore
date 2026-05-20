@@ -7,3 +7,4 @@
 **/*.tfvars.json
 **/crash.log
 **/crash.*.log
+**/openrc.sh

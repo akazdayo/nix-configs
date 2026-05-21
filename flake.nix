@@ -382,6 +382,7 @@
               pkgs.age
               pkgs.age-plugin-yubikey
               pkgs.ssh-to-age
+              pkgs.python3Packages.python-openstackclient
             ];
           };
         }

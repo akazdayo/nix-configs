@@ -25,10 +25,11 @@ fi
 
 export NIX_CONFIG='experimental-features = nix-command flakes'
 
-echo "Running: nixos-rebuild switch --flake $FLAKE_REF"
-nixos-rebuild switch --flake "$FLAKE_REF"
+echo "Running: nixos-rebuild boot --flake $FLAKE_REF"
+nixos-rebuild boot --flake "$FLAKE_REF"
 
-date -u '+%Y-%m-%dT%H:%M:%SZ rebuild succeeded' > "$MARKER"
+date -u '+%Y-%m-%dT%H:%M:%SZ rebuild succeeded; reboot requested' > "$MARKER"
 echo "=== NixOS bootstrap completed successfully at $(date -u) ==="
 echo "Success marker written to $MARKER"
-echo "Reboot recommended to activate new kernel if updated."
+echo "Rebooting to activate the bootstrapped NixOS generation."
+systemctl reboot --no-block

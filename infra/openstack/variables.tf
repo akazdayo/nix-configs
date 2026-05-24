@@ -50,11 +50,25 @@ variable "public_key_path" {
 
 variable "ssh_allowed_cidrs" {
   type        = list(string)
-  description = "CIDR blocks allowed SSH ingress (required, must be non-empty)"
+  description = "CIDR blocks allowed SSH ingress. Use an empty list to avoid exposing SSH."
+  default     = []
+}
+
+variable "extra_tcp_ingress_rules" {
+  type = list(object({
+    name  = string
+    port  = number
+    cidrs = list(string)
+  }))
+  description = "Additional TCP ingress rules to add to the instance security group"
+  default     = []
 
   validation {
-    condition     = length(var.ssh_allowed_cidrs) > 0
-    error_message = "At least one SSH CIDR block must be specified for security. Use a specific IP range."
+    condition = alltrue([
+      for rule in var.extra_tcp_ingress_rules :
+      rule.port >= 1 && rule.port <= 65535 && length(rule.cidrs) > 0
+    ])
+    error_message = "Each extra TCP ingress rule must use a port between 1 and 65535 and at least one CIDR block."
   }
 }
 

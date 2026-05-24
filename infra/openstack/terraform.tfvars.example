@@ -9,6 +9,8 @@ public_key_path = ""
 
 ssh_allowed_cidrs = ["<YOUR_IP>/32"]
 
+extra_tcp_ingress_rules = []
+
 allocate_floating_ip = true
 external_network_name = "<EXTERNAL_NETWORK_NAME>"
 

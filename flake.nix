@@ -327,6 +327,11 @@
           remoteBuild = true;
           activationTimeout = 600;
         };
+        minecraft = {
+          sshUser = "deploy";
+          remoteBuild = true;
+          activationTimeout = 600;
+        };
       };
 
       darwinHosts = {

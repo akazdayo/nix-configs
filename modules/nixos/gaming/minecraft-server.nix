@@ -1,30 +1,15 @@
-{ inputs, ... }:
+{ pkgs, ... }:
 {
-  imports = [
-    inputs.minecraft-nix.nixosModules.default
-  ];
-
-  services.minecraft-servers.survival = {
+  services.minecraft-server = {
     enable = true;
     eula = true;
-    lockFile = ./minecraft-server-lock.json;
-
-    software = {
-      type = "neoforge";
-      minecraftVersion = "1.21.1";
-      neoforge = {
-        version = "21.1.227";
-      };
-    };
-
-    mods.modrinth = [
-      {
-        project = "create";
-        loader = "neoforge";
-      }
-    ];
-
-    port = 25565;
+    package = pkgs.papermcServers.papermc-1_21_10;
     openFirewall = true;
+
+    declarative = true;
+    serverProperties = {
+      server-port = 25565;
+      motd = "NixOS Paper Minecraft Server";
+    };
   };
 }

@@ -1,7 +1,7 @@
 { ... }:
 {
   imports = [
-    ../../profiles/nixos/openstack.nix
+    ../../../profiles/nixos/openstack/gateway
     ./hardware-configuration.nix
     ./host-data.nix
   ];

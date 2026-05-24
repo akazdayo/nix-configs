@@ -1,5 +1,5 @@
-instance_name = "openstack-example"
-host_name     = "openstack"
+instance_name = "gateway-example"
+host_name     = "gateway"
 image_id      = "ac5fc61e-258b-4f8b-a06c-229c26f1e38f"
 flavor_name   = "<OPENSTACK_FLAVOR_NAME>"
 network_name  = "<OPENSTACK_NETWORK_NAME>"

@@ -13,20 +13,20 @@
 - **Dev shell**: `nix develop` (provides deploy-rs, nixfmt-rfc-style, sops, age tools)
 
 ## CI (GitHub Actions)
-- **PR Build** (`pr-build.yml`): On PR to main — builds all 4 hosts (nixos, server, openstack on ubuntu-latest; macbook on macos-latest). Uses Cachix (read-only).
+- **PR Build** (`pr-build.yml`): On PR to main — builds all 4 hosts (nixos, server, gateway on ubuntu-latest; macbook on macos-latest). Uses Cachix (read-only).
 - **Scheduled Update** (`flake-update.yml`): Every 3 days — updates flake.lock, builds all hosts, pushes to Cachix + Attic, commits updated lock file.
 - No formal NixOS tests exist. Verification is via `nix flake check`, dry-build, and CI builds.
 
 ## Architecture
 
-Import chain: `flake.nix` → host (`hosts/<name>/default.nix`) → profile (`profiles/<platform>/<type>.nix`) → module domain (`modules/<platform>/<domain>/<variant>.nix`)
+Import chain: `flake.nix` → host (`hosts/<name>/default.nix` or `hosts/openstack/<name>/default.nix`) → profile (`profiles/<platform>/<type>/<name>/default.nix` where grouped) → module domain (`modules/<platform>/<domain>/<variant>.nix`)
 
 - `flake.nix`: Four builder functions — `mkHost` (desktop NixOS), `mkServer` (server NixOS), `mkOpenStackHost` (cloud VM NixOS), `mkDarwinHost` (macOS). Each constructs `hostMeta`, resolves `hostData`, wires `specialArgs` + `extraSpecialArgs`.
 - **hostMeta** (passed to all NixOS + HM modules): `{ hostName, system, primaryUser, flakeRoot, hostData }`. `hostData` is resolved via a two-pass pattern: `baseHostMeta` → import `host-data.nix` → extract `_module.args.hostData` → merge into `hostMeta`.
 - **specialArgs (NixOS)**: `self`, `inputs`, `pkgs-unstable`, `hostMeta`
 - **extraSpecialArgs (home-manager)**: same as system + `pkgs-with-llm-agents` + `nixvim-module`
 - **Flake inputs** (14): nixpkgs (25.11), nixpkgs-unstable, home-manager, nix-darwin, nixvim, lanzaboote, deploy-rs, nix-flatpak, noctalia, llm-agents, minecraft-nix, nix-cachyos-kernel, sops-nix
-- **Outputs**: `nixosConfigurations.{nixos,server,openstack}`, `darwinConfigurations.macbook`, `deploy.nodes`, `checks` (deploy-rs), `devShells`
+- **Outputs**: `nixosConfigurations.{nixos,server,gateway}`, `darwinConfigurations.macbook`, `deploy.nodes`, `checks` (deploy-rs), `devShells`
 
 ## Code Style & Conventions
 - **Structure**: Platform-first modular Flake. System settings live under `modules/<platform>/`, user settings under `home/`.
@@ -43,8 +43,8 @@ Import chain: `flake.nix` → host (`hosts/<name>/default.nix`) → profile (`pr
 
 ## Strict File & Directory Rules
 - **Directory Boundaries**:
-  - `hosts/<host>/default.nix`: Host composition only. Must be a thin wrapper importing a profile, hardware config, and `host-data.nix`. No direct feature settings.
-  - `hosts/<host>/host-data.nix`: Host-local literals only (network addresses, interfaces, mount paths, swap path, SSH authorized keys, container paths). No reusable module logic.
+  - `hosts/<host>/default.nix` and `hosts/openstack/<host>/default.nix`: Host composition only. Must be a thin wrapper importing a profile, hardware config, and `host-data.nix`. No direct feature settings.
+  - `hosts/<host>/host-data.nix` and `hosts/openstack/<host>/host-data.nix`: Host-local literals only (network addresses, interfaces, mount paths, swap path, SSH authorized keys, container paths). No reusable module logic.
   - `modules/nixos/`: NixOS system settings only.
   - `modules/darwin/`: Darwin system settings only.
   - `modules/shared/`: Cross-platform modules only. Must be safe to evaluate on both NixOS and Darwin. Currently a placeholder.
@@ -83,7 +83,7 @@ Import chain: `flake.nix` → host (`hosts/<name>/default.nix`) → profile (`pr
   - Other `secrets/` subdirectories contain only `.gitkeep` placeholders.
   - Legacy container secret paths (`/etc/nextcloud-adminpass`, `/etc/searx-env`) remain host-local files. Do not migrate them to sops-nix without an explicit task.
 - **Deploy Coverage**:
-  - `deploy-rs` nodes cover `nixos` (192.168.11.48), `server` (192.168.11.50), and `openstack` (via `nix run .#deploy-openstack` — resolves SSH host from tofu output dynamically).
+  - `deploy-rs` nodes cover `nixos` (192.168.11.48), `server` (192.168.11.50), and `gateway` (via `nix run .#deploy-openstack` — resolves SSH host from tofu output dynamically).
   - Darwin hosts are not deployable via deploy-rs.
 - **Non-Standard Root Directories**:
   - `cursors/`: Custom cursor theme derivations. Not a standard flake repo directory.

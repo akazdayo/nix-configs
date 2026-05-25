@@ -9,5 +9,6 @@
     ./nvim-autopairs.nix
     ./lsp-signature.nix
     ./copilot.nix
+    ./conform-nvim.nix
   ];
 }

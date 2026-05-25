@@ -386,19 +386,21 @@
             inherit system;
             config.allowUnfree = true;
           };
+          deploy-openstack-script = pkgs.writeShellScript "deploy-openstack" ''
+            set -euo pipefail
+            TARGET_HOST="''${1:-}"
+            if [ -z "$TARGET_HOST" ]; then
+              echo "Usage: nix run .#deploy-openstack -- <hostname>" >&2
+              exit 1
+            fi
+            HOST=$(${pkgs.opentofu}/bin/tofu -chdir=infra/openstack/$TARGET_HOST output -raw ssh_host)
+            exec ${deploy-rs.packages.${system}.default}/bin/deploy .#$TARGET_HOST --hostname "$HOST" "''${@:2}"
+          '';
         in
         {
           deploy-openstack = {
             type = "app";
-            program =
-              let
-                script = pkgs.writeShellScript "deploy-openstack" ''
-                  set -euo pipefail
-                  HOST=$(${pkgs.opentofu}/bin/tofu -chdir=infra/openstack output -raw ssh_host)
-                  exec ${deploy-rs.packages.${system}.default}/bin/deploy .#gateway --hostname "$HOST" "$@"
-                '';
-              in
-              "${script}";
+            program = "${deploy-openstack-script}";
           };
         }
       );

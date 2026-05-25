@@ -45,6 +45,11 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -63,6 +68,7 @@
       minecraft-nix,
       nix-cachyos-kernel,
       sops-nix,
+      treefmt-nix,
     }@inputs:
     let
       lib = nixpkgs.lib;
@@ -426,6 +432,31 @@
               pkgs.python3Packages.python-openstackclient
             ];
           };
+        }
+      );
+
+      formatter = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
+        in
+        (treefmt-nix.lib.evalModule pkgs ./treefmt.nix).config.build.wrapper
+      );
+
+      checks = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
+          treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
+        in
+        {
+          formatting = treefmtEval.config.build.check self;
         }
       );
     };

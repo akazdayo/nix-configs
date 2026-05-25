@@ -1,0 +1,28 @@
+instance_name = "gateway-example"
+host_name     = "gateway"
+image_id      = "ac5fc61e-258b-4f8b-a06c-229c26f1e38f"
+flavor_name   = "<OPENSTACK_FLAVOR_NAME>"
+network_name  = "<OPENSTACK_NETWORK_NAME>"
+network_id    = ""
+subnet_id     = ""
+keypair_name  = "<YOUR_KEYPAIR_NAME>"
+public_key_path = ""
+
+ssh_allowed_cidrs = ["<YOUR_IP>/32"]
+
+extra_tcp_ingress_rules = []
+
+allocate_floating_ip = true
+external_network_name = "<EXTERNAL_NETWORK_NAME>"
+
+metadata = {
+  environment = "example"
+}
+
+tags = ["nixos", "openstack"]
+
+ssh_user = "deploy"
+
+# Alternative without a floating IP:
+# allocate_floating_ip   = false
+# external_network_name  = ""

@@ -31,7 +31,7 @@ infra/openstack/
 - **Keypair preference**: Always use an existing `keypair_name` — avoids generating private keys in Terraform state.
 - **CIDR rules**: Never `0.0.0.0/0`. Always explicit CIDR blocks for SSH access.
 - **Persistent VM with lifecycle guard**: `lifecycle { ignore_changes = [user_data] }` protects the VM from being replaced when bootstrap script changes. Review changes with `tofu plan` before applying.
-- **Deploy-rs is the sole deployment mechanism**: NixOS config is pushed via host-specific apps such as `nix run .#deploy-minecraft`, which wrap tofu output resolution + deploy-rs. No bootstrap-time rebuild.
+- **Deploy-rs is the sole deployment mechanism**: NixOS config is pushed via `nix run .#deploy-openstack -- <host>`, which wraps tofu output resolution + deploy-rs. No bootstrap-time rebuild.
 
 ## COMMANDS
 ```bash
@@ -46,7 +46,7 @@ tofu -chdir=infra/openstack/minecraft apply
 tofu -chdir=infra/openstack/minecraft output ssh_host
 
 # Deploy NixOS (resolves SSH host from tofu output)
-nix run .#deploy-minecraft
+nix run .#deploy-openstack -- minecraft
 
 # Offline validation (no credentials)
 nix develop -c tofu -chdir=infra/openstack/minecraft fmt -check
@@ -64,6 +64,6 @@ nix develop -c tofu -chdir=infra/openstack/minecraft validate
 ## NOTES
 - Bootstrap uses **amazon-init** (NixOS built-in) to execute user_data as a shell script. Creates the `deploy` user with SSH keys and NOPASSWD sudo for deploy-rs. Does NOT run `nixos-rebuild`. Logs to `/var/log/nixos-bootstrap.log`.
 - First-boot SSH goes to `root` (OpenStack keypair injection). After bootstrap, the `deploy` user is created with the same authorized keys.
-- The IP address is **not hardcoded** in flake.nix. Use host-specific deploy apps such as `nix run .#deploy-minecraft`, which resolve the SSH host from tofu output automatically.
+- The IP address is **not hardcoded** in flake.nix. Use `nix run .#deploy-openstack -- <host>`, which resolves the SSH host from tofu output automatically.
 - The VM persists across config changes — `user_data` changes are ignored via lifecycle policy to prevent accidental replacement.
 - The VM is considered **persistent** — infrastructure changes should be reviewed via `tofu plan` before applying.

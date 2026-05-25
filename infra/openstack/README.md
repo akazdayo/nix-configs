@@ -28,7 +28,7 @@ tofu -chdir=infra/openstack/minecraft apply
 ssh deploy@$(tofu -chdir=infra/openstack/minecraft output -raw ssh_host) 'sudo -n true'
 
 # 8. Deploy NixOS config via deploy-rs (wraps --hostname resolution)
-nix run .#deploy-minecraft
+nix run .#deploy-openstack -- minecraft
 
 # 9. SSH into the deployed system
 ssh akazdayo@$(tofu -chdir=infra/openstack/minecraft output -raw ssh_host)
@@ -38,7 +38,7 @@ ssh akazdayo@$(tofu -chdir=infra/openstack/minecraft output -raw ssh_host)
 
 ```bash
 # Pull latest config, then deploy (no tofu needed)
-nix run .#deploy-minecraft
+nix run .#deploy-openstack -- minecraft
 ```
 
 ## Workflow Summary
@@ -46,16 +46,16 @@ nix run .#deploy-minecraft
 | Stage | Tool | What It Does |
 |-------|------|-------------|
 | Provision | `tofu apply` | Creates VM, port, security group. Bootstrap creates `deploy` user with SSH keys + NOPASSWD sudo. |
-| Deploy | `nix run .#deploy-minecraft` | Connects as `deploy` user, pushes NixOS closure via deploy-rs. |
-| Update | `nix run .#deploy-minecraft` | Pushes updated NixOS closure. TF not needed for config changes. |
+| Deploy | `nix run .#deploy-openstack -- <host>` | Connects as `deploy` user, pushes NixOS closure via deploy-rs. |
+| Update | `nix run .#deploy-openstack -- <host>` | Pushes updated NixOS closure. TF not needed for config changes. |
 
 ## Hosts
 
 Each host is a separate OpenTofu root module with its own local state:
 
-| Host | OpenTofu dir | Deploy app |
-|------|--------------|------------|
-| gateway | `infra/openstack/gateway` | `nix run .#deploy-gateway` |
-| minecraft | `infra/openstack/minecraft` | `nix run .#deploy-minecraft` |
+| Host | OpenTofu dir | Deploy command |
+|------|--------------|----------------|
+| gateway | `infra/openstack/gateway` | `nix run .#deploy-openstack -- gateway` |
+| minecraft | `infra/openstack/minecraft` | `nix run .#deploy-openstack -- minecraft` |
 
-`nix run .#deploy-openstack` remains as a compatibility alias for `deploy-gateway`.
+`deploy-openstack` resolves the host's SSH address from the matching OpenTofu root module output.

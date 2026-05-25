@@ -50,6 +50,11 @@
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    git-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -69,6 +74,7 @@
       nix-cachyos-kernel,
       sops-nix,
       treefmt-nix,
+      git-hooks,
     }@inputs:
     let
       lib = nixpkgs.lib;
@@ -350,6 +356,36 @@
         "aarch64-darwin"
       ];
 
+      mkPreCommitCheck =
+        system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
+          treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
+          preCommitFmt = pkgs.writeShellApplication {
+            name = "pre-commit-fmt";
+            runtimeInputs = [ treefmtEval.config.build.wrapper ];
+            text = ''
+              exec ${pkgs.lib.getExe treefmtEval.config.build.wrapper} --no-cache -- "$@"
+            '';
+          };
+        in
+        git-hooks.lib.${system}.run {
+          src = ./.;
+          hooks = {
+            nix-fmt = {
+              enable = true;
+              name = "nix fmt";
+              entry = pkgs.lib.getExe preCommitFmt;
+              files = "\\.(nix|lua|sh|md|json|toml|yaml|yml|rs)$";
+            };
+            check-added-large-files.enable = true;
+            check-merge-conflicts.enable = true;
+          };
+        };
+
       mkDeployNode =
         hostName:
         {
@@ -418,10 +454,12 @@
             inherit system;
             config.allowUnfree = true;
           };
+          preCommit = mkPreCommitCheck system;
         in
         {
           default = pkgs.mkShell {
-            packages = [
+            inherit (preCommit) shellHook;
+            packages = preCommit.enabledPackages ++ [
               deploy-rs.packages.${system}.default
               pkgs.nixfmt-rfc-style
               pkgs.opentofu
@@ -457,6 +495,7 @@
         in
         {
           formatting = treefmtEval.config.build.check self;
+          pre-commit-check = mkPreCommitCheck system;
         }
       );
     };

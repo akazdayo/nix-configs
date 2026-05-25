@@ -1,5 +1,6 @@
 /result
 /.sisyphus
+/.pre-commit-config.yaml
 **/.terraform/
 **/*.tfstate
 **/*.tfstate.*

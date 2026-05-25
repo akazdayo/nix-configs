@@ -1,4 +1,9 @@
-{ pkgs, pkgs-unstable, inputs, ... }:
+{
+  pkgs,
+  pkgs-unstable,
+  inputs,
+  ...
+}:
 {
   environment.systemPackages = with pkgs; [
     vim

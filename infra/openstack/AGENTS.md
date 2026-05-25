@@ -4,9 +4,11 @@
 Parent: [root AGENTS.md](../../AGENTS.md)
 
 ## OVERVIEW
+
 OpenTofu/Terraform IaC for provisioning NixOS VMs on OpenStack. Uses minimal cloud-init to prepare SSH access for deploy-rs, which is the primary NixOS deployment mechanism.
 
 ## STRUCTURE
+
 ```
 infra/openstack/
 ├── modules/vm/              # Shared VM module: compute, networking, security group
@@ -17,15 +19,17 @@ infra/openstack/
 ```
 
 ## WHERE TO LOOK
-| Task | Location | Notes |
-|------|----------|-------|
-| Change instance config | `modules/vm/main.tf` | Compute, network, security group, floating IP |
-| Add/change input vars | `modules/vm/variables.tf` plus host `variables.tf` files | New vars need host `terraform.tfvars.example` entries |
-| Change bootstrap script | `modules/vm/user-data.sh.tftpl` | Shell script injected via config-drive |
-| Debug bootstrap | `README.md` | amazon-init status, manual bootstrap steps |
-| Validate offline | `README.md` | `tofu validate` without credentials |
+
+| Task                    | Location                                                 | Notes                                                 |
+| ----------------------- | -------------------------------------------------------- | ----------------------------------------------------- |
+| Change instance config  | `modules/vm/main.tf`                                     | Compute, network, security group, floating IP         |
+| Add/change input vars   | `modules/vm/variables.tf` plus host `variables.tf` files | New vars need host `terraform.tfvars.example` entries |
+| Change bootstrap script | `modules/vm/user-data.sh.tftpl`                          | Shell script injected via config-drive                |
+| Debug bootstrap         | `README.md`                                              | amazon-init status, manual bootstrap steps            |
+| Validate offline        | `README.md`                                              | `tofu validate` without credentials                   |
 
 ## CONVENTIONS
+
 - **Auth from env, never tracked**: `openrc.sh` sources `OS_*` env vars. No credentials in tracked files. Provider config uses env vars + `OS_CLOUD` fallback.
 - **State gitignored, lockfile tracked**: `*.tfstate` and `*.tfvars` are in `.gitignore`. `.terraform.lock.hcl` IS tracked.
 - **Keypair preference**: Always use an existing `keypair_name` — avoids generating private keys in Terraform state.
@@ -34,6 +38,7 @@ infra/openstack/
 - **Deploy-rs is the sole deployment mechanism**: NixOS config is pushed via `nix run .#deploy-openstack -- <host>`, which wraps tofu output resolution + deploy-rs. No bootstrap-time rebuild.
 
 ## COMMANDS
+
 ```bash
 # Authentication
 source ../../openrc.sh                     # or set OS_* env vars
@@ -55,6 +60,7 @@ nix develop -c tofu -chdir=infra/openstack/minecraft validate
 ```
 
 ## ANTI-PATTERNS
+
 - Committing `terraform.tfvars` (contains real values, must remain gitignored).
 - Committing auth credentials (API keys, tokens, `clouds.yaml` secrets).
 - Using `0.0.0.0/0` for `ssh_allowed_cidrs` — always restrict to your IP range.
@@ -62,6 +68,7 @@ nix develop -c tofu -chdir=infra/openstack/minecraft validate
 - Changing `image_id`, `config_drive`, or `key_pair` on a live instance — destroys and recreates the VM. Use `tofu plan` to confirm.
 
 ## NOTES
+
 - Bootstrap uses **amazon-init** (NixOS built-in) to execute user_data as a shell script. Creates the `deploy` user with SSH keys and NOPASSWD sudo for deploy-rs. Does NOT run `nixos-rebuild`. Logs to `/var/log/nixos-bootstrap.log`.
 - First-boot SSH goes to `root` (OpenStack keypair injection). After bootstrap, the `deploy` user is created with the same authorized keys.
 - The IP address is **not hardcoded** in flake.nix. Use `nix run .#deploy-openstack -- <host>`, which resolves the SSH host from tofu output automatically.

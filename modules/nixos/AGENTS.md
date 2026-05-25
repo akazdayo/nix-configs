@@ -4,9 +4,11 @@
 Parent: [root AGENTS.md](../../AGENTS.md)
 
 ## OVERVIEW
+
 NixOS system modules — 14 domains, each with `desktop.nix` and/or `server.nix` host-type variants.
 
 ## STRUCTURE
+
 ```
 modules/nixos/
 ├── audio/desktop.nix          # PipeWire audio stack
@@ -26,14 +28,16 @@ modules/nixos/
 ```
 
 ## WHERE TO LOOK
-| Task | Location | Notes |
-|------|----------|-------|
+
+| Task                     | Location                                      | Notes                                      |
+| ------------------------ | --------------------------------------------- | ------------------------------------------ |
 | Add NixOS system setting | Create `modules/nixos/<domain>/<variant>.nix` | Register in `profiles/nixos/<profile>.nix` |
-| Host-local values | `hosts/<host>/host-data.nix` | Access via `hostMeta.hostData.<key>` |
-| New container service | `modules/nixos/containers/<name>.nix` | Follow existing container template |
-| Add kernel module | `modules/nixos/hardware/kernel.nix` | CachyOS kernel via `nix-cachyos-kernel` |
+| Host-local values        | `hosts/<host>/host-data.nix`                  | Access via `hostMeta.hostData.<key>`       |
+| New container service    | `modules/nixos/containers/<name>.nix`         | Follow existing container template         |
+| Add kernel module        | `modules/nixos/hardware/kernel.nix`           | CachyOS kernel via `nix-cachyos-kernel`    |
 
 ## CONVENTIONS
+
 - **Host-type suffix naming**: `desktop.nix` / `server.nix` per domain. Desktop-only domains have just `desktop.nix`. Server-only features use domain-specific names (e.g., `minecraft-server.nix`, `cloudflared.nix`).
 - **`default.nix` is NOT used in subdirectories** — unlike `home/programs/`, NixOS module domains use descriptive names. The top-level `modules/nixos/default.nix` is a placeholder.
 - **Profiles are the ONLY composition layer**: `profiles/nixos/desktop.nix` and `profiles/nixos/server.nix` are the sole files that know the full set of modules. Import new modules there, never in `hosts/<host>/default.nix`.
@@ -42,12 +46,14 @@ modules/nixos/
 - **System-wide `system.stateVersion = "25.11"`** is set in profiles, not in individual modules.
 
 ## ANTI-PATTERNS
+
 - Importing modules directly from `hosts/<host>/default.nix` — use profiles.
 - Hardcoding host-local values (IPs, paths, keys) — use `hostMeta.hostData`.
 - Adding `lib.mkIf` conditionals in leaf modules — push conditional logic to profile selection.
 - Modifying `hardware-configuration.nix` — it's generated, keep additions in separate modules.
 
 ## NOTES
+
 - **Containers are NixOS containers** — each defines a full `containers.<name> = { config = { ... }; }` with interior `system.stateVersion`. The `attic.nix` (103 lines) is the most complex module. All containers follow a shared template: `autoStart`, `privateNetwork`, `macvlans`, `bindMounts`, nested `config`.
 - **`macvlan-shim.nix`** is the only module using `lib.mkIf` + assertions — it solves a niche ARP/routing problem for container macvlan networking.
 - **`slimevr.nix`** uses `symlinkJoin` + `makeWrapper` — the only custom derivation in `modules/`.

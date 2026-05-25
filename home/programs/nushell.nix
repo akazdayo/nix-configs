@@ -37,7 +37,13 @@
 
   programs.direnv = {
     enable = true;
-    package = if pkgs.stdenv.isDarwin then pkgs.direnv.overrideAttrs (_: { doCheck = false; }) else pkgs.direnv;
+    package =
+      if pkgs.stdenv.isDarwin then
+        pkgs.direnv.overrideAttrs (_: {
+          doCheck = false;
+        })
+      else
+        pkgs.direnv;
     enableNushellIntegration = true;
   };
 

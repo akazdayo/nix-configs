@@ -1,4 +1,5 @@
-{inputs, ...}: {
+{ inputs, ... }:
+{
   imports = [
     inputs.noctalia.homeModules.default
     inputs.sops-nix.homeManagerModules.default

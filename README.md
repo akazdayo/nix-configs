@@ -23,13 +23,12 @@ nix flake update
 
 ## Hosts
 
-| Host | Platform | Command |
-|------|----------|---------|
-| `nixos` | NixOS (x86_64-linux) | `nh os switch` |
-| `server` | NixOS (x86_64-linux) | `nh os switch --hostname server` |
+| Host      | Platform                | Command                                          |
+| --------- | ----------------------- | ------------------------------------------------ |
+| `nixos`   | NixOS (x86_64-linux)    | `nh os switch`                                   |
+| `server`  | NixOS (x86_64-linux)    | `nh os switch --hostname server`                 |
 | `macbook` | Darwin (aarch64-darwin) | `nix run nix-darwin -- switch --flake .#macbook` |
 
 ## Infrastructure
 
 `infra/openstack/` — OpenTofu IaC
-

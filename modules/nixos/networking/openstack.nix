@@ -1,7 +1,9 @@
 { hostMeta, ... }:
 let
   hostData = hostMeta.hostData;
-  primaryInterface = hostData.networking.primaryInterface or (throw "hostData.networking.primaryInterface must be set for OpenStack host");
+  primaryInterface =
+    hostData.networking.primaryInterface
+      or (throw "hostData.networking.primaryInterface must be set for OpenStack host");
 in
 {
   networking.hostName = hostMeta.hostName;

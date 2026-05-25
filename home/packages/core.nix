@@ -26,10 +26,13 @@ in
       gh
       attic-client
     ])
-    ++ lib.optionals isLinux (with pkgs; [
-      starship
-      tailscale
-    ])
+    ++ lib.optionals isLinux (
+      with pkgs;
+      [
+        starship
+        tailscale
+      ]
+    )
     ++ [
       pkgs-unstable.wakatime-cli
       (if isDesktop then pkgs.btop-cuda else pkgs.btop)

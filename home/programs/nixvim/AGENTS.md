@@ -4,9 +4,11 @@
 Parent: [root AGENTS.md](../../../AGENTS.md)
 
 ## OVERVIEW
+
 NixVim configuration — 23 files across 4 levels of nesting, organized by concern (opts, keymaps, LSP, plugins) and plugin category (editor, UI, other).
 
 ## STRUCTURE
+
 ```
 home/programs/nixvim/
 ├── default.nix              # Entry: imports nixvim-module + all sub-modules
@@ -40,14 +42,16 @@ home/programs/nixvim/
 ```
 
 ## WHERE TO LOOK
-| Task | Location | Notes |
-|------|----------|-------|
-| Add a plugin | `plugins/<category>/<name>.nix` | Register in `plugins/<category>/default.nix` |
-| Add LSP server | `lsp.nix` | Add to `plugins.lsp.servers` attrset |
-| Global keybind | `keymaps.nix` | Plugin-specific keybinds go in plugin file |
-| Editor settings | `opts.nix` | |
+
+| Task            | Location                        | Notes                                        |
+| --------------- | ------------------------------- | -------------------------------------------- |
+| Add a plugin    | `plugins/<category>/<name>.nix` | Register in `plugins/<category>/default.nix` |
+| Add LSP server  | `lsp.nix`                       | Add to `plugins.lsp.servers` attrset         |
+| Global keybind  | `keymaps.nix`                   | Plugin-specific keybinds go in plugin file   |
+| Editor settings | `opts.nix`                      |                                              |
 
 ## CONVENTIONS
+
 - **One file per plugin** — even for 4-line configs. Category determines subdirectory: `editor/` (coding), `ui/` (appearance), `other/` (integration).
 - **Plugin registration**: Add to `plugins/<category>/default.nix` `imports` list. File naming uses lowercase kebab-case matching plugin name.
 - **Plugins use `programs.nixvim.plugins.<name>` API**, not `extraPlugins` + Lua. Some plugins require `settings` sub-attr, others set options directly.
@@ -57,11 +61,13 @@ home/programs/nixvim/
 - **Japanese encoding**: `opts.nix` includes `sjis`, `euc-jp`, `iso-2022-jp` in `fileencodings`.
 
 ## ANTI-PATTERNS
+
 - Using `extraPlugins` + Lua instead of `programs.nixvim.plugins.<name>` (first check if a native module exists).
 - Mixing `plugins.<name>` pattern with `plugins = { <name>.enable = true; }` — choose the direct attr path form consistently.
 - Omitting plugin file from `default.nix` — all new plugin files must be registered in their category's `default.nix`.
 
 ## NOTES
+
 - This config is the **deepest subtree** in the project (4 levels: nixvim → plugins → category → individual plugins).
 - The `nixvim-module` specialArg passthrough pattern is unique to this subtree — no other home-manager module uses this indirection.
 - `.agents/skills/nixvim-add-plugin/SKILL.md` documents the workflow for adding or migrating plugins.

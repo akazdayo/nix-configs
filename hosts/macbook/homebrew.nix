@@ -10,7 +10,12 @@
     };
 
     taps = [ ];
-    brews = [ "openssh" "libfido2" "ykman" "opensc" ];
+    brews = [
+      "openssh"
+      "libfido2"
+      "ykman"
+      "opensc"
+    ];
     casks = [
       "vesktop"
       "orbstack"

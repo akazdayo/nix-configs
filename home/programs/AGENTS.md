@@ -4,9 +4,11 @@
 Parent: [root AGENTS.md](../../AGENTS.md)
 
 ## OVERVIEW
+
 Per-program Home Manager configuration — 12 `.nix` files plus the `nixvim/` subtree. Each file configures a single program or service for the user environment.
 
 ## STRUCTURE
+
 ```
 home/programs/
 ├── cursor.nix              # Custom cursor theme
@@ -25,15 +27,17 @@ home/programs/
 ```
 
 ## WHERE TO LOOK
-| Task | Location | Notes |
-|------|----------|-------|
+
+| Task                   | Location                          | Notes                                     |
+| ---------------------- | --------------------------------- | ----------------------------------------- |
 | Add new program module | Create `home/programs/<name>.nix` | Register in `home/profiles/<profile>.nix` |
-| Configure Neovim | `home/programs/nixvim/` | Own AGENTS.md with plugin conventions |
-| Add dotfile | `home/programs/files.nix` | Uses `home.file` |
-| Shell config | `home/programs/nushell.nix` | Sources dotfiles via `builtins.readFile` |
-| Secrets management | `home/programs/secrets.nix` | sops + age + yubikey |
+| Configure Neovim       | `home/programs/nixvim/`           | Own AGENTS.md with plugin conventions     |
+| Add dotfile            | `home/programs/files.nix`         | Uses `home.file`                          |
+| Shell config           | `home/programs/nushell.nix`       | Sources dotfiles via `builtins.readFile`  |
+| Secrets management     | `home/programs/secrets.nix`       | sops + age + yubikey                      |
 
 ## CONVENTIONS
+
 - **One file = one program**: Each file configures a single `programs.<name>` or `services.<name>` block. Do not combine unrelated programs.
 - **Registration**: New program modules must be imported from the appropriate `home/profiles/<profile>.nix`. Which profile imports which program:
   - `desktop.nix`: git, ssh, files, flameshot, vscode, noctalia, niri, cursor, nushell, nixvim, obs, immich_backups, secrets
@@ -46,12 +50,14 @@ home/programs/
 - **nixvim indirection**: nixvim uses a `nixvim-module` specialArg passthrough — configured in `flake.nix`, not as a direct input import. See `home/programs/nixvim/AGENTS.md`.
 
 ## ANTI-PATTERNS
+
 - Combining multiple programs in one file — split into separate files per program.
 - Forgetting to register new program modules in the relevant `home/profiles/<profile>.nix`.
 - Adding Linux-only program config without platform guard on Darwin profiles.
 - Using `extraConfig` instead of the nix module's native options when the option exists.
 
 ## NOTES
+
 - `home/programs/` is flat (no subdirectories except `nixvim/`) — new programs go at the top level.
 - `secrets.nix` enables sops-nix but has no active HM-managed secrets yet (only CLI tools installed).
 - `niri.nix` is the largest single file at ~600+ lines — contains full Wayland compositor config.

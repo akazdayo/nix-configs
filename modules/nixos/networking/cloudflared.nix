@@ -1,4 +1,11 @@
-{ config, hostMeta, lib, pkgs, pkgs-unstable, ... }:
+{
+  config,
+  hostMeta,
+  lib,
+  pkgs,
+  pkgs-unstable,
+  ...
+}:
 let
   cloudflaredData = hostMeta.hostData.cloudflared;
   cloudflaredWrapper = pkgs.writeShellScriptBin "cloudflared" ''
@@ -19,9 +26,9 @@ in
       default = "http_status:404";
       edgeIPVersion = "auto";
 
-      ingress = lib.mapAttrs'
-        (_: svc: lib.nameValuePair svc.hostname svc.service)
-        cloudflaredData.ingress;
+      ingress = lib.mapAttrs' (
+        _: svc: lib.nameValuePair svc.hostname svc.service
+      ) cloudflaredData.ingress;
     };
   };
 }

@@ -3,14 +3,16 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   screenshotsDir = "${config.home.homeDirectory}/Pictures/Screenshots";
-in {
+in
+{
   home.packages = with pkgs; [
     grim
   ];
 
-  home.activation.createFlameshotScreenshotsDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.createFlameshotScreenshotsDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     mkdir -p ${lib.escapeShellArg screenshotsDir}
   '';
 

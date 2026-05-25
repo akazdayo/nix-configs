@@ -5,18 +5,56 @@ let
   # 日本語のファイル名の一部 (key) と、X11のカーソル名リスト (value)
   # リストの先頭が実ファイル名、2番目以降がシンボリックリンクになります
   cursorMap = {
-    "通常"       = [ "left_ptr" "default" "arrow" ];
-    "リンク"     = [ "hand2" "pointer" "hand" "link" ];
-    "テキスト"   = [ "xterm" "text" ];
-    "待ち"       = [ "watch" "wait" ];
-    "移動"       = [ "fleur" "move" ];
-    "左右"       = [ "sb_h_double_arrow" "h_double_arrow" "size_hor" ];
-    "上下"       = [ "sb_v_double_arrow" "v_double_arrow" "size_ver" ];
-    "斜めに拡大・縮小1" = [ "bd_double_arrow" "size_fdiag" ];
-    "斜めに拡大・縮小2" = [ "fd_double_arrow" "size_bdiag" ];
-    "ヘルプ"     = [ "question_arrow" "help" ];
-    "利用不可"   = [ "crossed_circle" "not-allowed" ];
-    "ペン"       = [ "pencil" ];
+    "通常" = [
+      "left_ptr"
+      "default"
+      "arrow"
+    ];
+    "リンク" = [
+      "hand2"
+      "pointer"
+      "hand"
+      "link"
+    ];
+    "テキスト" = [
+      "xterm"
+      "text"
+    ];
+    "待ち" = [
+      "watch"
+      "wait"
+    ];
+    "移動" = [
+      "fleur"
+      "move"
+    ];
+    "左右" = [
+      "sb_h_double_arrow"
+      "h_double_arrow"
+      "size_hor"
+    ];
+    "上下" = [
+      "sb_v_double_arrow"
+      "v_double_arrow"
+      "size_ver"
+    ];
+    "斜めに拡大・縮小1" = [
+      "bd_double_arrow"
+      "size_fdiag"
+    ];
+    "斜めに拡大・縮小2" = [
+      "fd_double_arrow"
+      "size_bdiag"
+    ];
+    "ヘルプ" = [
+      "question_arrow"
+      "help"
+    ];
+    "利用不可" = [
+      "crossed_circle"
+      "not-allowed"
+    ];
+    "ペン" = [ "pencil" ];
   };
 
   themeName = "MyCustomCursor";
@@ -56,31 +94,37 @@ pkgs.stdenv.mkDerivation {
 
     # NixのMap定義をbashのロジックに展開して実行
     # findコマンドを使ってファイル名の一部(key)に一致するファイルを探します
-    ${lib.concatStringsSep "\n" (lib.mapAttrsToList (key: names: let
-        primary = builtins.head names;
-        aliases = builtins.tail names;
-      in ''
-        targetFile=$(find . -maxdepth 2 -name "*${key}*.ani" -o -name "*${key}*.cur" | head -n 1)
+    ${lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (
+        key: names:
+        let
+          primary = builtins.head names;
+          aliases = builtins.tail names;
+        in
+        ''
+          targetFile=$(find . -maxdepth 2 -name "*${key}*.ani" -o -name "*${key}*.cur" | head -n 1)
 
-        if [ -n "$targetFile" ]; then
-          win2xcur "$targetFile" -o "$cursorDir/" >/dev/null
-          originalBaseName=$(basename "$targetFile")
-          generatedFile="$cursorDir/''${originalBaseName%.*}"
+          if [ -n "$targetFile" ]; then
+            win2xcur "$targetFile" -o "$cursorDir/" >/dev/null
+            originalBaseName=$(basename "$targetFile")
+            generatedFile="$cursorDir/''${originalBaseName%.*}"
 
-          if [ -f "$generatedFile" ]; then
-             mv "$generatedFile" "$cursorDir/${primary}"
+            if [ -f "$generatedFile" ]; then
+               mv "$generatedFile" "$cursorDir/${primary}"
 
-             # シンボリックリンクの作成 (エイリアス)
-             ${lib.concatMapStringsSep "\n" (alias: ''
-               ln -sf "${primary}" "$cursorDir/${alias}"
-             '') aliases}
+               # シンボリックリンクの作成 (エイリアス)
+               ${lib.concatMapStringsSep "\n" (alias: ''
+                 ln -sf "${primary}" "$cursorDir/${alias}"
+               '') aliases}
+            else
+               echo "    [Error] Output not found for $targetFile"
+            fi
           else
-             echo "    [Error] Output not found for $targetFile"
+            echo "    [Skip] Source file for '${key}' not found."
           fi
-        else
-          echo "    [Skip] Source file for '${key}' not found."
-        fi
-      '') cursorMap)}
+        ''
+      ) cursorMap
+    )}
 
     # --- index.theme の生成 ---
     echo "[Icon Theme]

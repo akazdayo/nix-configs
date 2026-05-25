@@ -3,6 +3,7 @@
 **Generated:** 2026-05-22 | **Commit:** 951517d | **Branch:** main
 
 ## Build & Test Commands
+
 - **Apply Config (NixOS, preferred)**: `nh os switch` (auto-cleans old generations, 4d/3 gen retention)
 - **Apply Config (NixOS, explicit)**: `sudo nixos-rebuild switch --flake .#nixos` (replace `nixos` with `server` as needed)
 - **Test Config (NixOS)**: `sudo nixos-rebuild test --flake .#nixos`
@@ -13,6 +14,7 @@
 - **Dev shell**: `nix develop` (provides deploy-rs, nixfmt-rfc-style, sops, age tools)
 
 ## CI (GitHub Actions)
+
 - **PR Build** (`pr-build.yml`): On PR to main — builds all 4 hosts (nixos, server, gateway on ubuntu-latest; macbook on macos-latest). Uses Cachix (read-only).
 - **Scheduled Update** (`flake-update.yml`): Every 3 days — updates flake.lock, builds all hosts, pushes to Cachix + Attic, commits updated lock file.
 - No formal NixOS tests exist. Verification is via `nix flake check`, dry-build, and CI builds.
@@ -29,6 +31,7 @@ Import chain: `flake.nix` → host (`hosts/<name>/default.nix` or `hosts/opensta
 - **Outputs**: `nixosConfigurations.{nixos,server,gateway}`, `darwinConfigurations.macbook`, `deploy.nodes`, `checks` (deploy-rs), `devShells`
 
 ## Code Style & Conventions
+
 - **Structure**: Platform-first modular Flake. System settings live under `modules/<platform>/`, user settings under `home/`.
 - **Modules**: Use `default.nix` as directory entry point for multi-file domains. Import sub-modules in `default.nix`.
 - **Arguments**: Modules typically accept `{ pkgs, pkgs-unstable, ... }`. Host-aware modules also receive `hostMeta`; access host-specific values via `hostMeta.hostData.<key>` — never hardcode.
@@ -42,6 +45,7 @@ Import chain: `flake.nix` → host (`hosts/<name>/default.nix` or `hosts/opensta
 - **Packages**: Use `pkgs-unstable` for newer software if needed (passed via `specialArgs`). Three package sets: `pkgs` (stable), `pkgs-unstable`, `pkgs-with-llm-agents` (HM-only). All have `allowUnfree = true`.
 
 ## Strict File & Directory Rules
+
 - **Directory Boundaries**:
   - `hosts/<host>/default.nix` and `hosts/openstack/<host>/default.nix`: Host composition only. Must be a thin wrapper importing a profile, hardware config, and `host-data.nix`. No direct feature settings.
   - `hosts/<host>/host-data.nix` and `hosts/openstack/<host>/host-data.nix`: Host-local literals only (network addresses, interfaces, mount paths, swap path, SSH authorized keys, container paths). No reusable module logic.

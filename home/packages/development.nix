@@ -3,8 +3,8 @@ let
   isDesktop = hostMeta.hostName == "nixos";
 in
 {
-  home.packages =
-    (if isDesktop then
+  home.packages = (
+    if isDesktop then
       (with pkgs; [
         devenv
         godot_4
@@ -17,5 +17,6 @@ in
         pnpm
         bun
         nodejs_24
-      ]));
+      ])
+  );
 }

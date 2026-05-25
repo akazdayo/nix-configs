@@ -1,9 +1,13 @@
-{pkgs, ...}: let
+{ pkgs, ... }:
+let
   # Noctalia IPC コマンド生成ヘルパー
-  noctalia = cmd: ''spawn "noctalia-shell" "ipc" "call" ${
+  noctalia =
+    cmd:
+    ''spawn "noctalia-shell" "ipc" "call" ${
       pkgs.lib.concatMapStringsSep " " (s: ''"${s}"'') (pkgs.lib.splitString " " cmd)
     }'';
-in {
+in
+{
   # niri設定ファイル（元のデフォルト設定 + 出力設定）
   xdg.configFile."niri/config.kdl".text = ''
     // This config is in the KDL format: https://kdl.dev

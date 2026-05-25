@@ -1,4 +1,9 @@
-{ hostMeta, lib, pkgs, ... }:
+{
+  hostMeta,
+  lib,
+  pkgs,
+  ...
+}:
 let
   containerData = hostMeta.hostData.containers;
   atticData = containerData.attic;

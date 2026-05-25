@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        host: [nixos, server, gateway]
+        host: [nixos, server, gateway, minecraft]
     steps:
       - uses: actions/checkout@v6
 

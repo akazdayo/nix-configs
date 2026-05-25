@@ -1,0 +1,51 @@
+name: Deploy OpenStack
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-openstack
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - host: gateway
+            hostname: 138.252.25.166
+          - host: minecraft
+            hostname: 138.252.25.159
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: cachix/cachix-action@v17
+        with:
+          name: ${{ vars.CACHIX_CACHE_NAME || 'akazdayo' }}
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Setup SSH key
+        env:
+          DEPLOY_SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s' "$DEPLOY_SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+      - name: Deploy ${{ matrix.host }}
+        run: |
+          nix run .#deploy-rs -- \
+            --ssh-opts "-i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=accept-new" \
+            --hostname ${{ matrix.hostname }} \
+            .#${{ matrix.host }}

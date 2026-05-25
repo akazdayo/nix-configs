@@ -421,6 +421,19 @@
 
       deploy.nodes = lib.mapAttrs mkDeployNode (hosts // servers // openstackHosts);
 
+      packages = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
+        in
+        {
+          deploy-rs = deploy-rs.packages.${system}.default;
+        }
+      );
+
       apps = forAllSystems (
         system:
         let

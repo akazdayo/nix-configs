@@ -6,7 +6,6 @@ in
   imports = [
     ./tailscale.nix
     ./macvlan-shim.nix
-    ./cloudflared.nix
   ];
 
   networking.hostName = hostMeta.hostName;

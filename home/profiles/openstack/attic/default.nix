@@ -2,6 +2,5 @@
 {
   imports = [
     ../common.nix
-    ../../../../modules/nixos/services/caddy.nix
   ];
 }

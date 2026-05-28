@@ -20,6 +20,11 @@ creation_rules:
           - *master_key
           - *server_host
 
+  - path_regex: secrets/attic/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *master_key
+
   - path_regex: secrets/common/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:

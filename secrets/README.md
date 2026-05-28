@@ -58,10 +58,11 @@ Save and exit - sops will encrypt automatically.
 
 ## Current sops Boundary
 
-`.sops.yaml` currently defines creation rules for four encrypted secret roots and those rules are intentionally unchanged during the repo structure refactor:
+`.sops.yaml` currently defines creation rules for five encrypted secret roots:
 
 - `secrets/nixos/` - NixOS host-specific secrets encrypted to the `nixos` host key
 - `secrets/server/` - server host-specific secrets encrypted to the `server` host key
+- `secrets/attic/` - attic host-specific secrets encrypted to the `attic` host key (master key only until host is provisioned)
 - `secrets/common/` - shared secrets encrypted to both Linux host keys
 - `secrets/darwin/` - macOS host-specific secrets encrypted to the Darwin host key
 
@@ -74,6 +75,11 @@ Tracked encrypted secret files must stay at these paths so pure evaluation can s
   - Status: encrypted with sops; do not decrypt in normal repo work
   - Used by: `modules/nixos/secrets/desktop.nix`
   - Host scope: the `nixos` desktop system profile
+- `secrets/attic/atticd-env.yaml`
+  - Contains: `atticd-env` (placeholder until provisioned)
+  - Status: encrypted with sops to master key only
+  - Used by: `modules/nixos/secrets/attic.nix`
+  - Host scope: the `attic` OpenStack host
 - `secrets/server/`, `secrets/common/`, `secrets/darwin/`
   - Current tracked state: placeholder `.gitkeep` only, no encrypted secret files committed today
 
@@ -94,6 +100,9 @@ Tracked encrypted secret files must stay at these paths so pure evaluation can s
 - `server` host
   - Imports `profiles/nixos/server.nix` -> `modules/nixos/secrets/server.nix`
   - Currently has no tracked sops-managed encrypted file in `secrets/server/`
+- `attic` host
+  - Imports `profiles/nixos/openstack/attic/default.nix` -> `modules/nixos/secrets/attic.nix`
+  - Uses `secrets/attic/atticd-env.yaml` (re-encrypt to attic host key after provisioning)
 - `macbook` host
   - Imports `home/programs/secrets.nix` through the Darwin Home Manager profile
   - `.sops.yaml` reserves `secrets/darwin/` for future Darwin secrets, but no encrypted file is committed there today

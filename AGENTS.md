@@ -68,7 +68,7 @@ Import chain: `flake.nix` → host (`hosts/<name>/default.nix` or `hosts/opensta
   - Do not mix unrelated domains in one file (example: desktop/locale/networking split).
 - **Naming**:
   - New file and directory names must use lowercase kebab-case.
-  - **NixOS module naming**: Primary convention is host-type suffix (`desktop.nix` / `server.nix` / `openstack.nix`) per domain. Exceptions: service-specific names (`minecraft-server.nix`, `cloudflared.nix`), feature-specific names (`nvidia.nix`, `cachyos-kernel.nix`), and aggregation entry points (`desktop/default.nix`). The domain directory name matches the primary option group; variant file names distinguish host type or feature.
+  - **NixOS module naming**: Primary convention is host-type suffix (`desktop.nix` / `server.nix` / `openstack.nix`) per domain. Exceptions: service-specific names (`minecraft-server.nix`), feature-specific names (`nvidia.nix`, `cachyos-kernel.nix`), and aggregation entry points (`desktop/default.nix`). The domain directory name matches the primary option group; variant file names distinguish host type or feature.
 - **Profile Registration**:
   - New NixOS modules must be imported from a `profiles/nixos/*.nix` file, not directly from a host entry.
   - New Darwin modules must be imported from a `profiles/darwin/*.nix` file.
@@ -83,7 +83,7 @@ Import chain: `flake.nix` → host (`hosts/<name>/default.nix` or `hosts/opensta
   - When using an exception, document reason and scope inline, and plan migration to secret management or environment variables.
 - **Secret Path Freeze**:
   - Do not move, rename, or rekey tracked encrypted secret files during repo structure work.
-  - Current tracked encrypted files: `secrets/nixos/home.yaml`.
+  - Current tracked encrypted files: `secrets/nixos/home.yaml`, `secrets/attic/atticd-env.yaml`.
   - Other `secrets/` subdirectories contain only `.gitkeep` placeholders.
   - Legacy container secret paths (`/etc/nextcloud-adminpass`, `/etc/searx-env`) remain host-local files. Do not migrate them to sops-nix without an explicit task.
 - **Deploy Coverage**:

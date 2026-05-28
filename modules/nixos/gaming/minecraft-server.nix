@@ -19,7 +19,7 @@ in
 
     servers.fabric-smp = {
       enable = true;
-      package = pkgs.fabricServers.fabric-26.1.2;
+      package = pkgs.fabricServers.fabric-26_1_2;
       jvmOpts = minecraftData.jvmOpts or "-Xms4G -Xmx8G";
 
       serverProperties = {

@@ -53,6 +53,10 @@ in
             url = "https://cdn.modrinth.com/data/zQhsx8KF/versions/eu63Kj9A/servux-fabric-26.1.2-0.10.2.jar";
             sha512 = "78566cebcc5e181c68fc7f78c2f34213d634ae930f82cdfad19dd65ac4e6b24ae6d541a200b069e07e32e90b5c827d1cc1e80809da376bfbabfc8b302f9f256a";
           };
+          Vivecraft = pkgs.fetchurl {
+            url = "https://cdn.modrinth.com/data/wGoQDPN5/versions/dAFnGtKk/vivecraft-26.1.2-1.3.8-fabric.jar";
+            sha512 = "3228489a2ff1191d90a47c0a50d11aa19c6a818032c8657bd530e7c1fbd7cdfca5c2e3062c9da2de868407b83e94f16c57bc44d4537d9538b08f1d9f584037a9";
+          };
         }
       );
     };

@@ -13,14 +13,14 @@ NixOS system modules — 14 domains, each with `desktop.nix` and/or `server.nix`
 modules/nixos/
 ├── audio/desktop.nix          # PipeWire audio stack
 ├── boot/{desktop,server}.nix  # Bootloader (lanzaboote on desktop, systemd-boot on server)
-├── containers/{desktop,server,immich,attic,pihole-unbound,searxng,nextcloud}.nix
+├── containers/{desktop,server,immich,pihole-unbound,searxng,nextcloud}.nix
 ├── desktop/desktop.nix        # DE (niri compositor, Firefox, printing, Sunshine)
 │   └── wayland/{login,niri,variable}.nix
 ├── flatpak/desktop.nix        # Flatpak support
 ├── gaming/{desktop,minecraft-server,steam,wivrn,slimevr,alvr}.nix
 ├── hardware/{desktop,server,kernel,nvidia,swap,mounts,tablet}.nix
 ├── locale/{desktop,server}.nix
-├── networking/{desktop,server,tailscale,cloudflared,macvlan-shim}.nix
+├── networking/{desktop,server,tailscale,macvlan-shim}.nix
 ├── secrets/{desktop,server}.nix
 ├── system/{desktop,server,nix-core,nix-ld,nh,packages,1password}.nix
 ├── users/{desktop,server}.nix
@@ -38,7 +38,7 @@ modules/nixos/
 
 ## CONVENTIONS
 
-- **Host-type suffix naming**: `desktop.nix` / `server.nix` per domain. Desktop-only domains have just `desktop.nix`. Server-only features use domain-specific names (e.g., `minecraft-server.nix`, `cloudflared.nix`).
+- **Host-type suffix naming**: `desktop.nix` / `server.nix` per domain. Desktop-only domains have just `desktop.nix`. Server-only features use domain-specific names (e.g., `minecraft-server.nix`).
 - **`default.nix` is NOT used in subdirectories** — unlike `home/programs/`, NixOS module domains use descriptive names. The top-level `modules/nixos/default.nix` is a placeholder.
 - **Profiles are the ONLY composition layer**: `profiles/nixos/desktop.nix` and `profiles/nixos/server.nix` are the sole files that know the full set of modules. Import new modules there, never in `hosts/<host>/default.nix`.
 - **`hostMeta.hostData` is the universal data bus**: All host-local values flow through this — never hardcode IPs, paths, or keys in modules.
@@ -54,7 +54,7 @@ modules/nixos/
 
 ## NOTES
 
-- **Containers are NixOS containers** — each defines a full `containers.<name> = { config = { ... }; }` with interior `system.stateVersion`. The `attic.nix` (103 lines) is the most complex module. All containers follow a shared template: `autoStart`, `privateNetwork`, `macvlans`, `bindMounts`, nested `config`.
+- **Containers are NixOS containers** — each defines a full `containers.<name> = { config = { ... }; }` with interior `system.stateVersion`. All containers follow a shared template: `autoStart`, `privateNetwork`, `macvlans`, `bindMounts`, nested `config`.
 - **`macvlan-shim.nix`** is the only module using `lib.mkIf` + assertions — it solves a niche ARP/routing problem for container macvlan networking.
 - **`slimevr.nix`** uses `symlinkJoin` + `makeWrapper` — the only custom derivation in `modules/`.
 - **No formal NixOS tests** exist — `nixosTest` / `make-test` infrastructure is absent. Verification is via `nix flake check`, `dry-build`, and `nixos-rebuild test`.

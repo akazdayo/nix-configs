@@ -16,9 +16,7 @@ let
         parentInterface = "eno1";
         address = "192.168.11.70";
         prefixLength = 32;
-        routeAddresses = [
-          "192.168.11.65"
-        ];
+        routeAddresses = [ ];
       };
     };
 
@@ -66,28 +64,6 @@ let
         environmentHostPath = "/etc/searx-env";
       };
 
-      attic = {
-        address = "192.168.11.65";
-        prefixLength = 24;
-        hostName = "attic";
-        apiDomain = "attic.odango.app";
-        hostDataRoot = "/var/lib/attic-container";
-        # sops-nix decrypts to /run/secrets/atticd-env on host;
-        # bind-mounted read-only into the container.
-        environmentHostPath = "/run/secrets/atticd-env";
-      };
-    };
-
-    # Cloudflare Tunnel: ingress rules declared here; DNS routes managed externally.
-    # Replace tunnelUuid after running `cloudflared tunnel create <name>`.
-    cloudflared = {
-      tunnelUuid = "9a22fd7b-44dd-4459-a360-52a5226b8216";
-      ingress = {
-        attic = {
-          hostname = "attic.odango.app";
-          service = "http://192.168.11.65:8080";
-        };
-      };
     };
 
   };

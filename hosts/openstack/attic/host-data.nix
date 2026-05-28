@@ -1,26 +1,13 @@
 { hostMeta, ... }:
 let
-  attic = {
-    # OpenStack internal address for the attic VM.
-    # Default uses hostname resolution (requires OpenStack DNS).
-    # After provisioning, replace with the fixed IP if DNS is unavailable:
-    #   tofu -chdir=infra/openstack/attic output -raw fixed_ip
-    internalAddress = "attic";
-  };
-
   hostData = {
     networking = {
       primaryInterface = "enp1s0";
     };
 
-    inherit attic;
-
-    caddy = {
-      virtualHosts = {
-        "attic.odango.app" = {
-          reverseProxy = "http://${attic.internalAddress}:8080";
-        };
-      };
+    atticd = {
+      domain = "attic.odango.app";
+      listen = "[::]:8080";
     };
 
     users.${hostMeta.primaryUser}.authorizedKeys = [

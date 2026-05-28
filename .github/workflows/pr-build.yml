@@ -28,7 +28,7 @@ jobs:
 
       - uses: cachix/cachix-action@v17
         with:
-          name: ${{ vars.CACHIX_CACHE_NAME || 'akazdayo' }}
+          name: ${{ vars.CACHIX_CACHE_NAME || 'akazdayo-nixos-config' }}
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
           skipPush: true
 

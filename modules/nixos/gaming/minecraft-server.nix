@@ -19,7 +19,7 @@ in
 
     servers.fabric-smp = {
       enable = true;
-      package = pkgs.fabricServers.fabric-1_21_5;
+      package = pkgs.fabricServers.fabric-26.1.2;
       jvmOpts = minecraftData.jvmOpts or "-Xms4G -Xmx8G";
 
       serverProperties = {
@@ -28,7 +28,7 @@ in
         gamemode = "survival";
         difficulty = "normal";
         max-players = 20;
-        white-list = false;
+        white-list = true;
         online-mode = true;
         view-distance = 10;
         simulation-distance = 10;
@@ -37,8 +37,8 @@ in
       symlinks.mods = pkgs.linkFarmFromDrvs "mods" (
         builtins.attrValues {
           FabricApi = pkgs.fetchurl {
-            url = "https://cdn.modrinth.com/data/P7dR8mSH/versions/kKEGlsne/fabric-api-0.128.2%2B1.21.5.jar";
-            sha512 = "0e42b72d1a63a45c1b64cdabafd15f4d236bbda5521964d687afa1f833d4022f96c7ffab5dd4471aba0190be588f092d156bf14a50b794895fb3286ec899bcf7";
+            url = "https://cdn.modrinth.com/data/P7dR8mSH/versions/E1mjhYMF/fabric-api-0.150.0%2B26.1.2.jar";
+            sha512 = "238c793b720ed21d2d5b564eca88c714cf2188f7b0fb1fd30864660f80901e2b4dad273994b6f77de3c0aa365f930ed8aaccffac49b36c6456b153b52d5d21dc";
           };
         }
       );

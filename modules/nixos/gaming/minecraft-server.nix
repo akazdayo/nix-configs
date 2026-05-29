@@ -45,6 +45,14 @@ in
         yuta_kobayashi = "cfcc92a7-7b55-4b45-a13f-0eebf716e5f3";
       };
 
+      operators = {
+        moons14 = {
+          uuid = "ede38872-25c5-414f-a04e-278b521d9f41";
+          level = 4;
+          bypassesPlayerLimit = false;
+        };
+      };
+
       symlinks.mods = pkgs.linkFarmFromDrvs "mods" (
         builtins.attrValues {
           FabricApi = pkgs.fetchurl {

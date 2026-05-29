@@ -81,6 +81,14 @@ in
             url = "https://cdn.modrinth.com/data/wGoQDPN5/versions/dAFnGtKk/vivecraft-26.1.2-1.3.8-fabric.jar";
             sha512 = "3228489a2ff1191d90a47c0a50d11aa19c6a818032c8657bd530e7c1fbd7cdfca5c2e3062c9da2de868407b83e94f16c57bc44d4537d9538b08f1d9f584037a9";
           };
+          Polymer = pkgs.fetchurl {
+            url = "https://github.com/Patbox/polymer/releases/download/0.16.5%2B26.1.2/polymer-bundled-0.16.5%2B26.1.2.jar";
+            hash = pkgs.lib.fakeHash;
+          };
+          UniversalGraves = pkgs.fetchurl {
+            url = "https://cdn.modrinth.com/data/yn9u3ypm/versions/hI8eYRJ3/graves-3.11.1%2B26.1.2.jar";
+            hash = pkgs.lib.fakeHash;
+          };
         }
       );
     };

@@ -10,7 +10,6 @@
           jdk8
         ];
       })
-      wlx-overlay-s
       alcom
       osu-lazer-bin
       wineWowPackages.stable # 64bit + 32bit対応

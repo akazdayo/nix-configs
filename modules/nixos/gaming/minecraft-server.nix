@@ -53,6 +53,16 @@ in
         };
       };
 
+      bannedPlayers = {
+        fa0311 = {
+          uuid = "7dfc7f95-df6f-435f-85f4-71513cc8fa87";
+          created = "2026-05-30 00:00:00 +0900";
+          source = "Server";
+          expires = "forever";
+          reason = "Because of trolls";
+        };
+      };
+
       symlinks.mods = pkgs.linkFarmFromDrvs "mods" (
         builtins.attrValues {
           FabricApi = pkgs.fetchurl {

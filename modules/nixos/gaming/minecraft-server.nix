@@ -48,7 +48,7 @@ in
       operators = {
         moons14 = {
           uuid = "ede38872-25c5-414f-a04e-278b521d9f41";
-          level = 4;
+          level = 1;
           bypassesPlayerLimit = false;
         };
       };

@@ -22,6 +22,12 @@ in
       package = (pkgs.fabricServers.fabric-26_1_2.override { jre_headless = pkgs.jdk25; });
       jvmOpts = minecraftData.jvmOpts or "-Xms4G -Xmx8G";
 
+      extraStartPost = ''
+        sleep 30
+        ${pkgs.tmux}/bin/tmux -S /run/minecraft/fabric-smp.sock send-keys \
+          "gamerule playersSleepingPercentage 0" Enter
+      '';
+
       serverProperties = {
         server-port = minecraftData.serverPort or 25565;
         motd = "NixOS Fabric Minecraft Server";

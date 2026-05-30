@@ -83,11 +83,11 @@ in
           };
           Polymer = pkgs.fetchurl {
             url = "https://github.com/Patbox/polymer/releases/download/0.16.5%2B26.1.2/polymer-bundled-0.16.5%2B26.1.2.jar";
-            hash = pkgs.lib.fakeHash;
+            sha512 = "e9438712eecfd7560e9e4b67e8ff0907cddf024ecdea93fae7e8caab0a00a041a674040770bf7b25eef2220813baca1ee5b797f3b88de4b9f0f0449189d08642";
           };
           UniversalGraves = pkgs.fetchurl {
             url = "https://cdn.modrinth.com/data/yn9u3ypm/versions/hI8eYRJ3/graves-3.11.1%2B26.1.2.jar";
-            hash = pkgs.lib.fakeHash;
+            sha512 = "3caa63bb7d8f4ae3623310d13149de950e87f3b9083fce8a7dfe3083eea92dd2ab9721fabf27ebb6121deffc6f48af8b85f3543980381d588e6dcd667a7bf5e4";
           };
         }
       );

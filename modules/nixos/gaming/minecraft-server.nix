@@ -2,10 +2,13 @@
   inputs,
   hostMeta,
   pkgs,
+  config,
   ...
 }:
 let
   minecraftData = hostMeta.hostData.minecraft or { };
+  inherit (config.services.minecraft-servers) runDir;
+  fabricSock = "${runDir}/fabric-smp.sock";
 in
 {
   imports = [ inputs.minecraft-nix.nixosModules.minecraft-servers ];
@@ -24,7 +27,7 @@ in
 
       extraStartPost = ''
         sleep 30
-        ${pkgs.tmux}/bin/tmux -S /run/minecraft/fabric-smp.sock send-keys \
+        ${pkgs.tmux}/bin/tmux -S ${fabricSock} send-keys \
           "gamerule playersSleepingPercentage 0" Enter
       '';
 

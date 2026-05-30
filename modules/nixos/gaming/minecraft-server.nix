@@ -44,6 +44,7 @@ in
         fa0311 = "7dfc7f95-df6f-435f-85f4-71513cc8fa87";
         yuta_kobayashi = "cfcc92a7-7b55-4b45-a13f-0eebf716e5f3";
         nakasyou0 = "9f2055d0-ff7f-4f27-adf2-c7793ebdff6a";
+        crocus_966 = "b4c6cdd7-3425-432d-9db5-4b0687393de2";
       };
 
       operators = {

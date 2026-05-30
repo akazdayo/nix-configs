@@ -29,6 +29,16 @@ locals {
       }
     ]
   ])
+
+  extra_udp_ingress_rules = flatten([
+    for rule in var.extra_udp_ingress_rules : [
+      for cidr in rule.cidrs : {
+        key  = "${rule.name}-${rule.port}-${cidr}"
+        port = rule.port
+        cidr = cidr
+      }
+    ]
+  ])
 }
 
 data "openstack_networking_network_v2" "network" {
@@ -72,6 +82,20 @@ resource "openstack_networking_secgroup_rule_v2" "extra_tcp_ingress" {
   direction         = "ingress"
   ethertype         = "IPv4"
   protocol          = "tcp"
+  port_range_min    = each.value.port
+  port_range_max    = each.value.port
+  remote_ip_prefix  = each.value.cidr
+  security_group_id = openstack_networking_secgroup_v2.sg.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "extra_udp_ingress" {
+  for_each = {
+    for rule in local.extra_udp_ingress_rules : rule.key => rule
+  }
+
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "udp"
   port_range_min    = each.value.port
   port_range_max    = each.value.port
   remote_ip_prefix  = each.value.cidr

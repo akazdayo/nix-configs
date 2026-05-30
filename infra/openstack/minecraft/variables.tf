@@ -72,6 +72,24 @@ variable "extra_tcp_ingress_rules" {
   }
 }
 
+variable "extra_udp_ingress_rules" {
+  type = list(object({
+    name  = string
+    port  = number
+    cidrs = list(string)
+  }))
+  description = "Additional UDP ingress rules to add to the instance security group"
+  default     = []
+
+  validation {
+    condition = alltrue([
+      for rule in var.extra_udp_ingress_rules :
+      rule.port >= 1 && rule.port <= 65535 && length(rule.cidrs) > 0
+    ])
+    error_message = "Each extra UDP ingress rule must use a port between 1 and 65535 and at least one CIDR block."
+  }
+}
+
 variable "allocate_floating_ip" {
   type        = bool
   description = "Whether to allocate and associate a floating IP"

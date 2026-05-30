@@ -43,6 +43,7 @@ in
         moons14 = "ede38872-25c5-414f-a04e-278b521d9f41";
         fa0311 = "7dfc7f95-df6f-435f-85f4-71513cc8fa87";
         yuta_kobayashi = "cfcc92a7-7b55-4b45-a13f-0eebf716e5f3";
+        nakasyou0 = "9f2055d0-ff7f-4f27-adf2-c7793ebdff6a";
       };
 
       operators = {

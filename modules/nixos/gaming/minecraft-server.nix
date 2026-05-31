@@ -111,4 +111,9 @@ in
       );
     };
   };
+
+  # Simple Voice Chat mod uses UDP 24454 by default.
+  # openFirewall above only opens the Minecraft server TCP port;
+  # the voice chat port must be opened explicitly.
+  networking.firewall.allowedUDPPorts = [ 24454 ];
 }

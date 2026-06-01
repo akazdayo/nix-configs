@@ -17,7 +17,8 @@ let
         address = "192.168.11.70";
         prefixLength = 32;
         routeAddresses = [
-          "192.168.11.65"
+          "192.168.11.66"
+          "192.168.11.67"
         ];
       };
     };
@@ -66,15 +67,30 @@ let
         environmentHostPath = "/etc/searx-env";
       };
 
-      attic = {
-        address = "192.168.11.65";
+      niks3 = {
+        address = "192.168.11.66";
         prefixLength = 24;
-        hostName = "attic";
-        apiDomain = "attic.odango.app";
-        hostDataRoot = "/var/lib/attic-container";
-        # sops-nix decrypts to /run/secrets/atticd-env on host;
-        # bind-mounted read-only into the container.
-        environmentHostPath = "/run/secrets/atticd-env";
+        hostName = "niks3";
+        cacheDomain = "cache.odango.app";
+        hostDataRoot = "/var/lib/niks3-container";
+        secretHostPaths = {
+          apiToken = "/run/secrets/niks3-api-token";
+          signingKey = "/run/secrets/niks3-signing-key";
+          s3AccessKey = "/run/secrets/niks3-s3-access-key";
+          s3SecretKey = "/run/secrets/niks3-s3-secret-key";
+        };
+        s3 = {
+          endpoint = "s3.odango.app";
+          bucket = "nix-cache";
+          region = "us-east-1";
+        };
+      };
+
+      rustfs = {
+        address = "192.168.11.67";
+        prefixLength = 24;
+        hostName = "rustfs";
+        hostDataRoot = "/var/lib/rustfs-container";
       };
     };
 
@@ -83,9 +99,13 @@ let
     cloudflared = {
       tunnelUuid = "9a22fd7b-44dd-4459-a360-52a5226b8216";
       ingress = {
-        attic = {
-          hostname = "attic.odango.app";
-          service = "http://192.168.11.65:8080";
+        niks3 = {
+          hostname = "cache.odango.app";
+          service = "http://192.168.11.66:5751";
+        };
+        s3 = {
+          hostname = "s3.odango.app";
+          service = "http://192.168.11.67:9000";
         };
       };
     };

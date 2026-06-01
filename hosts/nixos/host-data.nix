@@ -45,10 +45,13 @@ in
 {
   _module.args.hostData = hostData;
 
+  nix.settings.extra-substituters = [
+    "https://cache.odango.app"
+  ];
   nix.settings.extra-trusted-substituters = [
-    "https://attic.odango.app/main"
+    "https://cache.odango.app"
   ];
   nix.settings.extra-trusted-public-keys = [
-    "main:p1I0gblo5KOxd64LCmeOmENhGx/fRCVp5CS4aOQGY6w="
+    "main:<generate-with: nix key convert-secret-to-public>"
   ];
 }

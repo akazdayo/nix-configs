@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   services.pcscd.enable = true;
 
@@ -25,8 +25,43 @@
       mode = "0400";
     };
 
-    secrets.atticd-env = {
-      sopsFile = ../../../secrets/server/attic.yaml;
+    secrets.rustfs-access-key = {
+      sopsFile = ../../../secrets/server/rustfs.yaml;
+      owner = "root";
+      mode = "0400";
+    };
+
+    secrets.rustfs-secret-key = {
+      sopsFile = ../../../secrets/server/rustfs.yaml;
+      owner = "root";
+      mode = "0400";
+    };
+
+    templates."rustfs-env".content = ''
+      RUSTFS_ACCESS_KEY=${config.sops.placeholder.rustfs-access-key}
+      RUSTFS_SECRET_KEY=${config.sops.placeholder.rustfs-secret-key}
+    '';
+
+    secrets.niks3-api-token = {
+      sopsFile = ../../../secrets/server/niks3.yaml;
+      owner = "root";
+      mode = "0400";
+    };
+
+    secrets.niks3-signing-key = {
+      sopsFile = ../../../secrets/server/niks3.yaml;
+      owner = "root";
+      mode = "0400";
+    };
+
+    secrets.niks3-s3-access-key = {
+      sopsFile = ../../../secrets/server/niks3.yaml;
+      owner = "root";
+      mode = "0400";
+    };
+
+    secrets.niks3-s3-secret-key = {
+      sopsFile = ../../../secrets/server/niks3.yaml;
       owner = "root";
       mode = "0400";
     };

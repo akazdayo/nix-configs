@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 concurrency:
   group: flake-update
@@ -51,9 +52,6 @@ jobs:
   build:
     needs: update
     if: needs.update.outputs.updated == 'true'
-    env:
-      ATTIC_ENDPOINT: ${{ secrets.ATTIC_ENDPOINT || '' }}
-      ATTIC_TOKEN: ${{ secrets.ATTIC_TOKEN || '' }}
     strategy:
       fail-fast: false
       matrix:
@@ -96,27 +94,15 @@ jobs:
           name: ${{ vars.CACHIX_CACHE_NAME || 'akazdayo' }}
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - name: Set up Attic cache
-        if: vars.ATTIC_CACHE != '' && env.ATTIC_ENDPOINT != '' && env.ATTIC_TOKEN != ''
-        uses: ryanccn/attic-action@v0
+      - name: Set up niks3 cache
+        if: vars.NIKS3_SERVER_URL != ''
+        uses: Mic92/niks3-action@v1
+        continue-on-error: true
         with:
-          endpoint: ${{ secrets.ATTIC_ENDPOINT }}
-          cache: ${{ vars.ATTIC_CACHE }}
-          token: ${{ secrets.ATTIC_TOKEN }}
+          server-url: ${{ vars.NIKS3_SERVER_URL }}
 
       - name: Build ${{ matrix.host }}
         run: nix build ".#${{ matrix.flake-attr }}.${{ matrix.host }}.config.system.build.toplevel" --print-build-logs
-
-      - name: Push result to Attic
-        if: vars.ATTIC_CACHE != ''
-        env:
-          ATTIC_CACHE: ${{ vars.ATTIC_CACHE }}
-        run: |
-          if attic push "$ATTIC_CACHE" ./result; then
-            echo "Pushed build result to Attic cache '$ATTIC_CACHE'."
-          else
-            echo "Warning: failed to push build result to Attic cache '$ATTIC_CACHE'; continuing because Cachix is the primary cache." >&2
-          fi
 
   commit:
     needs: build

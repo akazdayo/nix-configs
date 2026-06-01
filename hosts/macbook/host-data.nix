@@ -12,13 +12,17 @@ in
   _module.args.hostData = hostData;
 
   nix.settings.always-allow-substitutes = true;
+  nix.settings.extra-substituters = [
+    "https://cache.lix.systems"
+    "https://cache.odango.app"
+  ];
   nix.settings.extra-trusted-substituters = [
     "https://cache.lix.systems"
-    "https://attic.odango.app/main"
+    "https://cache.odango.app"
   ];
   nix.settings.extra-trusted-public-keys = [
     "cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o="
-    "main:p1I0gblo5KOxd64LCmeOmENhGx/fRCVp5CS4aOQGY6w="
+    "main:<generate-with: nix key convert-secret-to-public>"
   ];
 
   nixpkgs.hostPlatform = hostMeta.system;

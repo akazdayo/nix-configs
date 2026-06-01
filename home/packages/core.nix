@@ -3,6 +3,7 @@
   pkgs-unstable,
   lib,
   hostMeta,
+  inputs,
   ...
 }:
 let
@@ -24,8 +25,10 @@ in
       wget
       lazygit
       gh
-      attic-client
     ])
+    ++ [
+      inputs.niks3.packages.${pkgs.stdenv.hostPlatform.system}.niks3
+    ]
     ++ lib.optionals isLinux (
       with pkgs;
       [

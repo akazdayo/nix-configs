@@ -55,6 +55,13 @@
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    niks3 = {
+      url = "github:Mic92/niks3";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    rustfs.url = "github:rustfs/rustfs";
   };
 
   outputs =
@@ -75,6 +82,8 @@
       sops-nix,
       treefmt-nix,
       git-hooks,
+      niks3,
+      rustfs,
     }@inputs:
     let
       lib = nixpkgs.lib;
@@ -191,6 +200,7 @@
             (./hosts + "/${hostName}")
             lanzaboote.nixosModules.lanzaboote
             sops-nix.nixosModules.default
+            niks3.nixosModules.niks3-auto-upload
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
@@ -245,9 +255,10 @@
           };
           modules = [
             ./packages
-            (./hosts/openstack + "/${hostName}")
+            (./hosts + "/${hostName}")
             lanzaboote.nixosModules.lanzaboote
             sops-nix.nixosModules.default
+            niks3.nixosModules.niks3-auto-upload
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;

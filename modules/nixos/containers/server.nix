@@ -5,7 +5,8 @@
     ./nextcloud.nix
     ./pihole-unbound.nix
     ./searxng.nix
-    ./attic.nix
+    ./niks3.nix
+    ./rustfs.nix
   ];
 
   virtualisation.oci-containers.backend = "docker";

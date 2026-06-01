@@ -25,12 +25,6 @@ in
       package = (pkgs.fabricServers.fabric-26_1_2.override { jre_headless = pkgs.jdk25; });
       jvmOpts = minecraftData.jvmOpts or "-Xms4G -Xmx8G";
 
-      extraStartPost = ''
-        sleep 30
-        ${pkgs.tmux}/bin/tmux -S ${fabricSock} send-keys \
-          "gamerule playersSleepingPercentage 0" Enter
-      '';
-
       serverProperties = {
         server-port = minecraftData.serverPort or 25565;
         motd = "§cn§6a§ek§aa§bs§9y§do§cu §6b§ea§ak§be§9r§dy §cM§6i§en§ae§bc§9r§da§cf§6t §eS§ae§br§9v§de§cr";

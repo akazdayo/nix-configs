@@ -25,12 +25,6 @@ in
       package = (pkgs.fabricServers.fabric-26_1_2.override { jre_headless = pkgs.jdk25; });
       jvmOpts = minecraftData.jvmOpts or "-Xms4G -Xmx8G";
 
-      extraStartPost = ''
-        sleep 30
-        ${pkgs.tmux}/bin/tmux -S ${fabricSock} send-keys \
-          "gamerule playersSleepingPercentage 0" Enter
-      '';
-
       files = {
         "server-icon.png" = ./server-icon.png;
       };

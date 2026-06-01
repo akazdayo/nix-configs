@@ -15,7 +15,15 @@ extra_tcp_ingress_rules = [
     name  = "minecraft"
     port  = 25565
     cidrs = ["0.0.0.0/0"]
-  }
+  },
+]
+
+extra_udp_ingress_rules = [
+  {
+    name  = "simple-vc"
+    port  = 24454
+    cidrs = ["0.0.0.0/0"]
+  },
 ]
 
 allocate_floating_ip = true

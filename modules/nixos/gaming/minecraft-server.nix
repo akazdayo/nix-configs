@@ -112,8 +112,8 @@ in
             sha512 = "c48f6e658ffc8cdce8647a149237f5aa7c35bb0cb5037024eb2bb6e6f3e2be863a733a010543ad206e295c5088d9bb400f2bb7a6d47f6b24a61921868491e9f2";
           };
           NakasyouBakeryMod = pkgs.fetchurl {
-            url = "https://github.com/zunoser/nakasyou-bakery-mod/releases/download/v1.3/nakasyou-bakery-mod-1.3.jar";
-            sha256 = "10da0888d0e6c073a896821c6be9b4ee64cc07f330e187b738b99a96f26b5b55";
+            url = "https://github.com/zunoser/nakasyou-bakery-mod/releases/download/v1.4/nakasyou-bakery-mod-1.4.jar";
+            sha256 = "3b0f4f92a15d6a2f6bc5f3a7982b8515c1c7de72f88e5b0a1545258bfff4b857";
           };
         }
       );

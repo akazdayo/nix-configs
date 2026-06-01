@@ -12,7 +12,7 @@
       })
       alcom
       osu-lazer-bin
-      wineWowPackages.stable # 64bit + 32bit対応
+      wineWow64Packages.stable # 64bit + 32bit対応
       winetricks
       vrcx
       protonup-qt

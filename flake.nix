@@ -453,6 +453,7 @@
           deploy-openstack = {
             type = "app";
             program = "${deploy-openstack-script}";
+            meta.description = "Deploy an OpenStack host using deploy-rs, resolving SSH host from OpenTofu output";
           };
         }
       );

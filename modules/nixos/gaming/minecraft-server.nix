@@ -9,6 +9,11 @@ let
   minecraftData = hostMeta.hostData.minecraft or { };
   inherit (config.services.minecraft-servers) runDir;
   fabricSock = "${runDir}/fabric-smp.sock";
+
+  jolokiaAgent = pkgs.fetchzip {
+    url = "https://github.com/jolokia/jolokia/releases/download/v2.6.0/jolokia-2.6.0-bin.tar.gz";
+    sha256 = "1v5yix46jr6q3pwwwzwskqjzhga1b117gwik8sfqmca1lg15npk8";
+  };
 in
 {
   imports = [ inputs.minecraft-nix.nixosModules.minecraft-servers ];
@@ -27,7 +32,7 @@ in
     servers.fabric-smp = {
       enable = true;
       package = (pkgs.fabricServers.fabric-26_1_2.override { jre_headless = pkgs.jdk25; });
-      jvmOpts = minecraftData.jvmOpts or "-Xms4G -Xmx8G";
+      jvmOpts = "${minecraftData.jvmOpts or "-Xms4G -Xmx8G"} -javaagent:${jolokiaAgent}/agents/jolokia-agent-jvm-javaagent.jar=port=8778,host=0.0.0.0";
 
       files = {
         "server-icon.png" = ./server-icon.png;
@@ -43,6 +48,7 @@ in
         online-mode = true;
         view-distance = 10;
         simulation-distance = 10;
+        enable-jmx-monitoring = true;
       };
 
       whitelist = {
@@ -127,5 +133,6 @@ in
   # Simple Voice Chat mod uses UDP 24454 by default.
   # openFirewall above only opens the Minecraft server TCP port;
   # the voice chat port must be opened explicitly.
+  networking.firewall.allowedTCPPorts = [ 8778 ];
   networking.firewall.allowedUDPPorts = [ 24454 ];
 }

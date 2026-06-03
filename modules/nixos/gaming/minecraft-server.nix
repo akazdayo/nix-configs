@@ -50,10 +50,6 @@ let
       url = "https://cdn.modrinth.com/data/yn9u3ypm/versions/hI8eYRJ3/graves-3.11.1%2B26.1.2.jar";
       sha512 = "3caa63bb7d8f4ae3623310d13149de950e87f3b9083fce8a7dfe3083eea92dd2ab9721fabf27ebb6121deffc6f48af8b85f3543980381d588e6dcd667a7bf5e4";
     };
-    SimpleVoiceChat = pkgs.fetchurl {
-      url = "https://cdn.modrinth.com/data/9eGKb6K1/versions/DpT86E4Q/voicechat-fabric-2.6.18%2B26.1.2.jar";
-      sha512 = "9d9f38185c66fc57f03363a37d4559e58442bccb27414a4bd7c5a2b8bb046813afbcdf1bf6279b22f941f9cb4d2ed9d5e6dc4929714e73ae914a03557fb087af";
-    };
     Syncmatica = pkgs.fetchurl {
       url = "https://cdn.modrinth.com/data/bfneejKo/versions/hiDPXGGO/syncmatica-fabric-26.1.1-0.3.18.jar";
       sha512 = "c48f6e658ffc8cdce8647a149237f5aa7c35bb0cb5037024eb2bb6e6f3e2be863a733a010543ad206e295c5088d9bb400f2bb7a6d47f6b24a61921868491e9f2";
@@ -65,7 +61,18 @@ let
   };
 
   # Derive a linkFarm from the mod attribute set
-  modsLink = pkgs.linkFarmFromDrvs "mods" (builtins.attrValues commonMods);
+  smpModsLink = pkgs.linkFarmFromDrvs "smp-mods" (
+    builtins.attrValues (
+      commonMods
+      // {
+        SimpleVoiceChat = pkgs.fetchurl {
+          url = "https://cdn.modrinth.com/data/9eGKb6K1/versions/DpT86E4Q/voicechat-fabric-2.6.18%2B26.1.2.jar";
+          sha512 = "9d9f38185c66fc57f03363a37d4559e58442bccb27414a4bd7c5a2b8bb046813afbcdf1bf6279b22f941f9cb4d2ed9d5e6dc4929714e73ae914a03557fb087af";
+        };
+      }
+    )
+  );
+  creativeModsLink = pkgs.linkFarmFromDrvs "creative-mods" (builtins.attrValues commonMods);
 
   whitelist = {
     aomona = "02992baf-9329-4c6a-b893-3e4b5ce37ca1";
@@ -117,7 +124,7 @@ let
       };
       inherit whitelist operators;
       symlinks = {
-        mods = modsLink;
+        mods = creativeModsLink;
       };
     };
 in
@@ -207,7 +214,7 @@ in
       };
 
       symlinks = {
-        mods = modsLink;
+        mods = smpModsLink;
         "config/fabric-proxy-lite.json" = config.sops.templates."fabric-smp-proxy-config".path;
       };
     };
@@ -238,7 +245,7 @@ in
       }
       // {
         symlinks = {
-          mods = modsLink;
+          mods = creativeModsLink;
           "config/fabric-proxy-lite.json" = config.sops.templates."fabric-creative-proxy-config".path;
         };
       };

@@ -39,6 +39,7 @@ in
         show-max-players = 500
         online-mode = true
         player-info-forwarding-mode = "MODERN"
+        forwarding-secret-file = "${config.sops.secrets.velocity-forwarding-secret.path}"
 
         [servers]
         smp = "${minecraftInternalIp}:${smpPort}"
@@ -49,9 +50,6 @@ in
 
         [advanced]
         compression-level = 1
-
-        [forwarding]
-        secret = "${config.sops.placeholder."velocity-forwarding-secret"}"
       '';
       owner = config.services.minecraft-servers.user or "minecraft";
       mode = "0400";

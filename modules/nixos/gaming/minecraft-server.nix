@@ -7,6 +7,7 @@
 }:
 let
   minecraftData = hostMeta.hostData.minecraft or { };
+  smpData = minecraftData.smp or { };
 
   inherit (config.services.minecraft-servers) runDir;
   fabricSock = "${runDir}/fabric-smp.sock";
@@ -171,14 +172,14 @@ in
       enable = true;
       autoStart = true;
       package = fabricPackage;
-      jvmOpts = minecraftData.jvmOpts or "-Xms4G -Xmx8G";
+      jvmOpts = smpData.jvmOpts or "-Xms4G -Xmx8G";
 
       files = {
         "server-icon.png" = ./server-icon.png;
       };
 
       serverProperties = {
-        server-port = minecraftData.serverPort or 25565;
+        server-port = smpData.serverPort or 25565;
         motd = "§cn§6a§ek§aa§bs§9y§do§cu §6b§ea§ak§be§9r§dy §cM§6i§en§ae§bc§9r§da§cf§6t §eS§ae§br§9v§de§cr";
         gamemode = "survival";
         difficulty = "normal";

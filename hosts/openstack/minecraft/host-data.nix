@@ -5,7 +5,15 @@ let
       primaryInterface = "enp1s0";
     };
 
+    fileSystems.minecraftData = {
+      mountPoint = "/srv/minecraft";
+      device = "/dev/disk/by-label/minecraft-data";
+      fsType = "ext4";
+    };
+
     minecraft = {
+      dataDir = "/srv/minecraft";
+
       smp = {
         serverPort = 25566;
         jvmOpts = "-Xms1G -Xmx2G";

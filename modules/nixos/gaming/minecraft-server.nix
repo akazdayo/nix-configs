@@ -164,6 +164,7 @@ in
     enable = true;
     eula = true;
     openFirewall = true;
+    dataDir = minecraftData.dataDir;
 
     servers.fabric-smp = {
       enable = true;

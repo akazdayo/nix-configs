@@ -8,7 +8,7 @@ subnet_id       = ""
 keypair_name    = "yubikey"
 public_key_path = ""
 
-ssh_allowed_cidrs = []
+ssh_allowed_cidrs = ["0.0.0.0/0"]
 
 extra_tcp_ingress_rules = [
   {

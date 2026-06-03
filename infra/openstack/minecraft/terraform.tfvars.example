@@ -11,9 +11,10 @@ public_key_path = ""
 ssh_allowed_cidrs = []
 
 # Backend servers are accessed via internal network from the gateway host only.
-# The gateway's floating IP handles all external traffic on port 25565.
+# The gateway's floating IP handles all external traffic on port 25565 and 24454.
 # No public ports need to be open on this host.
 extra_tcp_ingress_rules = []
+extra_udp_ingress_rules = []
 
 allocate_floating_ip = true
 external_network_name = "<EXTERNAL_NETWORK_NAME>"

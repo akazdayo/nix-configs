@@ -2,6 +2,7 @@
   inputs,
   hostMeta,
   pkgs,
+  config,
   ...
 }:
 let
@@ -11,6 +12,9 @@ let
   # Must match the value on the gateway host (velocity-server).
   # FIXME: Migrate to sops-nix for production use.
   velocitySecret = minecraftData.velocitySecret or "changeme-please-replace-at-deploy-time";
+
+  inherit (config.services.minecraft-servers) runDir;
+  fabricSock = "${runDir}/fabric-smp.sock";
 
   # === Minecraft Version & Package ===
   # All fabric backend servers share the same MC version / fabric loader
@@ -27,7 +31,6 @@ let
       sha512 = "b6f948576b062f83f1b13033c3f1121a3d4add8f8294415f8d283caeb91ca28acc1e19fb021a8807a034ff9875ef0dd9b6054734d552e072336aa060a106044f";
     };
     Carpet = pkgs.fetchurl {
-      # https://github.com/gnembon/fabric-carpet/releases
       url = "https://github.com/gnembon/fabric-carpet/releases/download/v26.1/fabric-carpet-26.1+v260402.jar";
       sha256 = "59bd225d12423a7d7a635ca0c94fa786f97ccebb116922b16d76072da4ee67e7";
     };
@@ -42,6 +45,26 @@ let
     FabricProxyLite = pkgs.fetchurl {
       url = "https://github.com/OKTW-Network/FabricProxy-Lite/releases/download/v2.12.0/FabricProxy-Lite-2.12.0.jar";
       sha256 = "dca0d05685afaa25d554372ad118d90b6b27f85ded93e6db0b85d822aa29342a";
+    };
+    Polymer = pkgs.fetchurl {
+      url = "https://github.com/Patbox/polymer/releases/download/0.16.5%2B26.1.2/polymer-bundled-0.16.5%2B26.1.2.jar";
+      sha512 = "e9438712eecfd7560e9e4b67e8ff0907cddf024ecdea93fae7e8caab0a00a041a674040770bf7b25eef2220813baca1ee5b797f3b88de4b9f0f0449189d08642";
+    };
+    UniversalGraves = pkgs.fetchurl {
+      url = "https://cdn.modrinth.com/data/yn9u3ypm/versions/hI8eYRJ3/graves-3.11.1%2B26.1.2.jar";
+      sha512 = "3caa63bb7d8f4ae3623310d13149de950e87f3b9083fce8a7dfe3083eea92dd2ab9721fabf27ebb6121deffc6f48af8b85f3543980381d588e6dcd667a7bf5e4";
+    };
+    SimpleVoiceChat = pkgs.fetchurl {
+      url = "https://cdn.modrinth.com/data/9eGKb6K1/versions/DpT86E4Q/voicechat-fabric-2.6.18%2B26.1.2.jar";
+      sha512 = "9d9f38185c66fc57f03363a37d4559e58442bccb27414a4bd7c5a2b8bb046813afbcdf1bf6279b22f941f9cb4d2ed9d5e6dc4929714e73ae914a03557fb087af";
+    };
+    Syncmatica = pkgs.fetchurl {
+      url = "https://cdn.modrinth.com/data/bfneejKo/versions/hiDPXGGO/syncmatica-fabric-26.1.1-0.3.18.jar";
+      sha512 = "c48f6e658ffc8cdce8647a149237f5aa7c35bb0cb5037024eb2bb6e6f3e2be863a733a010543ad206e295c5088d9bb400f2bb7a6d47f6b24a61921868491e9f2";
+    };
+    NakasyouBakeryMod = pkgs.fetchurl {
+      url = "https://github.com/zunoser/nakasyou-bakery-mod/releases/download/v1.4/nakasyou-bakery-mod-1.4.jar";
+      sha256 = "3b0f4f92a15d6a2f6bc5f3a7982b8515c1c7de72f88e5b0a1545258bfff4b857";
     };
   };
 
@@ -59,17 +82,25 @@ let
   };
 
   # Helper: create a fabric server module fragment
-  mkFabricServer = serverName: { port, jvmOpts, gamemode, motd, maxPlayers, operators, whitelist }:
+  mkFabricServer =
+    serverName:
+    {
+      port,
+      jvmOpts,
+      gamemode,
+      motd,
+      maxPlayers,
+      operators,
+      whitelist,
+    }:
     let
       serverData = minecraftData.${serverName} or { };
     in
     {
       enable = true;
       autoStart = true;
-
       package = fabricPackage;
       jvmOpts = serverData.jvmOpts or jvmOpts;
-
       serverProperties = {
         server-port = serverData.serverPort or port;
         motd = motd;
@@ -82,9 +113,7 @@ let
         view-distance = 10;
         simulation-distance = 10;
       };
-
       inherit whitelist operators;
-
       symlinks = {
         mods = modsLink;
         "config/fabric-proxy-lite.json" = fabricProxyLiteConfig;
@@ -93,21 +122,39 @@ let
 in
 {
   imports = [ inputs.minecraft-nix.nixosModules.minecraft-servers ];
-
   nixpkgs.overlays = [ inputs.minecraft-nix.overlay ];
+
+  system.extraDependencies = [
+    ./server-icon.png
+  ];
 
   services.minecraft-servers = {
     enable = true;
     eula = true;
     openFirewall = true;
 
-    # === Survival Multiplayer (SMP) ===
-    servers.fabric-smp = mkFabricServer "smp" {
-      port = 25566;
-      jvmOpts = "-Xms4G -Xmx8G";
-      gamemode = "survival";
-      motd = "NixOS Fabric SMP";
-      maxPlayers = 20;
+    servers.fabric-smp = {
+      enable = true;
+      autoStart = true;
+      package = fabricPackage;
+      jvmOpts = minecraftData.jvmOpts or "-Xms4G -Xmx8G";
+
+      files = {
+        "server-icon.png" = ./server-icon.png;
+      };
+
+      serverProperties = {
+        server-port = minecraftData.serverPort or 25565;
+        motd = "§cn§6a§ek§aa§bs§9y§do§cu §6b§ea§ak§be§9r§dy §cM§6i§en§ae§bc§9r§da§cf§6t §eS§ae§br§9v§de§cr";
+        gamemode = "survival";
+        difficulty = "normal";
+        max-players = 20;
+        white-list = true;
+        online-mode = false;
+        enforce-secure-profile = false;
+        view-distance = 10;
+        simulation-distance = 10;
+      };
 
       whitelist = {
         aomona = "02992baf-9329-4c6a-b893-3e4b5ce37ca1";
@@ -118,6 +165,11 @@ in
         moons14 = "ede38872-25c5-414f-a04e-278b521d9f41";
         fa0311 = "7dfc7f95-df6f-435f-85f4-71513cc8fa87";
         yuta_kobayashi = "cfcc92a7-7b55-4b45-a13f-0eebf716e5f3";
+        nakasyou0 = "9f2055d0-ff7f-4f27-adf2-c7793ebdff6a";
+        crocus_966 = "b4c6cdd7-3425-432d-9db5-4b0687393de2";
+        TmakMrst = "a0ee7eb9-1db2-4c19-ae97-ebe1606e1751";
+        tukiminn = "49df5f84-ccd6-4639-a4f4-11b6df52c333";
+        marukun_ = "5dd7cfe6-340f-4e3d-96e5-16d98d22c720";
       };
 
       operators = {
@@ -132,9 +184,14 @@ in
           bypassesPlayerLimit = true;
         };
       };
+
+      symlinks = {
+        mods = modsLink;
+        "config/fabric-proxy-lite.json" = fabricProxyLiteConfig;
+      };
     };
 
-    # === Creative Server (same mods as SMP) ===
+    # === Creative Server ===
     servers.fabric-creative = mkFabricServer "creative" {
       port = 25568;
       jvmOpts = "-Xms4G -Xmx8G";
@@ -167,4 +224,7 @@ in
       };
     };
   };
+
+  # Simple Voice Chat mod uses UDP 24454 by default.
+  networking.firewall.allowedUDPPorts = [ 24454 ];
 }

@@ -17,6 +17,7 @@ extra_tcp_ingress_rules = [
     cidrs = ["0.0.0.0/0"]
   }
 ]
+extra_udp_ingress_rules = []
 
 allocate_floating_ip = true
 external_network_name = "<EXTERNAL_NETWORK_NAME>"

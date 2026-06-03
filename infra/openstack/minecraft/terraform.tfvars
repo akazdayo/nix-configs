@@ -10,8 +10,25 @@ public_key_path = ""
 
 ssh_allowed_cidrs = []
 
-extra_tcp_ingress_rules = []
-extra_udp_ingress_rules = []
+extra_tcp_ingress_rules = [
+  {
+    name  = "velocity-smp"
+    port  = 25566
+    cidrs = ["138.252.25.166/32"]
+  },
+  {
+    name  = "velocity-creative"
+    port  = 25568
+    cidrs = ["138.252.25.166/32"]
+  }
+]
+extra_udp_ingress_rules = [
+  {
+    name  = "simple-voice-chat"
+    port  = 24454
+    cidrs = ["138.252.25.166/32"]
+  }
+]
 
 allocate_floating_ip  = false
 external_network_name = ""

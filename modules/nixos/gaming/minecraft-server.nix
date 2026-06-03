@@ -8,11 +8,6 @@
 let
   minecraftData = hostMeta.hostData.minecraft or { };
 
-  # Shared secret for Velocity modern forwarding.
-  # Must match the value on the gateway host (velocity-server).
-  # FIXME: Migrate to sops-nix for production use.
-  velocitySecret = minecraftData.velocitySecret or "changeme-please-replace-at-deploy-time";
-
   inherit (config.services.minecraft-servers) runDir;
   fabricSock = "${runDir}/fabric-smp.sock";
 
@@ -71,16 +66,6 @@ let
   # Derive a linkFarm from the mod attribute set
   modsLink = pkgs.linkFarmFromDrvs "mods" (builtins.attrValues commonMods);
 
-  # Fabric Proxy Lite config (shared by all proxy-aware fabric servers)
-  fabricProxyLiteConfig = {
-    value = {
-      proxySecret = velocitySecret;
-      ipHeader = null;
-      playersOnForwardingError = "DISCONNECT";
-    };
-    format = pkgs.formats.json { };
-  };
-
   # Helper: create a fabric server module fragment
   mkFabricServer =
     serverName:
@@ -116,7 +101,6 @@ let
       inherit whitelist operators;
       symlinks = {
         mods = modsLink;
-        "config/fabric-proxy-lite.json" = fabricProxyLiteConfig;
       };
     };
 in
@@ -127,6 +111,40 @@ in
   system.extraDependencies = [
     ./server-icon.png
   ];
+
+  sops = {
+    secrets.velocity-forwarding-secret = {
+      sopsFile = ../../../secrets/openstack/gateway/velocity.yaml;
+      owner = config.services.minecraft-servers.user or "minecraft";
+      mode = "0400";
+    };
+
+    templates = {
+      "fabric-smp-proxy-config" = {
+        content = ''
+          {
+            "proxySecret": "${config.sops.placeholder."velocity-forwarding-secret"}",
+            "ipHeader": null,
+            "playersOnForwardingError": "DISCONNECT"
+          }
+        '';
+        owner = config.services.minecraft-servers.user or "minecraft";
+        mode = "0400";
+      };
+
+      "fabric-creative-proxy-config" = {
+        content = ''
+          {
+            "proxySecret": "${config.sops.placeholder."velocity-forwarding-secret"}",
+            "ipHeader": null,
+            "playersOnForwardingError": "DISCONNECT"
+          }
+        '';
+        owner = config.services.minecraft-servers.user or "minecraft";
+        mode = "0400";
+      };
+    };
+  };
 
   services.minecraft-servers = {
     enable = true;
@@ -187,42 +205,49 @@ in
 
       symlinks = {
         mods = modsLink;
-        "config/fabric-proxy-lite.json" = fabricProxyLiteConfig;
+        "config/fabric-proxy-lite.json" = config.sops.templates."fabric-smp-proxy-config".path;
       };
     };
 
     # === Creative Server ===
-    servers.fabric-creative = mkFabricServer "creative" {
-      port = 25568;
-      jvmOpts = "-Xms4G -Xmx8G";
-      gamemode = "creative";
-      motd = "NixOS Fabric Creative";
-      maxPlayers = 20;
+    servers.fabric-creative =
+      mkFabricServer "creative" {
+        port = 25568;
+        jvmOpts = "-Xms4G -Xmx8G";
+        gamemode = "creative";
+        motd = "NixOS Fabric Creative";
+        maxPlayers = 20;
 
-      whitelist = {
-        aomona = "02992baf-9329-4c6a-b893-3e4b5ce37ca1";
-        akaz_dango = "644d4fc6-1525-4426-9eb9-7c7877883e81";
-        tokuzou0829 = "67ddca9d-42aa-4522-adc8-ab904eff34cd";
-        shu_tti = "379c2f07-08d5-4b0e-9fe6-6fd044723d64";
-        t4ko_uwu = "aedb2b9b-2fd3-415b-aa29-bac9a430a618";
-        moons14 = "ede38872-25c5-414f-a04e-278b521d9f41";
-        fa0311 = "7dfc7f95-df6f-435f-85f4-71513cc8fa87";
-        yuta_kobayashi = "cfcc92a7-7b55-4b45-a13f-0eebf716e5f3";
-      };
+        whitelist = {
+          aomona = "02992baf-9329-4c6a-b893-3e4b5ce37ca1";
+          akaz_dango = "644d4fc6-1525-4426-9eb9-7c7877883e81";
+          tokuzou0829 = "67ddca9d-42aa-4522-adc8-ab904eff34cd";
+          shu_tti = "379c2f07-08d5-4b0e-9fe6-6fd044723d64";
+          t4ko_uwu = "aedb2b9b-2fd3-415b-aa29-bac9a430a618";
+          moons14 = "ede38872-25c5-414f-a04e-278b521d9f41";
+          fa0311 = "7dfc7f95-df6f-435f-85f4-71513cc8fa87";
+          yuta_kobayashi = "cfcc92a7-7b55-4b45-a13f-0eebf716e5f3";
+        };
 
-      operators = {
-        moons14 = {
-          uuid = "ede38872-25c5-414f-a04e-278b521d9f41";
-          level = 4;
-          bypassesPlayerLimit = true;
+        operators = {
+          moons14 = {
+            uuid = "ede38872-25c5-414f-a04e-278b521d9f41";
+            level = 4;
+            bypassesPlayerLimit = true;
+          };
+          akaz_dango = {
+            uuid = "644d4fc6-1525-4426-9eb9-7c7877883e81";
+            level = 4;
+            bypassesPlayerLimit = true;
+          };
         };
-        akaz_dango = {
-          uuid = "644d4fc6-1525-4426-9eb9-7c7877883e81";
-          level = 4;
-          bypassesPlayerLimit = true;
+      }
+      // {
+        symlinks = {
+          mods = modsLink;
+          "config/fabric-proxy-lite.json" = config.sops.templates."fabric-creative-proxy-config".path;
         };
       };
-    };
   };
 
   # Simple Voice Chat mod uses UDP 24454 by default.

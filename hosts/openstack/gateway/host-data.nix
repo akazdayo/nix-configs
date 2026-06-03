@@ -8,6 +8,7 @@ let
     velocity = {
       # Port for Velocity to listen on (public-facing).
       serverPort = 25565;
+      voiceChatPort = 24454;
       jvmOpts = "-Xms512M -Xmx1G";
     };
 

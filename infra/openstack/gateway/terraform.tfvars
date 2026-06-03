@@ -17,7 +17,13 @@ extra_tcp_ingress_rules = [
     cidrs = ["0.0.0.0/0"]
   }
 ]
-extra_udp_ingress_rules = []
+extra_udp_ingress_rules = [
+  {
+    name  = "simple-voice-chat"
+    port  = 24454
+    cidrs = ["0.0.0.0/0"]
+  }
+]
 
 allocate_floating_ip  = false
 external_network_name = ""

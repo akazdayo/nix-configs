@@ -146,11 +146,8 @@ in
     templates = {
       "fabric-smp-proxy-config" = {
         content = ''
-          {
-            "proxySecret": "${config.sops.placeholder."velocity-forwarding-secret"}",
-            "ipHeader": null,
-            "playersOnForwardingError": "DISCONNECT"
-          }
+          secret = "${config.sops.placeholder."velocity-forwarding-secret"}"
+          disconnectMessage = "This server requires you to connect with Velocity."
         '';
         owner = config.services.minecraft-servers.user or "minecraft";
         mode = "0400";
@@ -158,11 +155,8 @@ in
 
       "fabric-creative-proxy-config" = {
         content = ''
-          {
-            "proxySecret": "${config.sops.placeholder."velocity-forwarding-secret"}",
-            "ipHeader": null,
-            "playersOnForwardingError": "DISCONNECT"
-          }
+          secret = "${config.sops.placeholder."velocity-forwarding-secret"}"
+          disconnectMessage = "This server requires you to connect with Velocity."
         '';
         owner = config.services.minecraft-servers.user or "minecraft";
         mode = "0400";
@@ -215,7 +209,7 @@ in
 
       symlinks = {
         mods = smpModsLink;
-        "config/fabric-proxy-lite.json" = config.sops.templates."fabric-smp-proxy-config".path;
+        "config/FabricProxy-Lite.toml" = config.sops.templates."fabric-smp-proxy-config".path;
       };
     };
 
@@ -246,7 +240,7 @@ in
       // {
         symlinks = {
           mods = creativeModsLink;
-          "config/fabric-proxy-lite.json" = config.sops.templates."fabric-creative-proxy-config".path;
+          "config/FabricProxy-Lite.toml" = config.sops.templates."fabric-creative-proxy-config".path;
         };
       };
   };

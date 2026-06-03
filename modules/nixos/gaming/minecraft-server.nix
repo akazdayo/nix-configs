@@ -66,6 +66,22 @@ let
   # Derive a linkFarm from the mod attribute set
   modsLink = pkgs.linkFarmFromDrvs "mods" (builtins.attrValues commonMods);
 
+  whitelist = {
+    aomona = "02992baf-9329-4c6a-b893-3e4b5ce37ca1";
+    akaz_dango = "644d4fc6-1525-4426-9eb9-7c7877883e81";
+    tokuzou0829 = "67ddca9d-42aa-4522-adc8-ab904eff34cd";
+    shu_tti = "379c2f07-08d5-4b0e-9fe6-6fd044723d64";
+    t4ko_uwu = "aedb2b9b-2fd3-415b-aa29-bac9a430a618";
+    moons14 = "ede38872-25c5-414f-a04e-278b521d9f41";
+    fa0311 = "7dfc7f95-df6f-435f-85f4-71513cc8fa87";
+    yuta_kobayashi = "cfcc92a7-7b55-4b45-a13f-0eebf716e5f3";
+    nakasyou0 = "9f2055d0-ff7f-4f27-adf2-c7793ebdff6a";
+    crocus_966 = "b4c6cdd7-3425-432d-9db5-4b0687393de2";
+    TmakMrst = "a0ee7eb9-1db2-4c19-ae97-ebe1606e1751";
+    tukiminn = "49df5f84-ccd6-4639-a4f4-11b6df52c333";
+    marukun_ = "5dd7cfe6-340f-4e3d-96e5-16d98d22c720";
+  };
+
   # Helper: create a fabric server module fragment
   mkFabricServer =
     serverName:
@@ -174,21 +190,7 @@ in
         simulation-distance = 10;
       };
 
-      whitelist = {
-        aomona = "02992baf-9329-4c6a-b893-3e4b5ce37ca1";
-        akaz_dango = "644d4fc6-1525-4426-9eb9-7c7877883e81";
-        tokuzou0829 = "67ddca9d-42aa-4522-adc8-ab904eff34cd";
-        shu_tti = "379c2f07-08d5-4b0e-9fe6-6fd044723d64";
-        t4ko_uwu = "aedb2b9b-2fd3-415b-aa29-bac9a430a618";
-        moons14 = "ede38872-25c5-414f-a04e-278b521d9f41";
-        fa0311 = "7dfc7f95-df6f-435f-85f4-71513cc8fa87";
-        yuta_kobayashi = "cfcc92a7-7b55-4b45-a13f-0eebf716e5f3";
-        nakasyou0 = "9f2055d0-ff7f-4f27-adf2-c7793ebdff6a";
-        crocus_966 = "b4c6cdd7-3425-432d-9db5-4b0687393de2";
-        TmakMrst = "a0ee7eb9-1db2-4c19-ae97-ebe1606e1751";
-        tukiminn = "49df5f84-ccd6-4639-a4f4-11b6df52c333";
-        marukun_ = "5dd7cfe6-340f-4e3d-96e5-16d98d22c720";
-      };
+      inherit whitelist;
 
       operators = {
         moons14 = {
@@ -218,16 +220,7 @@ in
         motd = "NixOS Fabric Creative";
         maxPlayers = 20;
 
-        whitelist = {
-          aomona = "02992baf-9329-4c6a-b893-3e4b5ce37ca1";
-          akaz_dango = "644d4fc6-1525-4426-9eb9-7c7877883e81";
-          tokuzou0829 = "67ddca9d-42aa-4522-adc8-ab904eff34cd";
-          shu_tti = "379c2f07-08d5-4b0e-9fe6-6fd044723d64";
-          t4ko_uwu = "aedb2b9b-2fd3-415b-aa29-bac9a430a618";
-          moons14 = "ede38872-25c5-414f-a04e-278b521d9f41";
-          fa0311 = "7dfc7f95-df6f-435f-85f4-71513cc8fa87";
-          yuta_kobayashi = "cfcc92a7-7b55-4b45-a13f-0eebf716e5f3";
-        };
+        inherit whitelist;
 
         operators = {
           moons14 = {

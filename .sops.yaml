@@ -6,6 +6,8 @@ keys:
   # Generate: ssh-to-age -i /etc/ssh/ssh_host_ed25519_key.pub
   - &nixos_host age17ruhp8fp4cnhpg8phtcsyf2s37ejt5qekpqkntx6f8j22uu9sg6s53ngxm
   - &server_host age1dmadrw5y7z68h0atxjvuwk2wuxs9rdmd03dhkm92ex579q4aqs5sv4xgu3
+  - &minecraft_host age1wcrc09lul4y2cdq04wn5ufg0waxcvqgmwce8m9sufktfgj45zccs5pt8y8
+  - &gateway_host age1wj9regw4e7wevq90llcsajpr5kv87kd6rwh4uuyyg80zdrw5lvssjae2xa
 
 creation_rules:
   - path_regex: secrets/nixos/[^/]+\.(yaml|json|env|ini)$
@@ -26,6 +28,13 @@ creation_rules:
           - *master_key
           - *nixos_host
           - *server_host
+
+  - path_regex: secrets/openstack/gateway/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *master_key
+          - *minecraft_host
+          - *gateway_host
 
   # Darwin/macbook home-manager secrets
   - path_regex: secrets/darwin/[^/]+\.(yaml|json|env|ini)$

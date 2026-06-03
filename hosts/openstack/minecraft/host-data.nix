@@ -6,8 +6,15 @@ let
     };
 
     minecraft = {
-      serverPort = 25565;
-      jvmOpts = "-Xms1G -Xmx2G";
+      smp = {
+        serverPort = 25566;
+        jvmOpts = "-Xms1G -Xmx2G";
+      };
+
+      creative = {
+        serverPort = 25568;
+        jvmOpts = "-Xms1G -Xmx2G";
+      };
     };
 
     users.${hostMeta.primaryUser}.authorizedKeys = [

@@ -11,13 +11,20 @@ let
 
   proxyPort = toString (velocityData.serverPort or 25565);
   voiceChatPort = velocityData.voiceChatPort or 24454;
+  simpleVoiceChatVelocityPlugin = pkgs.fetchurl {
+    url = "https://cdn.modrinth.com/data/9eGKb6K1/versions/ES87t4lm/voicechat-velocity-2.6.18.jar";
+    sha512 = "ca8238c3f4d8c0f023912373f6dfe932961fcd83b061c70941b83cf29421d969c65d1771a4ebd7d1e5804057ae8fb92069fbc64a8e66668da119033e0e7ac3cf";
+  };
+  voiceChatProxyConfig = pkgs.writeText "voicechat-proxy.properties" ''
+    # Keep the public voice chat endpoint on the existing gateway UDP port.
+    port=${toString voiceChatPort}
+    bind_address=
+    voice_host=
+  '';
   minecraftInternalIp =
     minecraftData.internalIp or (throw "hostData.minecraft.internalIp must be set");
   smpPort = toString (minecraftData.smp.serverPort or 25566);
   creativePort = toString (minecraftData.creative.serverPort or 25568);
-  primaryInterface =
-    hostMeta.hostData.networking.primaryInterface
-      or (throw "hostData.networking.primaryInterface must be set");
 in
 {
   imports = [ inputs.minecraft-nix.nixosModules.minecraft-servers ];
@@ -81,26 +88,17 @@ in
       # → forwarding.secret file in Velocity 3.5.0+).
       # `files` creates a writable copy; cleaned on service stop.
       files."velocity.toml" = config.sops.templates."velocity.toml".path;
+
+      symlinks."plugins/voicechat-velocity.jar" = simpleVoiceChatVelocityPlugin;
+      files."plugins/voicechat/voicechat-proxy.properties" = voiceChatProxyConfig;
     };
   };
 
   systemd.services.minecraft-server-velocity.restartTriggers = [
     config.sops.templates."velocity.toml".content
+    voiceChatProxyConfig
+    simpleVoiceChatVelocityPlugin
   ];
 
-  networking = {
-    firewall.allowedUDPPorts = [ voiceChatPort ];
-
-    nat = {
-      enable = true;
-      externalInterface = primaryInterface;
-      forwardPorts = [
-        {
-          sourcePort = voiceChatPort;
-          destination = "${minecraftInternalIp}:${toString voiceChatPort}";
-          proto = "udp";
-        }
-      ];
-    };
-  };
+  networking.firewall.allowedUDPPorts = [ voiceChatPort ];
 }

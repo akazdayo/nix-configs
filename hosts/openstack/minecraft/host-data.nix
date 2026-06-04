@@ -17,6 +17,10 @@ let
       smp = {
         serverPort = 25566;
         jvmOpts = "-Xms1G -Xmx2G";
+        bluemap = {
+          port = 8100;
+          bindAddress = "0.0.0.0";
+        };
       };
 
       creative = {

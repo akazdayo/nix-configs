@@ -15,6 +15,11 @@ extra_tcp_ingress_rules = [
     name  = "minecraft-proxy"
     port  = 25565
     cidrs = ["0.0.0.0/0"]
+  },
+  {
+    name  = "bluemap-http"
+    port  = 80
+    cidrs = ["0.0.0.0/0"]
   }
 ]
 extra_udp_ingress_rules = [

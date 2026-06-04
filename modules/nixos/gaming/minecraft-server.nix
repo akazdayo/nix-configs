@@ -8,6 +8,9 @@
 let
   minecraftData = hostMeta.hostData.minecraft or { };
   smpData = minecraftData.smp or { };
+  blueMapData = smpData.bluemap or { };
+  blueMapPort = blueMapData.port or 8100;
+  blueMapBindAddress = blueMapData.bindAddress or "0.0.0.0";
 
   # === Minecraft Version & Package ===
   # All fabric backend servers share the same MC version / fabric loader
@@ -62,7 +65,9 @@ let
     accept-download: true
   '';
   blueMapWebserverConfig = pkgs.writeText "bluemap-webserver.conf" ''
-    enabled: false
+    enabled: true
+    ip: "${blueMapBindAddress}"
+    port: ${toString blueMapPort}
   '';
 
   smpModsLink = pkgs.linkFarmFromDrvs "smp-mods" (
@@ -252,5 +257,6 @@ in
   };
 
   # Simple Voice Chat mod uses UDP 24454 by default.
+  networking.firewall.allowedTCPPorts = [ blueMapPort ];
   networking.firewall.allowedUDPPorts = [ 24454 ];
 }

@@ -20,6 +20,11 @@ extra_tcp_ingress_rules = [
     name  = "velocity-creative"
     port  = 25568
     cidrs = ["138.252.25.166/32"]
+  },
+  {
+    name  = "bluemap-http"
+    port  = 8100
+    cidrs = ["138.252.25.166/32"]
   }
 ]
 extra_udp_ingress_rules = [

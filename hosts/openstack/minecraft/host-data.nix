@@ -11,6 +11,11 @@ let
       fsType = "ext4";
     };
 
+    swap = {
+      device = "/var/lib/swapfile";
+      size = 8 * 1024;
+    };
+
     minecraft = {
       dataDir = "/srv/minecraft";
 

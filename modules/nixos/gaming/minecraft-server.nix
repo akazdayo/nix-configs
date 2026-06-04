@@ -58,10 +58,21 @@ let
   };
 
   # Derive a linkFarm from the mod attribute set
+  blueMapCoreConfig = pkgs.writeText "bluemap-core.conf" ''
+    accept-download: true
+  '';
+  blueMapWebserverConfig = pkgs.writeText "bluemap-webserver.conf" ''
+    enabled: false
+  '';
+
   smpModsLink = pkgs.linkFarmFromDrvs "smp-mods" (
     builtins.attrValues (
       commonMods
       // {
+        BlueMap = pkgs.fetchurl {
+          url = "https://cdn.modrinth.com/data/swbUV1cr/versions/D9j76thC/bluemap-5.20-fabric.jar";
+          sha512 = "b140390c505655491130f74653fc0e9cd9501f35f001c174965c13bccf45bb91900c4ed439ecdb8d824723fb57688a20ce37582b7b3a4a04623af09854f6fb2d";
+        };
         SimpleVoiceChat = pkgs.fetchurl {
           url = "https://cdn.modrinth.com/data/9eGKb6K1/versions/DpT86E4Q/voicechat-fabric-2.6.18%2B26.1.2.jar";
           sha512 = "9d9f38185c66fc57f03363a37d4559e58442bccb27414a4bd7c5a2b8bb046813afbcdf1bf6279b22f941f9cb4d2ed9d5e6dc4929714e73ae914a03557fb087af";
@@ -202,6 +213,8 @@ in
 
       symlinks = {
         mods = smpModsLink;
+        "config/bluemap/core.conf" = blueMapCoreConfig;
+        "config/bluemap/webserver.conf" = blueMapWebserverConfig;
         "config/FabricProxy-Lite.toml" = config.sops.templates."fabric-smp-proxy-config".path;
       };
     };

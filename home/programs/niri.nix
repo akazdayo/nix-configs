@@ -257,7 +257,6 @@ in
     // spawn-at-startup "waybar"
 
     spawn-at-startup "xwayland-satellite"
-    spawn-at-startup "noctalia-shell"
 
     // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
     // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"

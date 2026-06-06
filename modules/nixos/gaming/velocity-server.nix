@@ -36,8 +36,9 @@ in
       content = ''
         config-version = "2.8"
         bind = "0.0.0.0:${proxyPort}"
-        motd = "&#x00a7bNixOS Minecraft Network"
+        motd = "<red>n<gold>a<yellow>k<green>a<aqua>s<blue>y<light_purple>o<red>u <gold>b<yellow>a<green>k<aqua>e<blue>r<light_purple>y <red>M<gold>i<yellow>n<green>e<aqua>c<blue>r<light_purple>a<red>f<gold>t <yellow>S<green>e<aqua>r<blue>v<light_purple>e<red>r"
         show-max-players = 500
+        sample-players-in-ping = true
         online-mode = true
         player-info-forwarding-mode = "modern"
         forwarding-secret-file = "${config.sops.secrets.velocity-forwarding-secret.path}"

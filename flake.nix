@@ -2,17 +2,20 @@
   description = "NixOS configuration with home-manager";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager = {
-      url = "github:nix-community/home-manager/release-26.05";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-darwin = {
-      url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
+      url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixvim.url = "github:nix-community/nixvim/nixos-26.05";
+    nixvim = {
+      url = "github:nix-community/nixvim/nixos-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     lanzaboote = {
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -453,7 +456,6 @@
           deploy-openstack = {
             type = "app";
             program = "${deploy-openstack-script}";
-            meta.description = "Deploy an OpenStack host using deploy-rs, resolving SSH host from OpenTofu output";
           };
         }
       );
@@ -472,7 +474,7 @@
             inherit (preCommit) shellHook;
             packages = preCommit.enabledPackages ++ [
               deploy-rs.packages.${system}.default
-              pkgs.nixfmt
+              pkgs.nixfmt-rfc-style
               pkgs.opentofu
               pkgs.sops
               pkgs.age

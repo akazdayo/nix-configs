@@ -106,12 +106,15 @@ let
     moons14 = "ede38872-25c5-414f-a04e-278b521d9f41";
     fa0311 = "7dfc7f95-df6f-435f-85f4-71513cc8fa87";
     yuta_kobayashi = "cfcc92a7-7b55-4b45-a13f-0eebf716e5f3";
-    nakasyou0 = "9f2055d0-ff7f-4f27-adf2-c7793ebdff6a";
     crocus_966 = "b4c6cdd7-3425-432d-9db5-4b0687393de2";
     TmakMrst = "a0ee7eb9-1db2-4c19-ae97-ebe1606e1751";
     tukiminn = "49df5f84-ccd6-4639-a4f4-11b6df52c333";
     marukun_ = "5dd7cfe6-340f-4e3d-96e5-16d98d22c720";
     EdamAmex = "864b2f8a-3dd9-42a2-9c4b-e399740b9e33";
+  };
+
+  bannedPlayers = {
+    nakasyou0 = "9f2055d0-ff7f-4f27-adf2-c7793ebdff6a";
   };
 
   # Helper: create a fabric server module fragment
@@ -125,6 +128,7 @@ let
       maxPlayers,
       operators,
       whitelist,
+      bannedPlayers
     }:
     let
       serverData = minecraftData.${serverName} or { };
@@ -146,7 +150,7 @@ let
         view-distance = 10;
         simulation-distance = 10;
       };
-      inherit whitelist operators;
+      inherit whitelist operators bannedPlayers;
       symlinks = {
         mods = creativeModsLink;
       };
@@ -212,7 +216,7 @@ in
         simulation-distance = 10;
       };
 
-      inherit whitelist;
+      inherit whitelist bannedPlayers;
 
       operators = {
         moons14 = {
@@ -244,7 +248,7 @@ in
         motd = "NixOS Fabric Creative";
         maxPlayers = 20;
 
-        inherit whitelist;
+        inherit whitelist bannedPlayers;
 
         operators = builtins.mapAttrs (_: uuid: {
           inherit uuid;

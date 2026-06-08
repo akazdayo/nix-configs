@@ -32,7 +32,7 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
 
     minecraft-nix = {
-      url = "github:Infinidoge/nix-minecraft";
+      url = "github:akazdayo/nix-minecraft";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

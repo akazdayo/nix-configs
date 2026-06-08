@@ -19,6 +19,9 @@
           ""
       }
       ${builtins.readFile ../../dotfiles/env.nu}
+
+      # sops YubiKey-priority age identity provider
+      $env.SOPS_AGE_KEY_CMD = ($env.HOME | path join '.config' 'sops' 'age' 'yubikey-priority.sh')
     '';
   };
 

@@ -2,6 +2,8 @@
 {
   services.pcscd.enable = true;
 
+  environment.variables.SOPS_AGE_KEY_CMD = "$HOME/.config/sops/age/yubikey-priority.sh";
+
   environment.systemPackages = with pkgs; [
     age-plugin-yubikey
     age

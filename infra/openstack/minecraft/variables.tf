@@ -119,3 +119,26 @@ variable "ssh_user" {
   description = "SSH username for deploy-rs bootstrap access (created by user-data script with NOPASSWD sudo)"
   default     = "deploy"
 }
+
+variable "data_volume_name" {
+  type        = string
+  description = "Name of the Cinder volume used for persistent Minecraft server data"
+  default     = "minecraft-data"
+}
+
+variable "data_volume_size_gb" {
+  type        = number
+  description = "Size of the persistent Minecraft data volume in GiB"
+  default     = 50
+
+  validation {
+    condition     = var.data_volume_size_gb >= 10
+    error_message = "data_volume_size_gb must be at least 10 GiB."
+  }
+}
+
+variable "data_volume_type" {
+  type        = string
+  description = "Optional Cinder volume type for the Minecraft data volume"
+  default     = ""
+}

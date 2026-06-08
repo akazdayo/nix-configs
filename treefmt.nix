@@ -2,6 +2,11 @@
 {
   projectRootFile = "flake.nix";
 
+  settings.excludes = [
+    "secrets/**/*.yaml"
+    "secrets/**/*.yml"
+  ];
+
   programs = {
     nixfmt.enable = true;
     stylua.enable = true;

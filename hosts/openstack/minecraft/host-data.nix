@@ -5,9 +5,33 @@ let
       primaryInterface = "enp1s0";
     };
 
+    fileSystems.minecraftData = {
+      mountPoint = "/srv/minecraft";
+      device = "/dev/disk/by-label/minecraft-data";
+      fsType = "ext4";
+    };
+
+    swap = {
+      device = "/var/lib/swapfile";
+      size = 8 * 1024;
+    };
+
     minecraft = {
-      serverPort = 25565;
-      jvmOpts = "-Xms1G -Xmx2G";
+      dataDir = "/srv/minecraft";
+
+      smp = {
+        serverPort = 25566;
+        jvmOpts = "-Xms1G -Xmx2G";
+        bluemap = {
+          port = 8100;
+          bindAddress = "0.0.0.0";
+        };
+      };
+
+      creative = {
+        serverPort = 25568;
+        jvmOpts = "-Xms1G -Xmx2G";
+      };
     };
 
     users.${hostMeta.primaryUser}.authorizedKeys = [

@@ -34,4 +34,5 @@ resource "openstack_blockstorage_volume_v3" "bluemap_data" {
 resource "openstack_compute_volume_attach_v2" "bluemap_data" {
   instance_id = module.vm.instance_id
   volume_id   = openstack_blockstorage_volume_v3.bluemap_data.id
+  device      = var.data_volume_device
 }

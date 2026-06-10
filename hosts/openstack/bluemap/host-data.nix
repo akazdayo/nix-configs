@@ -7,7 +7,8 @@ let
 
     fileSystems.bluemapData = {
       mountPoint = "/srv/bluemap";
-      device = "/dev/disk/by-label/bluemap-data";
+      diskDevice = "/dev/vdb";
+      label = "bluemap-data";
       fsType = "ext4";
     };
 

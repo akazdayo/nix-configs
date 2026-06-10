@@ -142,3 +142,9 @@ variable "data_volume_type" {
   description = "Optional Cinder volume type for the BlueMap data volume"
   default     = ""
 }
+
+variable "data_volume_device" {
+  type        = string
+  description = "Guest device path requested for the attached BlueMap data volume"
+  default     = "/dev/vdb"
+}

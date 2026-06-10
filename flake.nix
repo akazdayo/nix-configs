@@ -46,6 +46,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -73,6 +78,7 @@
       minecraft-nix,
       nix-cachyos-kernel,
       sops-nix,
+      disko,
       treefmt-nix,
       git-hooks,
     }@inputs:
@@ -246,6 +252,7 @@
           modules = [
             ./packages
             (./hosts/openstack + "/${hostName}")
+            disko.nixosModules.disko
             lanzaboote.nixosModules.lanzaboote
             sops-nix.nixosModules.default
             home-manager.nixosModules.home-manager

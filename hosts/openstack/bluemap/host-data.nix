@@ -5,29 +5,18 @@ let
       primaryInterface = "enp1s0";
     };
 
-    velocity = {
-      # Port for Velocity to listen on (public-facing).
-      serverPort = 25565;
-      voiceChatPort = 24454;
-      jvmOpts = "-Xms512M -Xmx1G";
+    fileSystems.bluemapData = {
+      mountPoint = "/srv/bluemap";
+      device = "/dev/disk/by-label/bluemap-data";
+      fsType = "ext4";
     };
 
-    minecraft = {
-      internalIp = "138.252.25.159";
-
-      smp = {
-        serverPort = 25566;
-      };
-
-      creative = {
-        serverPort = 25568;
-      };
-    };
-
-    caddy.virtualHosts.bluemap = {
-      hostname = ":80";
-      upstream = "bluemap:80";
-      openFirewall = true;
+    bluemap = {
+      webRoot = "/srv/bluemap/web";
+      httpPort = 80;
+      rsyncPort = 873;
+      rsyncModule = "bluemap-web";
+      rsyncAllowedHosts = [ "138.252.25.159" ];
     };
 
     users.${hostMeta.primaryUser}.authorizedKeys = [

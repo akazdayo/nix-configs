@@ -344,6 +344,11 @@
           remoteBuild = true;
           activationTimeout = 600;
         };
+        bluemap = {
+          sshUser = "deploy";
+          remoteBuild = true;
+          activationTimeout = 600;
+        };
       };
 
       darwinHosts = {

@@ -1,6 +1,7 @@
 {
   inputs,
   hostMeta,
+  lib,
   pkgs,
   config,
   ...
@@ -11,6 +12,11 @@ let
   blueMapData = smpData.bluemap or { };
   blueMapPort = blueMapData.port or 8100;
   blueMapBindAddress = blueMapData.bindAddress or "0.0.0.0";
+  blueMapWebserverEnabled = blueMapData.webserverEnabled or true;
+  blueMapSyncData = blueMapData.sync;
+  blueMapSyncSourceDir = blueMapSyncData.sourceDir;
+  blueMapSyncDestination = blueMapSyncData.destination;
+  blueMapSyncInterval = blueMapSyncData.interval;
 
   # === Minecraft Version & Package ===
   # All fabric backend servers share the same MC version / fabric loader
@@ -69,7 +75,7 @@ let
     accept-download: true
   '';
   blueMapWebserverConfig = pkgs.writeText "bluemap-webserver.conf" ''
-    enabled: true
+    enabled: ${if blueMapWebserverEnabled then "true" else "false"}
     ip: "${blueMapBindAddress}"
     port: ${toString blueMapPort}
   '';
@@ -265,6 +271,31 @@ in
   };
 
   # Simple Voice Chat mod uses UDP 24454 by default.
-  networking.firewall.allowedTCPPorts = [ blueMapPort ];
+  networking.firewall.allowedTCPPorts = lib.optional blueMapWebserverEnabled blueMapPort;
   networking.firewall.allowedUDPPorts = [ 24454 ];
+
+  systemd.services.bluemap-web-sync = {
+    description = "Sync BlueMap web assets to the BlueMap host";
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+    path = [ pkgs.rsync ];
+    script = ''
+      set -euo pipefail
+      if [ ! -d ${lib.escapeShellArg blueMapSyncSourceDir} ]; then
+        exit 0
+      fi
+
+      rsync -az --delete ${lib.escapeShellArg "${blueMapSyncSourceDir}/"} ${lib.escapeShellArg blueMapSyncDestination}
+    '';
+  };
+
+  systemd.timers.bluemap-web-sync = {
+    description = "Periodically sync BlueMap web assets";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "1min";
+      OnUnitActiveSec = blueMapSyncInterval;
+      Unit = "bluemap-web-sync.service";
+    };
+  };
 }

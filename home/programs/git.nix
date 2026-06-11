@@ -18,6 +18,11 @@
       init = {
         defaultBranch = "main";
       };
+      lfs."customtransfer.xet" = {
+        path = "git-xet";
+        args = "transfer";
+        concurrent = true;
+      };
     }
     // lib.optionalAttrs pkgs.stdenv.isDarwin {
       commit = {

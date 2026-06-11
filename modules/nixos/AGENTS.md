@@ -17,7 +17,8 @@ modules/nixos/
 ├── desktop/desktop.nix        # DE (niri compositor, Firefox, printing, Sunshine)
 │   └── wayland/{login,niri,variable}.nix
 ├── flatpak/desktop.nix        # Flatpak support
-├── gaming/{desktop,minecraft-server,steam,wivrn,slimevr,alvr}.nix
+├── gaming/{desktop,steam,wivrn,slimevr,alvr}.nix
+├── minecraft/{minecraft-server,velocity-server,discord-integration}.nix
 ├── hardware/{desktop,server,kernel,nvidia,swap,mounts,tablet}.nix
 ├── locale/{desktop,server}.nix
 ├── networking/{desktop,server,tailscale,cloudflared,macvlan-shim}.nix

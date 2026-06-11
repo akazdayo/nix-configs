@@ -48,6 +48,7 @@
       else
         pkgs.direnv;
     enableNushellIntegration = true;
+    nix-direnv.enable = true;
   };
 
   programs.eza = {

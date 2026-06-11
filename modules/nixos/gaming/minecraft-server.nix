@@ -112,6 +112,7 @@ let
     tukiminn = "49df5f84-ccd6-4639-a4f4-11b6df52c333";
     marukun_ = "5dd7cfe6-340f-4e3d-96e5-16d98d22c720";
     EdamAmex = "864b2f8a-3dd9-42a2-9c4b-e399740b9e33";
+    kibune16 = "da937ed0-498f-43fc-b1b7-a678ee531b8b";
   };
 
   # Helper: create a fabric server module fragment

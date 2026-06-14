@@ -19,8 +19,8 @@ let
   # === Common Mods (shared by all fabric backend servers) ===
   commonMods = {
     FabricApi = pkgs.fetchurl {
-      url = "https://cdn.modrinth.com/data/P7dR8mSH/versions/E1mjhYMF/fabric-api-0.150.0%2B26.1.2.jar";
-      sha512 = "238c793b720ed21d2d5b564eca88c714cf2188f7b0fb1fd30864660f80901e2b4dad273994b6f77de3c0aa365f930ed8aaccffac49b36c6456b153b52d5d21dc";
+      url = "https://cdn.modrinth.com/data/P7dR8mSH/versions/yALY9gHM/fabric-api-0.151.0%2B26.1.2.jar";
+      sha512 = "d087349842b962414ba89248f9ef7bc75f537848f4d783435de633ddae8924cd50fd9bffc606aae0f1c2c3ed9b4339623244e1fd34c6b9c17f977528d1303cdd";
     };
     Lithium = pkgs.fetchurl {
       url = "https://cdn.modrinth.com/data/gvQqBUqZ/versions/Nt50x0fz/lithium-fabric-0.24.3%2Bmc26.1.2.jar";
@@ -116,6 +116,7 @@ let
     tukiminn = "49df5f84-ccd6-4639-a4f4-11b6df52c333";
     marukun_ = "5dd7cfe6-340f-4e3d-96e5-16d98d22c720";
     EdamAmex = "864b2f8a-3dd9-42a2-9c4b-e399740b9e33";
+    kibune16 = "da937ed0-498f-43fc-b1b7-a678ee531b8b";
   };
 
   # Helper: create a fabric server module fragment
@@ -219,11 +220,6 @@ in
       inherit whitelist;
 
       operators = {
-        moons14 = {
-          uuid = "ede38872-25c5-414f-a04e-278b521d9f41";
-          level = 1;
-          bypassesPlayerLimit = false;
-        };
         akaz_dango = {
           uuid = "644d4fc6-1525-4426-9eb9-7c7877883e81";
           level = 4;

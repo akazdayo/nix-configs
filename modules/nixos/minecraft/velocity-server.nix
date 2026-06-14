@@ -116,8 +116,6 @@ in
   };
 
   systemd.services.minecraft-server-velocity = {
-    requires = [ "sops-install-secrets.service" ];
-    after = [ "sops-install-secrets.service" ];
     restartTriggers = [
       config.sops.templates."velocity.toml".content
       config.sops.templates."discord-integration-velocity-config.json".content

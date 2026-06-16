@@ -62,6 +62,10 @@ let
       url = "https://github.com/zunoser/discord-integration-velocity/releases/download/v1.0.2/discord-integration-fabric-backend-1.0.2.jar";
       sha256 = "2e5c205084dbb5d25e35907329b74c045475114e9b65650ab9cba71050892620";
     };
+    CarpetBotAPI = pkgs.fetchurl {
+      url = "https://github.com/zunoser/carpet-ws/releases/download/v0.1.1/carpet-bot-api-0.1.1.jar";
+      sha256 = "3baaacbb7f70bbf08dd53e3fcbf3ca7e8f73c63b62d5bffb4da1be573b582557";
+    };
   };
 
   # Derive a linkFarm from the mod attribute set

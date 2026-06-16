@@ -55,8 +55,8 @@ let
       sha512 = "c48f6e658ffc8cdce8647a149237f5aa7c35bb0cb5037024eb2bb6e6f3e2be863a733a010543ad206e295c5088d9bb400f2bb7a6d47f6b24a61921868491e9f2";
     };
     NakasyouBakeryMod = pkgs.fetchurl {
-      url = "https://github.com/zunoser/nakasyou-bakery-mod/releases/download/v1.7/nakasyou-bakery-mod-1.7.jar";
-      sha256 = "591f95e7d03acc525f9093ce3bcd3541ba6a92d3be9143d01c4179433d013d4e";
+      url = "https://github.com/zunoser/nakasyou-bakery-mod/releases/download/v1.6/nakasyou-bakery-mod-1.6.jar";
+      sha256 = "9a2d74f63aa58f23457fe22b9cb51036cbd5c02bbf15d1eb1e4e6e85116027e6";
     };
     DiscordIntegrationFabricBackend = pkgs.fetchurl {
       url = "https://github.com/zunoser/discord-integration-velocity/releases/download/v1.0.2/discord-integration-fabric-backend-1.0.2.jar";
@@ -215,8 +215,6 @@ in
         enforce-secure-profile = false;
         view-distance = 10;
         simulation-distance = 10;
-        resource-pack = "https://github.com/zunoser/nakasyou-bakery-mod/releases/download/v1.7/nakasyou-bakery-resourcepack-1.7.zip";
-        resource-pack-sha1 = "55666717868f0e8c6bb9652a2863b14176c0e69f";
       };
 
       inherit whitelist;

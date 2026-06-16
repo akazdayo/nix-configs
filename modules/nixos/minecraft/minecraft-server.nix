@@ -56,7 +56,7 @@ let
     };
     NakasyouBakeryMod = pkgs.fetchurl {
       url = "https://github.com/zunoser/nakasyou-bakery-mod/releases/download/v1.8/nakasyou-bakery-mod-1.8.jar";
-      sha256 = "c0cd439d1f2800b6088060ae31154d925c491361908bce6ae1e6f0a745715c1b";
+      sha256 = "b93725f60a38055c409166c32cf8cc7c62bbece0a5a94637275588a61147eb58";
     };
     DiscordIntegrationFabricBackend = pkgs.fetchurl {
       url = "https://github.com/zunoser/discord-integration-velocity/releases/download/v1.0.2/discord-integration-fabric-backend-1.0.2.jar";

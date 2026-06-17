@@ -19,10 +19,9 @@
       plugins = with pkgs; [ age-plugin-yubikey ];
     };
 
-    # System-level secret for the nixos desktop host.
-    # Keep the encrypted file at secrets/nixos/home.yaml during the refactor.
+    # System-level secret for the milk desktop host.
     secrets.immich-api-key = {
-      sopsFile = ../../../secrets/nixos/home.yaml;
+      sopsFile = ../../../secrets/milk/home.yaml;
       owner = "akazdayo";
       mode = "0400";
     };

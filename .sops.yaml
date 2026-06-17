@@ -4,30 +4,30 @@ keys:
 
   # Host SSH-derived age recipients (fallback for unattended boot)
   # Generate: ssh-to-age -i /etc/ssh/ssh_host_ed25519_key.pub
-  - &nixos_host age17ruhp8fp4cnhpg8phtcsyf2s37ejt5qekpqkntx6f8j22uu9sg6s53ngxm
-  - &server_host age1dmadrw5y7z68h0atxjvuwk2wuxs9rdmd03dhkm92ex579q4aqs5sv4xgu3
+  - &milk_host age17ruhp8fp4cnhpg8phtcsyf2s37ejt5qekpqkntx6f8j22uu9sg6s53ngxm
+  - &hinata_host age1dmadrw5y7z68h0atxjvuwk2wuxs9rdmd03dhkm92ex579q4aqs5sv4xgu3
   - &minecraft_host age1l5ufj9cg9v33a24kvptzs9r7arl37ju6ckw4wrwekva6vy6xr39sm3zsm3
   - &gateway_host age1wj9regw4e7wevq90llcsajpr5kv87kd6rwh4uuyyg80zdrw5lvssjae2xa
 
 creation_rules:
-  - path_regex: secrets/nixos/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: secrets/milk/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
           - *master_key
-          - *nixos_host
+          - *milk_host
 
-  - path_regex: secrets/server/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: secrets/hinata/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
           - *master_key
-          - *server_host
+          - *hinata_host
 
   - path_regex: secrets/common/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
           - *master_key
-          - *nixos_host
-          - *server_host
+          - *milk_host
+          - *hinata_host
 
   - path_regex: secrets/openstack/gateway/[^/]+\.(yaml|json|env|ini)$
     key_groups:
@@ -36,9 +36,9 @@ creation_rules:
           - *minecraft_host
           - *gateway_host
 
-  # Darwin/macbook home-manager secrets
-  - path_regex: secrets/darwin/[^/]+\.(yaml|json|env|ini)$
+  # Darwin/chiffon home-manager secrets
+  - path_regex: secrets/chiffon/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
           - *master_key
-          - *nixos_host
+          - *milk_host

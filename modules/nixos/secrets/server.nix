@@ -20,13 +20,13 @@
     };
 
     secrets.cloudflared-credentials = {
-      sopsFile = ../../../secrets/server/cloudflared.yaml;
+      sopsFile = ../../../secrets/hinata/cloudflared.yaml;
       owner = "root";
       mode = "0400";
     };
 
     secrets.atticd-env = {
-      sopsFile = ../../../secrets/server/attic.yaml;
+      sopsFile = ../../../secrets/hinata/attic.yaml;
       owner = "root";
       mode = "0400";
     };

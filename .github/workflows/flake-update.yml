@@ -58,10 +58,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - host: nixos
+          - host: milk
             runs-on: ubuntu-latest
             flake-attr: nixosConfigurations
-          - host: server
+          - host: hinata
             runs-on: ubuntu-latest
             flake-attr: nixosConfigurations
           - host: gateway
@@ -70,7 +70,7 @@ jobs:
           - host: minecraft
             runs-on: ubuntu-latest
             flake-attr: nixosConfigurations
-          - host: macbook
+          - host: chiffon
             runs-on: macos-latest
             flake-attr: darwinConfigurations
     runs-on: ${{ matrix.runs-on }}

@@ -5,7 +5,7 @@
   ...
 }:
 let
-  isDesktop = hostMeta.hostName == "nixos";
+  isDesktop = hostMeta.hostName == "milk";
   # nixpkgs-unstable の lmstudio 0.4.15-2 は起動時に V8 snapshot エラーになるため、
   # 動作確認済みの 0.4.16-2 を直接指定する。
   lmstudio = pkgs-unstable.lmstudio.override {

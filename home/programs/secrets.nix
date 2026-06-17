@@ -11,7 +11,7 @@
     # no active HM-managed secrets yet. Keep examples aligned to current paths.
     # Example:
     # secrets.immich-api-key = {
-    #   sopsFile = ../../secrets/nixos/home.yaml;
+    #   sopsFile = ../../secrets/milk/home.yaml;
     #   path = "%r/immich-api-key";
     # };
   };

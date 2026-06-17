@@ -25,6 +25,10 @@ let
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDrvifm9j0kjjoEUWf+QeFxQgdA9XPYc/VRyS9oPL+X5"
     ];
 
+    users.deploy.authorizedKeys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIDAd7QIGpjLBZhmLofUd9D+uMoXajBjt/Nz1spgArXy akazdayo@nixos"
+    ];
+
     containers = {
       hostInterface = "eno1";
       containerInterface = "mv-eno1";

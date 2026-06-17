@@ -18,7 +18,7 @@ in
   ];
   nix.settings.extra-trusted-public-keys = [
     "cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o="
-    "nix-cache.odango.app-1:/12tE/yLf8U9I9ivgbJRtXVM8zggnBF1KrS0MU4RciY="
+    "nix-cache.odango.app-1:9WpqHzITvCkij+C3ErxinVCPrHJTgqb9DRU0YNZ8v+4="
   ];
 
   nixpkgs.hostPlatform = hostMeta.system;

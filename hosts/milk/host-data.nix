@@ -49,6 +49,6 @@ in
     "https://nix-cache.odango.app"
   ];
   nix.settings.extra-trusted-public-keys = [
-    "nix-cache.odango.app-1:/12tE/yLf8U9I9ivgbJRtXVM8zggnBF1KrS0MU4RciY="
+    "nix-cache.odango.app-1:9WpqHzITvCkij+C3ErxinVCPrHJTgqb9DRU0YNZ8v+4="
   ];
 }

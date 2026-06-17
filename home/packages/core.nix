@@ -7,7 +7,7 @@
   ...
 }:
 let
-  isDesktop = hostMeta.hostName == "nixos";
+  isDesktop = hostMeta.hostName == "milk";
   isLinux = pkgs.stdenv.isLinux;
 in
 {
@@ -37,6 +37,7 @@ in
       ]
     )
     ++ [
+      pkgs-unstable.git-xet
       pkgs-unstable.wakatime-cli
       (if isDesktop then pkgs.btop-cuda else pkgs.btop)
       (if isDesktop then pkgs-unstable.wireguard-tools else pkgs.wireguard-tools)

@@ -2,20 +2,17 @@
   description = "NixOS configuration with home-manager";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-darwin = {
-      url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
+      url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixvim = {
-      url = "github:nix-community/nixvim/nixos-25.11";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nixvim.url = "github:nix-community/nixvim/nixos-26.05";
     lanzaboote = {
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -35,7 +32,7 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
 
     minecraft-nix = {
-      url = "github:Infinidoge/nix-minecraft";
+      url = "github:akazdayo/nix-minecraft";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -333,13 +330,13 @@
         };
 
       hosts = {
-        nixos = {
+        milk = {
           deployHostname = "192.168.11.48";
         };
       };
 
       servers = {
-        server = {
+        hinata = {
           deployHostname = "192.168.11.50";
         };
       };
@@ -358,7 +355,7 @@
       };
 
       darwinHosts = {
-        macbook = { };
+        chiffon = { };
       };
 
       forAllSystems = lib.genAttrs [
@@ -432,18 +429,9 @@
 
       deploy.nodes = lib.mapAttrs mkDeployNode (hosts // servers // openstackHosts);
 
-      packages = forAllSystems (
-        system:
-        let
-          pkgs = import nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
-          };
-        in
-        {
-          deploy-rs = deploy-rs.packages.${system}.default;
-        }
-      );
+      packages = forAllSystems (system: {
+        deploy-rs = deploy-rs.packages.${system}.default;
+      });
 
       apps = forAllSystems (
         system:
@@ -467,6 +455,7 @@
           deploy-openstack = {
             type = "app";
             program = "${deploy-openstack-script}";
+            meta.description = "Deploy an OpenStack host using deploy-rs, resolving SSH host from OpenTofu output";
           };
         }
       );
@@ -485,7 +474,7 @@
             inherit (preCommit) shellHook;
             packages = preCommit.enabledPackages ++ [
               deploy-rs.packages.${system}.default
-              pkgs.nixfmt-rfc-style
+              pkgs.nixfmt
               pkgs.opentofu
               pkgs.sops
               pkgs.age

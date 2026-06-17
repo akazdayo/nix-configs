@@ -21,3 +21,9 @@ output "ssh_host" {
   value       = module.vm.ssh_host
   sensitive   = false
 }
+
+output "data_volume_id" {
+  description = "Cinder volume ID for persistent Minecraft server data"
+  value       = openstack_blockstorage_volume_v3.minecraft_data.id
+  sensitive   = false
+}

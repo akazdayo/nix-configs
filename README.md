@@ -9,10 +9,10 @@ Nix flake monorepo for NixOS, server, and macOS hosts with Home Manager.
 nh os switch
 
 # Apply NixOS server
-nh os switch --hostname server
+nh os switch --hostname hinata
 
 # Apply macOS
-nix run nix-darwin -- switch --flake .#macbook
+nix run nix-darwin -- switch --flake .#chiffon
 
 # Check flake integrity
 nix flake check
@@ -25,9 +25,9 @@ nix flake update
 
 | Host      | Platform                | Command                                          |
 | --------- | ----------------------- | ------------------------------------------------ |
-| `nixos`   | NixOS (x86_64-linux)    | `nh os switch`                                   |
-| `server`  | NixOS (x86_64-linux)    | `nh os switch --hostname server`                 |
-| `macbook` | Darwin (aarch64-darwin) | `nix run nix-darwin -- switch --flake .#macbook` |
+| `milk`    | NixOS (x86_64-linux)    | `nh os switch`                                   |
+| `hinata`  | NixOS (x86_64-linux)    | `nh os switch --hostname hinata`                 |
+| `chiffon` | Darwin (aarch64-darwin) | `nix run nix-darwin -- switch --flake .#chiffon` |
 
 ## Infrastructure
 

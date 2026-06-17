@@ -48,6 +48,7 @@
       else
         pkgs.direnv;
     enableNushellIntegration = true;
+    nix-direnv.enable = true;
   };
 
   programs.eza = {
@@ -86,5 +87,6 @@
   programs.yazi = {
     enable = true;
     enableNushellIntegration = true;
+    shellWrapperName = "y";
   };
 }

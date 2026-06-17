@@ -20,19 +20,19 @@
     };
 
     secrets.cloudflared-credentials = {
-      sopsFile = ../../../secrets/server/cloudflared.yaml;
+      sopsFile = ../../../secrets/hinata/cloudflared.yaml;
       owner = "root";
       mode = "0400";
     };
 
     secrets.rustfs-access-key = {
-      sopsFile = ../../../secrets/server/rustfs.yaml;
+      sopsFile = ../../../secrets/hinata/rustfs.yaml;
       owner = "root";
       mode = "0400";
     };
 
     secrets.rustfs-secret-key = {
-      sopsFile = ../../../secrets/server/rustfs.yaml;
+      sopsFile = ../../../secrets/hinata/rustfs.yaml;
       owner = "root";
       mode = "0400";
     };
@@ -43,30 +43,30 @@
     '';
 
     secrets.niks3-api-token = {
-      sopsFile = ../../../secrets/server/niks3.yaml;
+      sopsFile = ../../../secrets/hinata/niks3.yaml;
       owner = "root";
       mode = "0400";
     };
 
     secrets.niks3-signing-key = {
-      sopsFile = ../../../secrets/server/niks3.yaml;
+      sopsFile = ../../../secrets/hinata/niks3.yaml;
       owner = "root";
       mode = "0400";
     };
 
     secrets.niks3-s3-access-key = {
-      sopsFile = ../../../secrets/server/niks3.yaml;
+      sopsFile = ../../../secrets/hinata/niks3.yaml;
       owner = "root";
       mode = "0400";
     };
 
     secrets.niks3-s3-secret-key = {
-      sopsFile = ../../../secrets/server/niks3.yaml;
+      sopsFile = ../../../secrets/hinata/niks3.yaml;
       owner = "root";
       mode = "0400";
     };
 
-    # Server-level sops integration is configured here, but current
+    # server-level sops integration is configured here, but current
     # container /etc/... secret files remain legacy host-local paths.
   };
 }

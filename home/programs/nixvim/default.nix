@@ -1,4 +1,4 @@
-{ nixvim-module, ... }:
+{ nixvim-module, pkgs, ... }:
 {
   imports = [
     nixvim-module
@@ -9,5 +9,7 @@
     ./lsp.nix
   ];
 
-  programs.nixvim.enable = true;
+  programs.nixvim = {
+    enable = true;
+  };
 }

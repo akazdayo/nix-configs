@@ -2,6 +2,8 @@
 {
   imports = [
     ../common.nix
-    ../../../../modules/nixos/gaming/minecraft-server.nix
+    ../../../../modules/nixos/hardware/swap.nix
+    ../../../../modules/nixos/hardware/minecraft-data-volume.nix
+    ../../../../modules/nixos/minecraft/minecraft-server.nix
   ];
 }

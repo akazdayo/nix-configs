@@ -19,3 +19,19 @@ module "vm" {
   tags                    = var.tags
   ssh_user                = var.ssh_user
 }
+
+resource "openstack_blockstorage_volume_v3" "minecraft_data" {
+  name        = var.data_volume_name
+  description = "Persistent Minecraft server data for ${var.instance_name}"
+  size        = var.data_volume_size_gb
+  volume_type = var.data_volume_type != "" ? var.data_volume_type : null
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "openstack_compute_volume_attach_v2" "minecraft_data" {
+  instance_id = module.vm.instance_id
+  volume_id   = openstack_blockstorage_volume_v3.minecraft_data.id
+}

@@ -25,30 +25,20 @@ in
     "d ${rustfsData.dataRoot} 0755 rustfs rustfs -"
   ];
 
-  sops.templates."rustfs-env" = {
-    owner = "rustfs";
-    group = "rustfs";
-    mode = "0400";
-    content = ''
-      RUSTFS_ACCESS_KEY=${config.sops.placeholder.rustfs-access-key}
-      RUSTFS_SECRET_KEY=${config.sops.placeholder.rustfs-secret-key}
-    '';
-    restartUnits = [ "rustfs.service" ];
-  };
-
   systemd.services.rustfs = {
     description = "RustFS S3-compatible object storage";
-    after = [
-      "network.target"
-      "sops-nix.service"
-    ];
-    wants = [ "sops-nix.service" ];
+    after = [ "network.target" ];
     wantedBy = [ "multi-user.target" ];
 
     serviceConfig = {
       Type = "simple";
-      ExecStart = "${rustfsPkg}/bin/rustfs --address ${rustfsData.listenAddress} ${rustfsData.dataRoot}";
-      EnvironmentFile = [ config.sops.templates."rustfs-env".path ];
+      ExecStart = pkgs.writeShellScript "rustfs-start" ''
+        export RUSTFS_ACCESS_KEY="$(cat ${config.sops.secrets.rustfs-access-key.path})"
+        export RUSTFS_SECRET_KEY="$(cat ${config.sops.secrets.rustfs-secret-key.path})"
+        exec ${rustfsPkg}/bin/rustfs \
+          --address ${rustfsData.listenAddress} \
+          ${rustfsData.dataRoot}
+      '';
       StateDirectory = "rustfs";
       User = "rustfs";
       Group = "rustfs";

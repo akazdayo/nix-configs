@@ -334,9 +334,6 @@
       servers = {
         hinata = {
           deployHostname = "192.168.11.50";
-          sshUser = "deploy";
-          remoteBuild = true;
-          activationTimeout = 600;
         };
       };
 

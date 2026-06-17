@@ -61,7 +61,13 @@ in
   };
 
   systemd.services.niks3 = {
-    after = [ "rustfs-setup.service" ];
-    requires = [ "rustfs-setup.service" ];
+    after = [
+      "postgresql-setup.service"
+      "rustfs-setup.service"
+    ];
+    requires = [
+      "postgresql-setup.service"
+      "rustfs-setup.service"
+    ];
   };
 }

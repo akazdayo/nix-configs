@@ -10,13 +10,13 @@ keys:
   - &gateway_host age1wj9regw4e7wevq90llcsajpr5kv87kd6rwh4uuyyg80zdrw5lvssjae2xa
 
 creation_rules:
-  - path_regex: secrets/nixos/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: secrets/milk/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
           - *master_key
           - *milk_host
 
-  - path_regex: secrets/server/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: secrets/hinata/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
           - *master_key
@@ -37,7 +37,7 @@ creation_rules:
           - *gateway_host
 
   # Darwin/chiffon home-manager secrets
-  - path_regex: secrets/darwin/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: secrets/chiffon/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
           - *master_key

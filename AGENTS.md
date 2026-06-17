@@ -83,7 +83,7 @@ Import chain: `flake.nix` → host (`hosts/<name>/default.nix` or `hosts/opensta
   - When using an exception, document reason and scope inline, and plan migration to secret management or environment variables.
 - **Secret Path Freeze**:
   - Do not move, rename, or rekey tracked encrypted secret files during repo structure work.
-  - Current tracked encrypted files: `secrets/nixos/home.yaml`.
+  - Current tracked encrypted files: `secrets/milk/home.yaml`.
   - Other `secrets/` subdirectories contain only `.gitkeep` placeholders.
   - Legacy container secret paths (`/etc/nextcloud-adminpass`, `/etc/searx-env`) remain host-local files. Do not migrate them to sops-nix without an explicit task.
 - **Deploy Coverage**:

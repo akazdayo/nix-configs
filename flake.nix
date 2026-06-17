@@ -334,6 +334,7 @@
       servers = {
         hinata = {
           deployHostname = "192.168.11.50";
+          remoteBuild = true;
         };
       };
 

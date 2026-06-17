@@ -1,6 +1,6 @@
 { pkgs, hostMeta, ... }:
 let
-  isDesktop = hostMeta.hostName == "nixos";
+  isDesktop = hostMeta.hostName == "milk";
 in
 {
   home.packages = (

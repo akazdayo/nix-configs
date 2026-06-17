@@ -32,15 +32,15 @@ modules/darwin/
 | -------------------------- | ------------------------------------- | ----------------------------------------- |
 | Add Darwin system setting  | `modules/darwin/<domain>/default.nix` | Register in `profiles/darwin/desktop.nix` |
 | Darwin-specific packages   | `home/packages/darwin.nix`            |                                           |
-| Homebrew casks/brews       | `hosts/macbook/homebrew.nix`          |                                           |
-| Host-local Darwin settings | `hosts/macbook/host-data.nix`         | Hybrid: both data + darwin system options |
+| Homebrew casks/brews       | `hosts/chiffon/homebrew.nix`          |                                           |
+| Host-local Darwin settings | `hosts/chiffon/host-data.nix`         | Hybrid: both data + darwin system options |
 
 ## CONVENTIONS
 
 - **`default.nix` naming**: Darwin modules use `default.nix` (single macOS variant), unlike NixOS modules which use `desktop.nix`/`server.nix` suffixes.
 - **Module registration**: Add to `profiles/darwin/desktop.nix` — this profile imports directories (e.g., `../../modules/darwin/boot`), which resolves to `default.nix`.
 - **Most modules are empty placeholders** — only add content when a real macOS-specific setting is needed. Do not create modules that simply mirror NixOS settings.
-- **Darwin system options in host-data.nix**: Some darwin-level system settings (`nix.settings`, `system.stateVersion`, user config) live in `hosts/macbook/host-data.nix` alongside host-local data — this is a deviation from the NixOS pattern. New darwin settings may go either in `host-data.nix` or in `modules/darwin/<domain>/default.nix`.
+- **Darwin system options in host-data.nix**: Some darwin-level system settings (`nix.settings`, `system.stateVersion`, user config) live in `hosts/chiffon/host-data.nix` alongside host-local data — this is a deviation from the NixOS pattern. New darwin settings may go either in `host-data.nix` or in `modules/darwin/<domain>/default.nix`.
 - **`modules/shared/`** is the intended home for cross-platform modules safe to evaluate on both NixOS and Darwin. Currently empty.
 
 ## ANTI-PATTERNS
@@ -54,4 +54,4 @@ modules/darwin/
 - Darwin uses `nix-darwin.lib.darwinSystem` (not `lib.nixosSystem`). The builder is `mkDarwinHost` in `flake.nix`.
 - Home-manager is included via `home-manager.darwinModules.home-manager` (not `nixosModules.home-manager`).
 - No lanzaboote or sops-nix at the system level for Darwin. sops-nix is available via HM (`inputs.sops-nix.homeManagerModules.default` in `home/profiles/darwin.nix`).
-- `homebrew` is configured in `hosts/macbook/homebrew.nix` — a Darwin-only host file.
+- `homebrew` is configured in `hosts/chiffon/homebrew.nix` — a Darwin-only host file.

@@ -319,13 +319,13 @@
         };
 
       hosts = {
-        nixos = {
+        milk = {
           deployHostname = "192.168.11.48";
         };
       };
 
       servers = {
-        server = {
+        hinata = {
           deployHostname = "192.168.11.50";
         };
       };
@@ -344,7 +344,7 @@
       };
 
       darwinHosts = {
-        macbook = { };
+        chiffon = { };
       };
 
       forAllSystems = lib.genAttrs [
@@ -418,18 +418,9 @@
 
       deploy.nodes = lib.mapAttrs mkDeployNode (hosts // servers // openstackHosts);
 
-      packages = forAllSystems (
-        system:
-        let
-          pkgs = import nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
-          };
-        in
-        {
-          deploy-rs = deploy-rs.packages.${system}.default;
-        }
-      );
+      packages = forAllSystems (system: {
+        deploy-rs = deploy-rs.packages.${system}.default;
+      });
 
       apps = forAllSystems (
         system:

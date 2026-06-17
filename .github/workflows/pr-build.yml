@@ -30,7 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        host: [nixos, server, gateway, minecraft]
+        host: [milk, hinata, gateway, minecraft]
     steps:
       - uses: actions/checkout@v6
 
@@ -62,5 +62,5 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
           skipPush: true
 
-      - name: Build macbook
-        run: nix build -L .#darwinConfigurations.macbook.config.system.build.toplevel
+      - name: Build chiffon
+        run: nix build -L .#darwinConfigurations.chiffon.config.system.build.toplevel

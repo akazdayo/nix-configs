@@ -10,5 +10,6 @@
     ./lsp-signature.nix
     ./copilot.nix
     ./conform-nvim.nix
+    ./lazygit.nix
   ];
 }

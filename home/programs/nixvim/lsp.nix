@@ -53,6 +53,15 @@
           desc = "Go to definition";
         };
       }
+      {
+        mode = "n";
+        key = "<leader>ld";
+        action.__raw = "function() vim.diagnostic.open_float({ scope = 'cursor' }) end";
+        options = {
+          silent = true;
+          desc = "Show diagnostic details";
+        };
+      }
     ];
   };
 }

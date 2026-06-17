@@ -24,7 +24,6 @@ in
       wget
       lazygit
       gh
-      attic-client
     ])
     ++ lib.optionals isLinux (
       with pkgs;

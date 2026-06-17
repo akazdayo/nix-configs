@@ -46,9 +46,9 @@ in
   _module.args.hostData = hostData;
 
   nix.settings.extra-trusted-substituters = [
-    "https://attic.odango.app/main"
+    "https://nix-cache.odango.app"
   ];
   nix.settings.extra-trusted-public-keys = [
-    "main:p1I0gblo5KOxd64LCmeOmENhGx/fRCVp5CS4aOQGY6w="
+    "nix-cache.odango.app-1:/12tE/yLf8U9I9ivgbJRtXVM8zggnBF1KrS0MU4RciY="
   ];
 }

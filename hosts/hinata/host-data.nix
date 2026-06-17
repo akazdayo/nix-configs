@@ -16,9 +16,7 @@ let
         parentInterface = "eno1";
         address = "192.168.11.70";
         prefixLength = 32;
-        routeAddresses = [
-          "192.168.11.65"
-        ];
+        routeAddresses = [ ];
       };
     };
 
@@ -65,16 +63,18 @@ let
         # Legacy host-local secret path. Keep managed outside sops-nix for now.
         environmentHostPath = "/etc/searx-env";
       };
+    };
 
-      attic = {
-        address = "192.168.11.65";
-        prefixLength = 24;
-        hostName = "attic";
-        apiDomain = "attic.odango.app";
-        hostDataRoot = "/var/lib/attic-container";
-        # sops-nix decrypts to /run/secrets/atticd-env on host;
-        # bind-mounted read-only into the container.
-        environmentHostPath = "/run/secrets/atticd-env";
+    cache = {
+      domain = "nix-cache.odango.app";
+      bucket = "nix-cache";
+      niks3 = {
+        httpAddr = "127.0.0.1:5751";
+      };
+      rustfs = {
+        endpoint = "127.0.0.1:9000";
+        listenAddress = "127.0.0.1:9000";
+        dataRoot = "/var/lib/rustfs";
       };
     };
 
@@ -83,9 +83,9 @@ let
     cloudflared = {
       tunnelUuid = "9a22fd7b-44dd-4459-a360-52a5226b8216";
       ingress = {
-        attic = {
-          hostname = "attic.odango.app";
-          service = "http://192.168.11.65:8080";
+        cache = {
+          hostname = "nix-cache.odango.app";
+          service = "http://127.0.0.1:5751";
         };
       };
     };

@@ -13,7 +13,8 @@ NixOS system modules — 14 domains, each with `desktop.nix` and/or `server.nix`
 modules/nixos/
 ├── audio/desktop.nix          # PipeWire audio stack
 ├── boot/{desktop,server}.nix  # Bootloader (lanzaboote on desktop, systemd-boot on server)
-├── containers/{desktop,server,immich,attic,pihole-unbound,searxng,nextcloud}.nix
+├── cache/{niks3,rustfs}.nix          # Niks3 binary cache + RustFS S3 backend
+├── containers/{desktop,server,immich,pihole-unbound,searxng,nextcloud}.nix
 ├── desktop/desktop.nix        # DE (niri compositor, Firefox, printing, Sunshine)
 │   └── wayland/{login,niri,variable}.nix
 ├── flatpak/desktop.nix        # Flatpak support
@@ -35,6 +36,7 @@ modules/nixos/
 | Add NixOS system setting | Create `modules/nixos/<domain>/<variant>.nix` | Register in `profiles/nixos/<profile>.nix` |
 | Host-local values        | `hosts/<host>/host-data.nix`                  | Access via `hostMeta.hostData.<key>`       |
 | New container service    | `modules/nixos/containers/<name>.nix`         | Follow existing container template         |
+| Binary cache service     | `modules/nixos/cache/{niks3,rustfs}.nix`      | Niks3 cache + RustFS S3 backend            |
 | Add kernel module        | `modules/nixos/hardware/kernel.nix`           | CachyOS kernel via `nix-cachyos-kernel`    |
 
 ## CONVENTIONS
@@ -55,7 +57,7 @@ modules/nixos/
 
 ## NOTES
 
-- **Containers are NixOS containers** — each defines a full `containers.<name> = { config = { ... }; }` with interior `system.stateVersion`. The `attic.nix` (103 lines) is the most complex module. All containers follow a shared template: `autoStart`, `privateNetwork`, `macvlans`, `bindMounts`, nested `config`.
+- **Containers are NixOS containers** — each defines a full `containers.<name> = { config = { ... }; }` with interior `system.stateVersion`. All containers follow a shared template: `autoStart`, `privateNetwork`, `macvlans`, `bindMounts`, nested `config`.
 - **`macvlan-shim.nix`** is the only module using `lib.mkIf` + assertions — it solves a niche ARP/routing problem for container macvlan networking.
 - **`slimevr.nix`** uses `symlinkJoin` + `makeWrapper` — the only custom derivation in `modules/`.
 - **No formal NixOS tests** exist — `nixosTest` / `make-test` infrastructure is absent. Verification is via `nix flake check`, `dry-build`, and `nixos-rebuild test`.

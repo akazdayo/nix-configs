@@ -9,6 +9,8 @@
     ../../modules/nixos/virtualization/server.nix
     ../../modules/nixos/containers/server.nix
     ../../modules/nixos/secrets/server.nix
+    ../../modules/nixos/cache/niks3.nix
+    ../../modules/nixos/cache/rustfs.nix
   ];
 
   system.stateVersion = "25.11";

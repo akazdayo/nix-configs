@@ -1,13 +1,11 @@
-{ pkgs, ... }:
+{ ... }:
 {
-  # greetdログイン画面
-  services.greetd = {
+  services.displayManager.ly = {
     enable = true;
+    x11Support = false;
     settings = {
-      default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd niri-session";
-        user = "greeter";
-      };
+      load = false;
+      save = false;
     };
   };
 }

@@ -14,7 +14,6 @@
     ../packages/wayland.nix
     ../packages/gaming.nix
     ../packages/llm.nix
-    ../programs/vscode.nix
     ../programs/noctalia.nix
     ../programs/niri.nix
     ../programs/cursor.nix

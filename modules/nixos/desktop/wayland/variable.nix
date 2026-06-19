@@ -1,12 +1,7 @@
 { ... }:
 {
-  # Wayland環境変数(NVIDIA最適化)
+  # Wayland環境変数
   environment.sessionVariables = {
-    LIBVA_DRIVER_NAME = "nvidia";
-    GBM_BACKEND = "nvidia-drm";
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-    LD_LIBRARY_PATH = "/run/opengl-driver/lib";
-    WLR_NO_HARDWARE_CURSORS = "1"; # NVIDIAカーソル問題回避
     NIXOS_OZONE_WL = "1"; # Electron (Vesktop等)
     MOZ_ENABLE_WAYLAND = "1"; # Firefox
     TZ = "Asia/Tokyo";

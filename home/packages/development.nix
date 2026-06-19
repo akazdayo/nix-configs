@@ -10,8 +10,6 @@ in
         godot_4
         unityhub
         immich-go
-        nvtopPackages.nvidia
-        cudaPackages.cuda_nvcc
       ])
     else
       (with pkgs; [

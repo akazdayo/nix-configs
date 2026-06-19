@@ -1,4 +1,13 @@
-{ pkgs, config, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  hostMeta,
+  ...
+}:
+let
+  isDesktop = hostMeta.hostName == "milk";
+in
 {
   hardware.nvidia = {
     modesetting.enable = true;
@@ -27,4 +36,29 @@
 
   # Wayland用カーネルパラメータ
   boot.kernelParams = [ "nvidia.NVreg_PreserveVideoMemoryAllocations=1" ];
+
+  # NVIDIA用Wayland環境変数
+  environment.sessionVariables = {
+    LIBVA_DRIVER_NAME = "nvidia";
+    GBM_BACKEND = "nvidia-drm";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    LD_LIBRARY_PATH = "/run/opengl-driver/lib";
+    WLR_NO_HARDWARE_CURSORS = "1"; # NVIDIAカーソル問題回避
+  };
+
+  # NVIDIA関連のユーザー環境（ホームマネージャー経由）
+  home-manager.sharedModules = lib.optionals isDesktop [
+    ({ pkgs, ... }: {
+      home.packages = with pkgs; [
+        nvtopPackages.nvidia
+        cudaPackages.cuda_nvcc
+      ];
+
+      # optional Nvidia hardware acceleration
+      programs.obs-studio.package = pkgs.obs-studio.override {
+        cudaSupport = true;
+      };
+    })
+  ];
+
 }

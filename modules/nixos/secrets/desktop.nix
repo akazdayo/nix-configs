@@ -18,12 +18,5 @@
       generateKey = false;
       plugins = with pkgs; [ age-plugin-yubikey ];
     };
-
-    # System-level secret for the milk desktop host.
-    secrets.immich-api-key = {
-      sopsFile = ../../../secrets/milk/home.yaml;
-      owner = "akazdayo";
-      mode = "0400";
-    };
   };
 }

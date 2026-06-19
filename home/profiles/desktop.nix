@@ -21,7 +21,6 @@
     ../programs/nushell.nix
     ../programs/nixvim
     ../programs/obs.nix
-    ../programs/immich_backups.nix
     ../programs/secrets.nix
   ];
   home.sessionVariables.EDITOR = "nvim";

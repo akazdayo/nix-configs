@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   programs.nixvim = {
     # 基本設定
@@ -14,6 +14,8 @@
       smartcase = true;
 
       clipboard = "unnamedplus";
+
+      shell = "${pkgs.nushell}/bin/nu";
 
       termguicolors = true;
 

@@ -28,5 +28,14 @@
         desc = "Delete to end without yanking";
       };
     }
+    {
+      mode = "t";
+      key = "<C-q>";
+      action = "<C-\\><C-n>";
+      options = {
+        noremap = true;
+        desc = "Exit terminal mode";
+      };
+    }
   ];
 }

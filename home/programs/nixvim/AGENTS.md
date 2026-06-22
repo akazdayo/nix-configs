@@ -1,11 +1,11 @@
 # home/programs/nixvim
 
-**Generated:** 2026-05-19 | **Commit:** 94337f6
+**Generated:** 2026-06-22 | **Commit:** f1733e6
 Parent: [root AGENTS.md](../../../AGENTS.md)
 
 ## OVERVIEW
 
-NixVim configuration — 23 files across 4 levels of nesting, organized by concern (opts, keymaps, LSP, plugins) and plugin category (editor, UI, other).
+NixVim configuration — 28 files across 4 levels of nesting, organized by concern (opts, keymaps, LSP, plugins) and plugin category (editor, UI, other).
 
 ## STRUCTURE
 
@@ -18,7 +18,7 @@ home/programs/nixvim/
 ├── opts.nix                 # Editor options (encoding, listchars, clipboard)
 └── plugins/
     ├── default.nix          # Imports ui/, other/, editor/
-    ├── editor/              # Coding plugins (8)
+    ├── editor/              # Coding plugins (10)
     │   ├── default.nix
     │   ├── telescope.nix    # Fuzzy finder (+ keymaps)
     │   ├── treesitter.nix
@@ -27,7 +27,9 @@ home/programs/nixvim/
     │   ├── comment.nix
     │   ├── nvim-autopairs.nix
     │   ├── lsp-signature.nix
-    │   └── copilot.nix
+    │   ├── copilot.nix
+    │   ├── conform-nvim.nix # Formatter (mirrors treefmt)
+    │   └── lazygit.nix
     ├── ui/                  # UI plugins (6)
     │   ├── default.nix
     │   ├── lualine.nix
@@ -36,9 +38,11 @@ home/programs/nixvim/
     │   ├── web-devicons.nix
     │   ├── indent-blankline.nix
     │   └── smear-cursor.nix
-    └── other/               # Miscellaneous (1)
+    └── other/               # Miscellaneous (3)
         ├── default.nix
-        └── neocord.nix
+        ├── neocord.nix
+        ├── toggleterm.nix
+        └── wakatime.nix
 ```
 
 ## WHERE TO LOOK

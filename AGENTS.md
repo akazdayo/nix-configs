@@ -1,6 +1,6 @@
 # AGENTS.md
 
-**Generated:** 2026-05-22 | **Commit:** 951517d | **Branch:** main
+**Generated:** 2026-06-22 | **Commit:** f1733e6 | **Branch:** main
 
 ## Build & Test Commands
 
@@ -11,19 +11,20 @@
 - **Apply Config (Darwin)**: `nix run nix-darwin -- switch --flake .#chiffon`
 - **Lint/Check**: `nix flake check` (also runs deploy-rs checks)
 - **Update deps**: `nix flake update` (all) or `nix flake lock --update-input <name>`
-- **Dev shell**: `nix develop` (provides deploy-rs, nixfmt-rfc-style, sops, age tools)
+- **Dev shell**: `nix develop` (provides deploy-rs, nixfmt-rfc-style, sops, age tools, opentofu, python3Packages.python-openstackclient)
 
 ## CI (GitHub Actions)
 
-- **PR Build** (`pr-build.yml`): On PR to main — builds all 4 hosts (milk, hinata, gateway on ubuntu-latest; chiffon on macos-latest). Uses Cachix (read-only).
-- **Scheduled Update** (`flake-update.yml`): Every 3 days — updates flake.lock, builds all hosts, pushes to Cachix + Attic, commits updated lock file.
+- **PR Build** (`pr-build.yml`): On PR to main. 2 jobs — `flake-check` (`nix flake check --no-build`) then `build` matrix (5 hosts: milk, hinata, gateway, minecraft on ubuntu-latest; chiffon on macos-latest). Uses Cachix (read-only, `skipPush: true`). `fail-fast: false`.
+- **Scheduled Update** (`flake-update.yml`): Every 3 days at 03:00 UTC. 3-job pipeline: `update` (flake.lock) → `build` (all 5 hosts, pushes to Cachix + Attic) → `commit` (bot commits updated lock). Attic push is secondary and non-fatal.
+- **Deploy OpenStack** (`deploy-openstack.yml`): On push to main — deploys gateway (138.252.25.166) and minecraft (138.252.25.159) via deploy-rs with SSH deploy key (`secrets.DEPLOY_SSH_PRIVATE_KEY`). Cachix write-enabled.
 - No formal NixOS tests exist. Verification is via `nix flake check`, dry-build, and CI builds.
 
 ## Architecture
 
 Import chain: `flake.nix` → host (`hosts/<name>/default.nix` or `hosts/openstack/<name>/default.nix`) → profile (`profiles/<platform>/<type>/<name>/default.nix` where grouped) → module domain (`modules/<platform>/<domain>/<variant>.nix`)
 
-- `flake.nix`: Four builder functions — `mkHost` (desktop NixOS), `mkServer` (server NixOS), `mkOpenStackHost` (cloud VM NixOS), `mkDarwinHost` (macOS). Each constructs `hostMeta`, resolves `hostData`, wires `specialArgs` + `extraSpecialArgs`.
+- `flake.nix`: Four builder functions — `mkHost` (desktop NixOS → `nixosConfigurations.milk`), `mkServer` (server NixOS → `nixosConfigurations.hinata`), `mkOpenStackHost` (cloud VM NixOS → `nixosConfigurations.{gateway,minecraft}`), `mkDarwinHost` (macOS → `darwinConfigurations.chiffon`). Each constructs `hostMeta`, resolves `hostData`, wires `specialArgs` + `extraSpecialArgs`.
 - **hostMeta** (passed to all NixOS + HM modules): `{ hostName, system, primaryUser, flakeRoot, hostData }`. `hostData` is resolved via a two-pass pattern: `baseHostMeta` → import `host-data.nix` → extract `_module.args.hostData` → merge into `hostMeta`.
 - **specialArgs (NixOS)**: `self`, `inputs`, `pkgs-unstable`, `hostMeta`
 - **extraSpecialArgs (home-manager)**: same as system + `pkgs-with-llm-agents` + `nixvim-module`
@@ -40,9 +41,12 @@ Import chain: `flake.nix` → host (`hosts/<name>/default.nix` or `hosts/opensta
   - NixOS system modules: imported by `profiles/nixos/*.nix`.
   - Darwin system modules: imported by `profiles/darwin/*.nix`.
   - Home Manager modules: imported by `home/profiles/*.nix`.
-- **Formatting**: `nixfmt-rfc-style` (canonical, in devShell). `alejandra` also available as user package.
+- **Formatting**: `treefmt-nix` configured in `./treefmt.nix` — includes `nixfmt-rfc-style` (canonical), `stylua` (lua), `shfmt` (shell), `prettier` (md/json/yaml), `rustfmt` (rust). Excludes `secrets/**/*.yaml`. Editor mirrors treefmt via conform-nvim (auto-format on save). `nix fmt` alias wraps treefmt.
 - **Versions**: Maintain `system.stateVersion = "25.11"` (NixOS) and `home.stateVersion = "25.11"`. Darwin hosts use integer `system.stateVersion` (for example, `6`).
 - **Packages**: Use `pkgs-unstable` for newer software if needed (passed via `specialArgs`). Three package sets: `pkgs` (stable), `pkgs-unstable`, `pkgs-with-llm-agents` (HM-only). All have `allowUnfree = true`.
+- **Pre-commit hooks**: Uses `git-hooks.nix` (cachix/git-hooks.nix). Generated `.pre-commit-config.yaml` (gitignored). 3 hooks: `nix-fmt` (treefmt across .nix/.lua/.sh/.md/.json/.toml/.yaml/.yml/.rs), `check-added-large-files`, `check-merge-conflicts`.
+- **direnv**: `.envrc` uses `use flake` for automatic dev shell entry.
+- **Module arguments**: NixOS leaf modules use `{ hostMeta, ... }` then `let hostData = hostMeta.hostData;` for host-local data access. Do not access `hostMeta.hostData` without destructuring.
 
 ## Strict File & Directory Rules
 
@@ -77,10 +81,15 @@ Import chain: `flake.nix` → host (`hosts/<name>/default.nix` or `hosts/opensta
 - **Host-Local Data**:
   - Static host values (IP addresses, interface names, gateway, DNS, mount paths, swap file path, SSH authorized keys, Immich paths/URLs, container service paths) belong in `hosts/<host>/host-data.nix`.
   - Reusable modules must read these values from `hostMeta.hostData`, never hardcode them.
+- **Hardware Configuration**:
+  - Do not modify `hardware-configuration.nix` — it is auto-generated by `nixos-generate-config` and kept in repo only as a reference.
+  - Hardware additions belong in `modules/nixos/hardware/<feature>.nix`.
 - **Security (Principle with Exceptions)**:
   - Principle: Do not hardcode secrets (API keys, tokens, passwords) in tracked files.
   - Exception: Local-only non-privileged values may be temporarily allowed when unavoidable.
   - When using an exception, document reason and scope inline, and plan migration to secret management or environment variables.
+  - SOPS config (`.sops.yaml`): per-host age encryption keys with path-regex rules (`secrets/<host>/[^/]+\.(yaml|json|env|ini)$`). Key management documented in `secrets/README.md`.
+  - Do not decrypt `.yaml` secrets during normal repo structure work; only via `sops` for targeted updates.
 - **Secret Path Freeze**:
   - Do not move, rename, or rekey tracked encrypted secret files during repo structure work.
   - Current tracked encrypted files: `secrets/milk/home.yaml`.
@@ -97,3 +106,4 @@ Import chain: `flake.nix` → host (`hosts/<name>/default.nix` or `hosts/opensta
   - `scripts/`: Does NOT exist (contrary to README tree diagram).
   - `packages/` is dual-role: both a NixOS module (sets `nixpkgs.overlays` via auto-discovery) and a potential flake output container. The overlay auto-discovery (`builtins.readDir` + `callPackage`) is a bespoke pattern.
   - `profiles/{nixos,darwin}/default.nix` and `home/profiles/default.nix` are empty placeholder scaffolds — not active entry points.
+  - `.agents/`: Project-specific agent skills (currently `nixvim-add-plugin`). Not standard flake content.

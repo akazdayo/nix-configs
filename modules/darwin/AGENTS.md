@@ -1,6 +1,6 @@
 # modules/darwin
 
-**Generated:** 2026-05-19 | **Commit:** 94337f6
+**Generated:** 2026-06-22 | **Commit:** f1733e6
 Parent: [root AGENTS.md](../../AGENTS.md)
 
 ## OVERVIEW

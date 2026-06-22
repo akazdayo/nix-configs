@@ -1,11 +1,11 @@
 # home/programs
 
-**Generated:** 2026-05-22 | **Commit:** 951517d
+**Generated:** 2026-06-22 | **Commit:** f1733e6
 Parent: [root AGENTS.md](../../AGENTS.md)
 
 ## OVERVIEW
 
-Per-program Home Manager configuration — 12 `.nix` files plus the `nixvim/` subtree. Each file configures a single program or service for the user environment.
+Per-program Home Manager configuration — 11 `.nix` files plus the `nixvim/` subtree. Each file configures a single program or service for the user environment.
 
 ## STRUCTURE
 
@@ -17,13 +17,12 @@ home/programs/
 ├── git.nix                 # Git user config, LFS, SSH signing
 ├── immich_backups.nix      # Immich photo backup service
 ├── niri.nix                # Niri compositor (Wayland)
-├── nixvim/                 # Neovim via NixVim (23 files, see own AGENTS.md)
+├── nixvim/                 # Neovim via NixVim (28 files, see own AGENTS.md)
 ├── noctalia.nix            # Noctalia shell integration
 ├── nushell.nix             # Nushell, carapace, starship, direnv
 ├── obs.nix                 # OBS Studio
 ├── secrets.nix             # sops-nix HM config + CLI tools (sops, age)
 ├── ssh.nix                 # SSH match blocks (GitHub, host-local)
-└── vscode.nix              # VS Code editor config
 ```
 
 ## WHERE TO LOOK
@@ -40,7 +39,7 @@ home/programs/
 
 - **One file = one program**: Each file configures a single `programs.<name>` or `services.<name>` block. Do not combine unrelated programs.
 - **Registration**: New program modules must be imported from the appropriate `home/profiles/<profile>.nix`. Which profile imports which program:
-  - `desktop.nix`: git, ssh, files, flameshot, vscode, noctalia, niri, cursor, nushell, nixvim, obs, immich_backups, secrets
+  - `desktop.nix`: git, ssh, files, flameshot, noctalia, niri, cursor, nushell, nixvim, obs, immich_backups, secrets
   - `server.nix`: git, nushell, nixvim, secrets
   - `openstack.nix`: git, nushell, nixvim
   - `darwin.nix`: git, ssh, nushell, nixvim, secrets

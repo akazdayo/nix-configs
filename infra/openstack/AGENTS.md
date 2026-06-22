@@ -1,6 +1,6 @@
 # infra/openstack
 
-**Generated:** 2026-05-22 | **Commit:** 951517d
+**Generated:** 2026-06-22 | **Commit:** f1733e6
 Parent: [root AGENTS.md](../../AGENTS.md)
 
 ## OVERVIEW

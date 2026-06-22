@@ -7,6 +7,7 @@
     ghostty
     libreoffice
     signal-desktop
+    mattermost-desktop
     termius
     tor-browser
     google-chrome

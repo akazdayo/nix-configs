@@ -76,6 +76,14 @@ let
         # bind-mounted read-only into the container.
         environmentHostPath = "/run/secrets/atticd-env";
       };
+
+      obsidianLivesync = {
+        address = "192.168.11.66";
+        prefixLength = 24;
+        hostName = "obsidian-livesync";
+        hostDataRoot = "/var/lib/obsidian-livesync-container";
+        adminUser = "admin";
+      };
     };
 
     # Cloudflare Tunnel: ingress rules declared here; DNS routes managed externally.

@@ -31,6 +31,12 @@
       mode = "0400";
     };
 
+    secrets.couchdb-admin-yaml = {
+      sopsFile = ../../../secrets/hinata/obsidian-livesync.yaml;
+      owner = "root";
+      mode = "0400";
+    };
+
     # Server-level sops integration is configured here, but current
     # container /etc/... secret files remain legacy host-local paths.
   };

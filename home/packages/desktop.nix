@@ -16,7 +16,6 @@
     unar
     nostui
     obsidian
-    zoom-us
     vesktop
   ];
 }

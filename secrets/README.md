@@ -74,14 +74,20 @@ Tracked encrypted secret files must stay at these paths so pure evaluation can s
   - Status: encrypted with sops; do not decrypt in normal repo work
   - Used by: `modules/nixos/secrets/desktop.nix`
   - Host scope: the `milk` desktop system profile
-- `secrets/hinata/`, `secrets/common/`, `secrets/chiffon/`
+- `secrets/hinata/cache.yaml`
+  - Contains: `niks3-api-token`, `niks3-signing-key`, `rustfs-access-key`, `rustfs-secret-key`
+  - Status: encrypted with sops; do not decrypt in normal repo work
+  - Used by: `modules/nixos/cache/niks3.nix` and `modules/nixos/cache/rustfs.nix`
+  - Host scope: the `hinata` server system profile
+- `secrets/common/`, `secrets/chiffon/`
   - Current tracked state: placeholder `.gitkeep` only, no encrypted secret files committed today
 
 ### System-level vs Home Manager boundary
 
 - System-level secrets live under `modules/nixos/secrets/` and are consumed by NixOS modules.
   - `modules/nixos/secrets/desktop.nix` currently declares `sops.secrets.immich-api-key` from `secrets/milk/home.yaml`.
-  - `modules/nixos/secrets/server.nix` currently only configures the hinata host age/SSH integration and does not declare any `sops.secrets.*` entries yet.
+  - `modules/nixos/secrets/server.nix` configures the hinata host age/SSH integration.
+  - Cache service secrets (`niks3-api-token`, `niks3-signing-key`, `rustfs-access-key`, `rustfs-secret-key`) are declared in `modules/nixos/cache/niks3.nix` and `modules/nixos/cache/rustfs.nix` from `secrets/hinata/cache.yaml`.
 - Home Manager secret wiring lives in `home/programs/secrets.nix`.
   - This module is imported by the desktop, server, and Darwin Home Manager profiles.
   - It currently configures sops/age tooling only and does not declare any active Home Manager secrets yet.
@@ -93,7 +99,7 @@ Tracked encrypted secret files must stay at these paths so pure evaluation can s
   - Uses `secrets/milk/home.yaml`
 - `hinata` host
   - Imports `profiles/nixos/server.nix` -> `modules/nixos/secrets/server.nix`
-  - Currently has no tracked sops-managed encrypted file in `secrets/hinata/`
+  - Uses `secrets/hinata/cache.yaml` for the Niks3/RustFS binary cache services
 - `chiffon` host
   - Imports `home/programs/secrets.nix` through the Darwin Home Manager profile
   - `.sops.yaml` reserves `secrets/chiffon/` for future Darwin secrets, but no encrypted file is committed there today

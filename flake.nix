@@ -52,6 +52,12 @@
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    niks3 = {
+      url = "github:Mic92/niks3";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.treefmt-nix.follows = "treefmt-nix";
+    };
   };
 
   outputs =
@@ -72,6 +78,7 @@
       sops-nix,
       treefmt-nix,
       git-hooks,
+      niks3,
     }@inputs:
     let
       lib = nixpkgs.lib;

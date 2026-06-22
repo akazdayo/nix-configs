@@ -19,7 +19,7 @@ home/packages/
 ├── wayland.nix         # Wayland-specific tools (wl-clipboard, grim, slurp, etc.)
 ├── gaming.nix          # Gaming tools (cider2, prismlauncher, etc.)
 ├── llm.nix             # LLM agents (opencode, claude-code)
-├── server.nix          # Server-specific (tailscale, attic-client, etc.)
+├── server.nix          # Server-specific (tailscale, etc.)
 └── darwin.nix          # macOS-specific (nerd-fonts, ffmpeg)
 ```
 

@@ -7,6 +7,7 @@
     ./wayland/login.nix
     ./wayland/niri.nix
     ./wayland/variable.nix
+    ./zoom.nix
   ];
 
   # XDGポータル(スクリーンシェア、ファイルピッカー)

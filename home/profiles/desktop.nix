@@ -21,6 +21,7 @@
     ../programs/nixvim
     ../programs/obs.nix
     ../programs/secrets.nix
+    ../programs/zoom.nix
   ];
   home.sessionVariables.EDITOR = "nvim";
   home.stateVersion = "25.11";

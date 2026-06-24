@@ -6,5 +6,6 @@
     ./swap.nix
     ./pentablet.nix
     ./mounts.nix
+    ./scanner.nix
   ];
 }

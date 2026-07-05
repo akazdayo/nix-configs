@@ -8,7 +8,6 @@
         nixd.enable = true;
         nushell.enable = true;
         tsgo.enable = true;
-        ts_ls.enable = true;
         rust_analyzer = {
           enable = true;
           installCargo = true;

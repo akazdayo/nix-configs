@@ -46,9 +46,10 @@ in
   _module.args.hostData = hostData;
 
   nix.settings.extra-trusted-substituters = [
-    "https://attic.odango.app/main"
+    "https://cache.numtide.com"
   ];
   nix.settings.extra-trusted-public-keys = [
     "main:p1I0gblo5KOxd64LCmeOmENhGx/fRCVp5CS4aOQGY6w="
+    "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
   ];
 }

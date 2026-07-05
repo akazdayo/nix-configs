@@ -12,10 +12,9 @@
     tor-browser
     google-chrome
     nautilus
-    code-cursor
     unar
-    nostui
     obsidian
     vesktop
+    wireguard-tools
   ];
 }

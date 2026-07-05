@@ -4,6 +4,6 @@
   programs.noctalia = {
     enable = true;
     package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
-    systemd.enable = false;
+    systemd.enable = true;
   };
 }

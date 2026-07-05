@@ -5,6 +5,7 @@ in
 {
   imports = [
     ./tailscale.nix
+    ./wireguard.nix
     ./macvlan-shim.nix
     ./cloudflared.nix
   ];

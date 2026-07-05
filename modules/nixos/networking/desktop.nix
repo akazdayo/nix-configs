@@ -5,6 +5,7 @@ in
 {
   imports = [
     ./tailscale.nix
+    ./wireguard.nix
   ];
 
   networking.hostName = hostMeta.hostName;

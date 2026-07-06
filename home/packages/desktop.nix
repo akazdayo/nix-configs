@@ -4,7 +4,7 @@
     nextcloud-client
     xdg-utils
     slack
-    ghostty
+    alacritty
     libreoffice
     signal-desktop
     mattermost-desktop

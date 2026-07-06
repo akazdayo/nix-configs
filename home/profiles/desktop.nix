@@ -17,6 +17,7 @@
     ../programs/noctalia.nix
     ../programs/niri.nix
     ../programs/cursor.nix
+    ../programs/ghostty.nix
     ../programs/nushell.nix
     ../programs/nixvim
     ../programs/obs.nix

@@ -45,7 +45,7 @@ in
 {
   _module.args.hostData = hostData;
 
-  nix.settings.extra-trusted-substituters = [
+  nix.settings.extra-substituters = [
     "https://cache.numtide.com"
     "https://akazdayo-nixos-config.cachix.org"
   ];

@@ -28,6 +28,5 @@ in
       # LLM Agents from numtide/llm-agents.nix
       opencode
       codex
-      claude-code
     ]);
 }

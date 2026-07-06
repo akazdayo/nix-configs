@@ -328,6 +328,12 @@ in
         open-floating true
     }
 
+    // Hide Discord clients from OBS / portal screencasts while keeping full-screen capture usable.
+    window-rule {
+        match app-id=r#"^(discord|Discord|com\.discordapp\.Discord|vesktop|dev\.vencord\.Vesktop)$"#
+        block-out-from "screencast"
+    }
+
     // Open the Firefox picture-in-picture player as floating by default.
     window-rule {
         // This app-id regular expression will work for both:

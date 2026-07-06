@@ -3,7 +3,7 @@ let
   # Noctalia IPC コマンド生成ヘルパー
   noctalia =
     cmd:
-    ''spawn "noctalia-shell" "ipc" "call" ${
+    ''spawn "noctalia" "msg" ${
       pkgs.lib.concatMapStringsSep " " (s: ''"${s}"'') (pkgs.lib.splitString " " cmd)
     }'';
 in
@@ -257,8 +257,6 @@ in
     // spawn-at-startup "waybar"
 
     spawn-at-startup "xwayland-satellite"
-    spawn-at-startup "noctalia-shell"
-
     // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
     // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
 
@@ -293,14 +291,26 @@ in
         // slowdown 3.0
     }
 
+    debug {
+        // Allows notification actions and window activation from Noctalia.
+        honor-xdg-activation-with-invalid-serial
+    }
+
     // Window rules let you adjust behavior for individual windows.
     // Find more information on the wiki:
     // https://yalter.github.io/niri/Configuration:-Window-Rules
 
-    // Set the overview wallpaper on the backdrop.
+    // Place Noctalia's overview backdrop layer inside niri's overview backdrop.
     layer-rule {
-        match namespace="^noctalia-overview*"
+        match namespace="^noctalia-backdrop"
         place-within-backdrop true
+    }
+
+    window-rule {
+        match app-id="dev.noctalia.Noctalia"
+        open-floating true
+        default-column-width { fixed 1080; }
+        default-window-height { fixed 920; }
     }
 
     // Work around WezTerm's initial configure bug
@@ -363,7 +373,7 @@ in
 
         // Suggested binds for running programs: terminal, app launcher, screen locker.
         Mod+T hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
-        Mod+D hotkey-overlay-title="Open Noctalia Launcher" { ${noctalia "launcher toggle"}; }
+        Mod+D hotkey-overlay-title="Open Noctalia Launcher" { ${noctalia "panel-toggle launcher"}; }
         Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
 
         // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
@@ -611,7 +621,7 @@ in
         //
         // The allow-inhibiting=false property can be applied to other binds as well,
         // which ensures niri always processes them, even when an inhibitor is active.
-        Mod+Escape allow-inhibiting=false { ${noctalia "sessionMenu toggle"}; }
+        Mod+Escape allow-inhibiting=false { ${noctalia "panel-toggle session"}; }
 
         // The quit action will show a confirmation dialog to avoid accidental exits.
         Mod+Shift+E { quit; }

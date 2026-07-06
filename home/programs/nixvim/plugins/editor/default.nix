@@ -11,5 +11,6 @@
     ./copilot.nix
     ./conform-nvim.nix
     ./lazygit.nix
+    ./agentic.nix
   ];
 }

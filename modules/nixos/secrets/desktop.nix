@@ -1,4 +1,7 @@
-{ pkgs, ... }:
+{ hostMeta, pkgs, ... }:
+let
+  primaryUser = hostMeta.primaryUser;
+in
 {
   services.pcscd.enable = true;
 
@@ -17,6 +20,13 @@
       sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
       generateKey = false;
       plugins = with pkgs; [ age-plugin-yubikey ];
+    };
+
+    secrets.wakatime-api-key = {
+      sopsFile = ../../../secrets/milk/wakatime.yaml;
+      key = "api-key";
+      owner = primaryUser;
+      mode = "0400";
     };
   };
 }

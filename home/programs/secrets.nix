@@ -8,12 +8,9 @@
     };
 
     # Home Manager imports this module on desktop/server/darwin, but there are
-    # no active HM-managed secrets yet. Keep examples aligned to current paths.
-    # Example:
-    # secrets.immich-api-key = {
-    #   sopsFile = ../../secrets/milk/home.yaml;
-    #   path = "%r/immich-api-key";
-    # };
+    # no active HM-managed secrets here. User secrets that need unattended
+    # decryption on NixOS are declared at the system level so they can use the
+    # host SSH age key.
   };
 
   home.file.".config/sops/age/yubikey-priority.sh" = {

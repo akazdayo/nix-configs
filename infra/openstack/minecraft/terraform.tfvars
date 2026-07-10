@@ -25,6 +25,16 @@ extra_tcp_ingress_rules = [
     name  = "bluemap-http"
     port  = 8100
     cidrs = ["138.252.25.166/32"]
+  },
+  {
+    name  = "carpet-bot-api-http"
+    port  = 8765
+    cidrs = ["138.252.25.166/32"]
+  },
+  {
+    name  = "carpet-bot-api-websocket"
+    port  = 8766
+    cidrs = ["138.252.25.166/32"]
   }
 ]
 extra_udp_ingress_rules = [

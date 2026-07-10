@@ -19,6 +19,11 @@ let
     minecraft = {
       dataDir = "/srv/minecraft";
 
+      botApi = {
+        httpPort = 8765;
+        websocketPort = 8766;
+      };
+
       smp = {
         serverPort = 25566;
         jvmOpts = "-Xms1G -Xmx2G";

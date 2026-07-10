@@ -30,6 +30,10 @@ let
       url = "https://github.com/gnembon/fabric-carpet/releases/download/v26.1/fabric-carpet-26.1+v260402.jar";
       sha256 = "59bd225d12423a7d7a635ca0c94fa786f97ccebb116922b16d76072da4ee67e7";
     };
+    CarpetBotApi = pkgs.fetchurl {
+      url = "https://github.com/zunoser/carpet-ws/releases/download/v0.1.3/carpet-bot-api-0.1.3.jar";
+      sha256 = "722babc31d5992bea55b49682e389696e61d91e5e515db7f5c74eb866cc9404b";
+    };
     Servux = pkgs.fetchurl {
       url = "https://cdn.modrinth.com/data/zQhsx8KF/versions/eu63Kj9A/servux-fabric-26.1.2-0.10.2.jar";
       sha512 = "78566cebcc5e181c68fc7f78c2f34213d634ae930f82cdfad19dd65ac4e6b24ae6d541a200b069e07e32e90b5c827d1cc1e80809da376bfbabfc8b302f9f256a";

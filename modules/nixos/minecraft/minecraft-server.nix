@@ -7,6 +7,9 @@
 }:
 let
   minecraftData = hostMeta.hostData.minecraft or { };
+  botApiData = minecraftData.botApi or { };
+  botApiHttpPort = botApiData.httpPort or 8765;
+  botApiWebsocketPort = botApiData.websocketPort or 8766;
   smpData = minecraftData.smp or { };
   blueMapData = smpData.bluemap or { };
   blueMapPort = blueMapData.port or 8100;
@@ -267,6 +270,10 @@ in
   };
 
   # Simple Voice Chat mod uses UDP 24454 by default.
-  networking.firewall.allowedTCPPorts = [ blueMapPort ];
+  networking.firewall.allowedTCPPorts = [
+    blueMapPort
+    botApiHttpPort
+    botApiWebsocketPort
+  ];
   networking.firewall.allowedUDPPorts = [ 24454 ];
 }

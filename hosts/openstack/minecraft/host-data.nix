@@ -24,7 +24,13 @@ let
         jvmOpts = "-Xms1G -Xmx2G";
         bluemap = {
           port = 8100;
-          bindAddress = "0.0.0.0";
+          webserverEnabled = false;
+          bindAddress = "127.0.0.1";
+          sync = {
+            sourceDir = "/srv/minecraft/fabric-smp/bluemap/web";
+            destination = "bluemap::bluemap-web/";
+            interval = "2min";
+          };
         };
       };
 

@@ -57,5 +57,6 @@ Each host is a separate OpenTofu root module with its own local state:
 | --------- | --------------------------- | ----------------------------------------- |
 | gateway   | `infra/openstack/gateway`   | `nix run .#deploy-openstack -- gateway`   |
 | minecraft | `infra/openstack/minecraft` | `nix run .#deploy-openstack -- minecraft` |
+| bluemap   | `infra/openstack/bluemap`   | `nix run .#deploy-openstack -- bluemap`   |
 
 `deploy-openstack` resolves the host's SSH address from the matching OpenTofu root module output.

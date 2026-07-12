@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 concurrency:
   group: flake-update
@@ -18,6 +19,7 @@ jobs:
     outputs:
       inputs: ${{ steps.flake-inputs.outputs.inputs }}
       build_matrix: ${{ steps.flake-inputs.outputs.build_matrix }}
+      host_matrix: ${{ steps.flake-inputs.outputs.host_matrix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -35,8 +37,10 @@ jobs:
           ]'
           build_matrix=$(jq -cn --argjson inputs "$inputs" --argjson hosts "$hosts" \
             '{include: [ $inputs[] as $input | $hosts[] | . + {input: $input} ]}')
+          host_matrix=$(jq -cn --argjson hosts "$hosts" '{include: $hosts}')
           echo "inputs=$inputs" >> "$GITHUB_OUTPUT"
           echo "build_matrix=$build_matrix" >> "$GITHUB_OUTPUT"
+          echo "host_matrix=$host_matrix" >> "$GITHUB_OUTPUT"
 
   update:
     needs: discover
@@ -55,6 +59,9 @@ jobs:
         uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            extra-substituters = https://cache.numtide.com
+            extra-trusted-public-keys = niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=
 
       - name: Update ${{ matrix.input }}
         run: nix flake lock --update-input "${{ matrix.input }}"
@@ -86,17 +93,24 @@ jobs:
         uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            extra-substituters = https://cache.numtide.com
+            extra-trusted-public-keys = niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=
 
       - name: Restore / configure Cachix
         uses: cachix/cachix-action@v17
         with:
           name: ${{ vars.CACHIX_CACHE_NAME || 'akazdayo' }}
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          skipPush: true
+
+      - name: Configure Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@v14
 
       - name: Build ${{ matrix.host }} with ${{ matrix.input }} updated
         run: nix build ".#${{ matrix.flake-attr }}.${{ matrix.host }}.config.system.build.toplevel" --print-build-logs
 
-  commit:
+  finalize:
     needs: build
     if: needs.build.result == 'success'
     runs-on: ubuntu-latest
@@ -110,9 +124,70 @@ jobs:
         uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            extra-substituters = https://cache.numtide.com
+            extra-trusted-public-keys = niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=
 
       - name: Update all flake inputs for the final lock
         run: nix flake update
+
+      - name: Upload final flake.lock
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-flake-lock-${{ github.run_id }}
+          path: flake.lock
+
+  distribute:
+    needs: [discover, finalize]
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.discover.outputs.host_matrix) }}
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Download final flake.lock
+        uses: actions/download-artifact@v4
+        with:
+          name: final-flake-lock-${{ github.run_id }}
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            extra-substituters = https://cache.numtide.com
+            extra-trusted-public-keys = niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=
+
+      - name: Restore / configure Cachix for distribution
+        uses: cachix/cachix-action@v17
+        with:
+          name: ${{ vars.CACHIX_CACHE_NAME || 'akazdayo' }}
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Configure Magic Nix Cache for distribution
+        uses: DeterminateSystems/magic-nix-cache-action@v14
+
+      - name: Build and push ${{ matrix.host }}
+        run: nix build ".#${{ matrix.flake-attr }}.${{ matrix.host }}.config.system.build.toplevel" --print-build-logs
+
+  commit:
+    needs: distribute
+    if: needs.distribute.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Download final flake.lock
+        uses: actions/download-artifact@v4
+        with:
+          name: final-flake-lock-${{ github.run_id }}
 
       - name: Commit and push flake.lock
         env:

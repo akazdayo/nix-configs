@@ -13,10 +13,25 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  update:
+  discover:
     runs-on: ubuntu-latest
     outputs:
-      updated: ${{ steps.check-changes.outputs.updated }}
+      inputs: ${{ steps.flake-inputs.outputs.inputs }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Read flake inputs
+        id: flake-inputs
+        run: echo "inputs=$(jq -c '.nodes.root.inputs | keys' flake.lock)" >> "$GITHUB_OUTPUT"
+
+  update:
+    needs: discover
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        input: ${{ fromJSON(needs.discover.outputs.inputs) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -28,32 +43,21 @@ jobs:
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update flake.lock
-        run: nix flake update
+      - name: Update ${{ matrix.input }}
+        run: nix flake lock --update-input "${{ matrix.input }}"
 
-      - name: Check for changes
-        id: check-changes
-        run: |
-          if git diff --quiet -- flake.lock; then
-            echo "updated=false" >> "$GITHUB_OUTPUT"
-            echo "No flake.lock changes; skipping build."
-          else
-            echo "updated=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Upload flake.lock
-        if: steps.check-changes.outputs.updated == 'true'
+      - name: Upload flake.lock for ${{ matrix.input }}
         uses: actions/upload-artifact@v4
         with:
-          name: flake-lock-${{ github.run_id }}
+          name: flake-lock-${{ matrix.input }}-${{ github.run_id }}
           path: flake.lock
 
   build:
-    needs: update
-    if: needs.update.outputs.updated == 'true'
+    needs: [discover, update]
     strategy:
       fail-fast: false
       matrix:
+        input: ${{ fromJSON(needs.discover.outputs.inputs) }}
         include:
           - host: milk
             runs-on: ubuntu-latest
@@ -77,10 +81,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download flake.lock
+      - name: Download flake.lock for ${{ matrix.input }}
         uses: actions/download-artifact@v4
         with:
-          name: flake-lock-${{ github.run_id }}
+          name: flake-lock-${{ matrix.input }}-${{ github.run_id }}
 
       - name: Install Nix
         uses: cachix/install-nix-action@v31
@@ -93,21 +97,26 @@ jobs:
           name: ${{ vars.CACHIX_CACHE_NAME || 'akazdayo' }}
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - name: Build ${{ matrix.host }}
+      - name: Build ${{ matrix.host }} with ${{ matrix.input }} updated
         run: nix build ".#${{ matrix.flake-attr }}.${{ matrix.host }}.config.system.build.toplevel" --print-build-logs
 
   commit:
     needs: build
-    if: always() && needs.build.result == 'success'
+    if: needs.build.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Download flake.lock
-        uses: actions/download-artifact@v4
+        uses: actions/checkout@v7
         with:
-          name: flake-lock-${{ github.run_id }}
+          fetch-depth: 0
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update all flake inputs for the final lock
+        run: nix flake update
 
       - name: Commit and push flake.lock
         env:

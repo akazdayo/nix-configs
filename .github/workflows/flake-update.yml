@@ -34,7 +34,7 @@ jobs:
             {"host":"chiffon","runs-on":"macos-latest","flake-attr":"darwinConfigurations"}
           ]'
           build_matrix=$(jq -cn --argjson inputs "$inputs" --argjson hosts "$hosts" \
-            '[ $inputs[] as $input | $hosts[] | . + {input: $input} ]')
+            '{include: [ $inputs[] as $input | $hosts[] | . + {input: $input} ]}')
           echo "inputs=$inputs" >> "$GITHUB_OUTPUT"
           echo "build_matrix=$build_matrix" >> "$GITHUB_OUTPUT"
 

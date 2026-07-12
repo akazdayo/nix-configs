@@ -17,13 +17,26 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       inputs: ${{ steps.flake-inputs.outputs.inputs }}
+      build_matrix: ${{ steps.flake-inputs.outputs.build_matrix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
       - name: Read flake inputs
         id: flake-inputs
-        run: echo "inputs=$(jq -c '.nodes.root.inputs | keys' flake.lock)" >> "$GITHUB_OUTPUT"
+        run: |
+          inputs=$(jq -c '.nodes.root.inputs | keys' flake.lock)
+          hosts='[
+            {"host":"milk","runs-on":"ubuntu-latest","flake-attr":"nixosConfigurations"},
+            {"host":"hinata","runs-on":"ubuntu-latest","flake-attr":"nixosConfigurations"},
+            {"host":"gateway","runs-on":"ubuntu-latest","flake-attr":"nixosConfigurations"},
+            {"host":"minecraft","runs-on":"ubuntu-latest","flake-attr":"nixosConfigurations"},
+            {"host":"chiffon","runs-on":"macos-latest","flake-attr":"darwinConfigurations"}
+          ]'
+          build_matrix=$(jq -cn --argjson inputs "$inputs" --argjson hosts "$hosts" \
+            '[ $inputs[] as $input | $hosts[] | . + {input: $input} ]')
+          echo "inputs=$inputs" >> "$GITHUB_OUTPUT"
+          echo "build_matrix=$build_matrix" >> "$GITHUB_OUTPUT"
 
   update:
     needs: discover
@@ -56,24 +69,7 @@ jobs:
     needs: [discover, update]
     strategy:
       fail-fast: false
-      matrix:
-        input: ${{ fromJSON(needs.discover.outputs.inputs) }}
-        include:
-          - host: milk
-            runs-on: ubuntu-latest
-            flake-attr: nixosConfigurations
-          - host: hinata
-            runs-on: ubuntu-latest
-            flake-attr: nixosConfigurations
-          - host: gateway
-            runs-on: ubuntu-latest
-            flake-attr: nixosConfigurations
-          - host: minecraft
-            runs-on: ubuntu-latest
-            flake-attr: nixosConfigurations
-          - host: chiffon
-            runs-on: macos-latest
-            flake-attr: darwinConfigurations
+      matrix: ${{ fromJSON(needs.discover.outputs.build_matrix) }}
     runs-on: ${{ matrix.runs-on }}
     steps:
       - name: Checkout

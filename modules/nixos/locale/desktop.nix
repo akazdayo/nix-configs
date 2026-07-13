@@ -35,6 +35,7 @@
     ipafont
     kochi-substitute
     inter
+    monaspace
     nerd-fonts.fira-code
     fira-code
   ];

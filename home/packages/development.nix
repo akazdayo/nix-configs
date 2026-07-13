@@ -10,6 +10,7 @@ in
         godot_4
         unityhub
         immich-go
+        pnpm
       ])
     else
       (with pkgs; [

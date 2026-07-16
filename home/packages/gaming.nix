@@ -20,6 +20,5 @@
     ++ (with pkgs-unstable; [
       wayvr
       bs-manager
-      tetrio-desktop
     ]);
 }

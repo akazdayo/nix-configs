@@ -1,4 +1,9 @@
-{ pkgs, hostMeta, ... }:
+{
+  pkgs,
+  pkgs-unstable,
+  hostMeta,
+  ...
+}:
 let
   isDesktop = hostMeta.hostName == "milk";
 in
@@ -6,15 +11,12 @@ in
   home.packages = (
     if isDesktop then
       (with pkgs; [
-        devenv
-        godot_4
         unityhub
-        immich-go
-        pnpm
+        pkgs-unstable.pnpm
       ])
     else
       (with pkgs; [
-        pnpm
+        pkgs-unstable.pnpm
         bun
         nodejs_24
       ])

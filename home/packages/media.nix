@@ -1,4 +1,10 @@
-{ pkgs, pkgs-unstable, ... }:
+{
+  lib,
+  pkgs,
+  pkgs-unstable,
+  hostMeta,
+  ...
+}:
 {
   home.packages =
     (with pkgs; [
@@ -8,6 +14,10 @@
       ffmpeg
       vlc
     ])
+    ++ lib.optionals (hostMeta.hostName == "milk") [
+      pkgs.mpv
+      pkgs.mpvpaper
+    ]
     ++ (with pkgs-unstable; [
       spotify
     ]);

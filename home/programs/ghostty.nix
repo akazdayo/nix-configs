@@ -8,6 +8,7 @@
         "Noto Sans CJK JP"
       ];
       gtk-titlebar = false;
+      background-opacity = 0.7;
     };
   };
 }

@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   programs.nixvim = {
     # LSP設定
@@ -16,7 +16,18 @@
         svelte.enable = true;
         pyrefly.enable = true;
         ruff.enable = true;
-        astro.enable = true;
+        astro = {
+          enable = true;
+          # Nixpkgs' astro-language-server package does not expose its
+          # TypeScript devDependency to Node's module resolver.
+          cmd = [
+            "${pkgs.coreutils}/bin/env"
+            "NODE_PATH=${pkgs.typescript}/lib/node_modules"
+            "astro-ls"
+            "--stdio"
+          ];
+          extraOptions.init_options.typescript.tsdk = "${pkgs.typescript}/lib/node_modules/typescript/lib";
+        };
         gleam.enable = true;
         gopls.enable = true;
         zls.enable = true;

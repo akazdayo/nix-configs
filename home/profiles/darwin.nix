@@ -5,6 +5,7 @@
     ../programs/git.nix
     ../programs/ssh.nix
     ../programs/nushell.nix
+    ../programs/zellij.nix
     ../programs/nixvim
     ../packages/core.nix
     ../packages/development.nix

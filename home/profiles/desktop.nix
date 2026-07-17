@@ -19,6 +19,7 @@
     ../programs/cursor.nix
     ../programs/ghostty.nix
     ../programs/nushell.nix
+    ../programs/zellij.nix
     ../programs/nixvim
     ../programs/obs.nix
     ../programs/secrets.nix

@@ -554,6 +554,22 @@
         "type": "github"
       }
     },
+    "nixpkgs_5": {
+      "locked": {
+        "lastModified": 1784497964,
+        "narHash": "sha256-vlHUuqAcbcH2RKmHbPiuQzbv1pnzzavXnI62RD0bqCU=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "241313f4e8e508cb9b13278c2b0fa25b9ca27163",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixvim": {
       "inputs": {
         "flake-parts": "flake-parts_3",
@@ -634,7 +650,8 @@
         "nixvim": "nixvim",
         "noctalia": "noctalia",
         "sops-nix": "sops-nix",
-        "treefmt-nix": "treefmt-nix_2"
+        "treefmt-nix": "treefmt-nix_2",
+        "wivrn-nix": "wivrn-nix"
       }
     },
     "rust-overlay": {
@@ -794,6 +811,24 @@
       "original": {
         "owner": "numtide",
         "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "wivrn-nix": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_5"
+      },
+      "locked": {
+        "lastModified": 1784571042,
+        "narHash": "sha256-eYKtyufxtl1qeVem0S9pv59ATBaYj0FPjiICiQQsqSc=",
+        "owner": "akazdayo",
+        "repo": "wivrn-nix",
+        "rev": "dcf2307d4d8fd2fde82078a26646dcc8f1d463c0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "akazdayo",
+        "repo": "wivrn-nix",
         "type": "github"
       }
     }

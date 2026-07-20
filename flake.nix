@@ -38,6 +38,8 @@
 
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
+    wivrn-nix.url = "github:akazdayo/wivrn-nix";
+
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -69,6 +71,7 @@
       llm-agents,
       minecraft-nix,
       nix-cachyos-kernel,
+      wivrn-nix,
       sops-nix,
       treefmt-nix,
       git-hooks,

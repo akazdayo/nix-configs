@@ -7,7 +7,11 @@
       servers = {
         nixd.enable = true;
         nushell.enable = true;
-        tsgo.enable = true;
+        vtsls.enable = true;
+        vue_ls = {
+          enable = true;
+          tslsIntegration = false;
+        };
         rust_analyzer = {
           enable = true;
           installCargo = true;

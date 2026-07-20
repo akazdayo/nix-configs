@@ -267,6 +267,62 @@
           ];
         };
 
+      mkWslHost =
+        hostName:
+        {
+          system ? "x86_64-linux",
+          primaryUser ? defaultPrimaryUser,
+          flakeRoot ? null,
+          ...
+        }:
+        let
+          resolvedFlakeRoot = if flakeRoot == null then "/home/${primaryUser}/configs" else flakeRoot;
+          baseHostMeta = {
+            inherit hostName system primaryUser;
+            flakeRoot = resolvedFlakeRoot;
+          };
+          hostData =
+            (import (./hosts + "/${hostName}/host-data.nix") { hostMeta = baseHostMeta; })._module.args.hostData
+              or { };
+          hostMeta = baseHostMeta // {
+            inherit hostData;
+          };
+          pkgs-unstable = mkPkgsUnstable system;
+          pkgs-with-llm-agents = mkPkgsWithLlmAgents system;
+        in
+        lib.nixosSystem {
+          inherit system;
+          specialArgs = {
+            inherit
+              self
+              inputs
+              pkgs-unstable
+              hostMeta
+              ;
+          };
+          modules = [
+            ./packages
+            (./hosts + "/${hostName}")
+            nixos-wsl.nixosModules.default
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.${primaryUser} = import ./home/profiles/wsl.nix;
+              home-manager.extraSpecialArgs = {
+                inherit
+                  self
+                  pkgs-unstable
+                  pkgs-with-llm-agents
+                  inputs
+                  hostMeta
+                  ;
+                nixvim-module = nixvim.homeModules.nixvim;
+              };
+            }
+          ];
+        };
+
       mkDarwinHost =
         hostName:
         {
@@ -346,6 +402,10 @@
         };
       };
 
+      wslHosts = {
+        milfy = { };
+      };
+
       darwinHosts = {
         chiffon = { };
       };
@@ -415,7 +475,8 @@
       nixosConfigurations =
         (lib.mapAttrs mkHost hosts)
         // (lib.mapAttrs mkServer servers)
-        // (lib.mapAttrs mkOpenStackHost openstackHosts);
+        // (lib.mapAttrs mkOpenStackHost openstackHosts)
+        // (lib.mapAttrs mkWslHost wslHosts);
 
       darwinConfigurations = lib.mapAttrs mkDarwinHost darwinHosts;
 

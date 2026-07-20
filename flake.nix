@@ -40,6 +40,11 @@
 
     wivrn-nix.url = "github:akazdayo/wivrn-nix";
 
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -72,6 +77,7 @@
       minecraft-nix,
       nix-cachyos-kernel,
       wivrn-nix,
+      nixos-wsl,
       sops-nix,
       treefmt-nix,
       git-hooks,

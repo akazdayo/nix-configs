@@ -7,6 +7,7 @@
     ../../../modules/nixos/secrets/openstack.nix
     ../../../modules/nixos/security/openstack.nix
     ../../../modules/nixos/users/openstack.nix
+    ../../../modules/nixos/users/deploy.nix
   ];
 
   system.stateVersion = "25.11";

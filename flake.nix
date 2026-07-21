@@ -392,6 +392,9 @@
       servers = {
         hinata = {
           deployHostname = "192.168.11.50";
+          sshUser = "deploy";
+          remoteBuild = true;
+          activationTimeout = 600;
         };
       };
 
@@ -467,6 +470,12 @@
           sshOpts = [
             "-i"
             "~/.ssh/id_ed25519_sk_rk"
+            "-o"
+            "ControlMaster=auto"
+            "-o"
+            "ControlPersist=10m"
+            "-o"
+            "ControlPath=~/.ssh/deploy-rs-%C"
           ];
           profiles.system = {
             inherit sshUser;

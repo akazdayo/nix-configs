@@ -89,6 +89,10 @@ let
           hostname = "attic.odango.app";
           service = "http://192.168.11.65:8080";
         };
+        litellm = {
+          hostname = "llm.odango.app";
+          service = "http://192.168.11.50:4000";
+        };
       };
     };
 

@@ -10,6 +10,7 @@
     ../../modules/nixos/virtualization/server.nix
     ../../modules/nixos/containers/server.nix
     ../../modules/nixos/secrets/server.nix
+    ../../modules/nixos/services/litellm.nix
   ];
 
   system.stateVersion = "25.11";

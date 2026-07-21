@@ -31,6 +31,18 @@
       mode = "0400";
     };
 
+    secrets.litellm-env = {
+      sopsFile = ../../../secrets/hinata/litellm.yaml;
+      owner = "root";
+      mode = "0400";
+    };
+
+    secrets.litellm-chatgpt-auth = {
+      sopsFile = ../../../secrets/hinata/litellm-chatgpt.yaml;
+      owner = "root";
+      mode = "0400";
+    };
+
     # Server-level sops integration is configured here, but current
     # container /etc/... secret files remain legacy host-local paths.
   };

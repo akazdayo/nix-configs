@@ -3,7 +3,7 @@
   swapDevices = [
     {
       device = hostMeta.hostData.swap.device;
-      size = hostMeta.hostData.swap.size or (24 * 1024);
+      size = hostMeta.hostData.swap.size or (2 * 1024);
     }
   ];
 }

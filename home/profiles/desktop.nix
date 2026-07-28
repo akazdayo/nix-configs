@@ -24,6 +24,7 @@
     ../programs/obs.nix
     ../programs/secrets.nix
     ../programs/wakatime.nix
+    ../programs/wivrn.nix
     ../programs/zoom.nix
   ];
   home.sessionVariables.EDITOR = "nvim";

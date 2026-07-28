@@ -1,0 +1,4 @@
+interface:
+  display_name: "Safe Nix Flakes"
+  short_description: "Avoid oversized local flake source copies"
+  default_prompt: "Use $nix-flake-safety to run this local Nix flake command without copying ignored build artifacts."

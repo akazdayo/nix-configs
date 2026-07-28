@@ -8,9 +8,5 @@
     autoStart = true;
     steam.importOXRRuntimes = true;
     package = pkgs.wivrn.override { cudaSupport = true; };
-    config = {
-      enable = true;
-      json.application = [ pkgs.wayvr ];
-    };
   };
 }

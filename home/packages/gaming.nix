@@ -12,6 +12,7 @@
       })
       alcom
       osu-lazer-bin
+      heroic
       wineWow64Packages.stable # 64bit + 32bit対応
       winetricks
       vrcx

@@ -12,5 +12,6 @@
     unar
     obsidian
     vesktop
+    chromium
   ];
 }

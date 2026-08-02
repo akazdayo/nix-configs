@@ -48,7 +48,6 @@ in
   nix.settings.extra-substituters = [
     "https://cache.numtide.com"
     "https://akazdayo-nixos-config.cachix.org"
-    "http://127.0.0.1:51337?trusted=true"
   ];
   nix.settings.extra-trusted-public-keys = [
     "main:p1I0gblo5KOxd64LCmeOmENhGx/fRCVp5CS4aOQGY6w="

@@ -109,17 +109,6 @@
             "nofail"
           ];
         };
-        vaio = {
-          mountPoint = "/mnt/vaio";
-          device = "/dev/disk/by-uuid/7AB6CF81B6CF3C7F";
-          fsType = "ntfs-3g";
-          options = [
-            "rw"
-            "uid=1000"
-            "nofail"
-          ];
-          autoMountUuid = "7AB6CF81B6CF3C7F";
-        };
       };
     };
     boot.lanzaboote.pkiBundle = "/var/lib/sbctl";

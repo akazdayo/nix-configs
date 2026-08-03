@@ -14,7 +14,7 @@
       ffmpeg
       vlc
     ])
-    ++ lib.optionals (hostMeta.hostName == "milk") [
+    ++ lib.optionals (hostMeta.platform == "nixos" && hostMeta.role == "desktop") [
       pkgs.mpv
       pkgs.mpvpaper
     ]

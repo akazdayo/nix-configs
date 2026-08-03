@@ -1,4 +1,0 @@
-{ ... }:
-{
-  programs.alvr.enable = true;
-}

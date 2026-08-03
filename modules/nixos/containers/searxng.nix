@@ -1,69 +1,73 @@
-{ hostMeta, ... }:
+{ config, lib, ... }:
 let
-  containerData = hostMeta.hostData.containers;
-  searxngData = containerData.searxng;
+  containerData = config.local.containers.network;
+  searxngData = config.local.containers.searxng;
 in
 {
-  containers.searxng = {
-    autoStart = true;
-    privateNetwork = true;
-    macvlans = [ containerData.hostInterface ];
-    bindMounts = {
-      # Legacy host-local secret path. Create /etc/searx-env on the host with:
-      #   SEARX_SECRET_KEY=$(openssl rand -hex 32)
-      #   chmod 600 /etc/searx-env
-      "/run/secrets/searx-env" = {
-        hostPath = searxngData.environmentHostPath;
-        isReadOnly = true;
-      };
-    };
+  options.local.containers.searxng = lib.mkOption { type = lib.types.attrs; };
 
-    config =
-      { ... }:
-      {
-        networking.interfaces.${containerData.containerInterface} = {
-          useDHCP = false;
-          ipv4.addresses = [
-            {
-              address = searxngData.address;
-              prefixLength = searxngData.prefixLength;
-            }
-          ];
+  config = {
+    containers.searxng = {
+      autoStart = true;
+      privateNetwork = true;
+      macvlans = [ containerData.hostInterface ];
+      bindMounts = {
+        # Legacy host-local secret path. Create /etc/searx-env on the host with:
+        #   SEARX_SECRET_KEY=$(openssl rand -hex 32)
+        #   chmod 600 /etc/searx-env
+        "/run/secrets/searx-env" = {
+          hostPath = searxngData.environmentHostPath;
+          isReadOnly = true;
         };
-        networking.defaultGateway = containerData.defaultGateway;
-        networking.nameservers = containerData.nameservers;
+      };
 
-        services.searx = {
-          enable = true;
-          configureUwsgi = true;
-          redisCreateLocally = true;
-          environmentFile = "/run/secrets/searx-env";
-          uwsgiConfig = {
-            http = "127.0.0.1:8888";
+      config =
+        { ... }:
+        {
+          networking.interfaces.${containerData.containerInterface} = {
+            useDHCP = false;
+            ipv4.addresses = [
+              {
+                address = searxngData.address;
+                prefixLength = searxngData.prefixLength;
+              }
+            ];
           };
-          settings = {
-            server = {
-              secret_key = "$SEARX_SECRET_KEY";
-              limiter = true;
-              public_instance = false;
+          networking.defaultGateway = containerData.defaultGateway;
+          networking.nameservers = containerData.nameservers;
+
+          services.searx = {
+            enable = true;
+            configureUwsgi = true;
+            redisCreateLocally = true;
+            environmentFile = "/run/secrets/searx-env";
+            uwsgiConfig = {
+              http = "127.0.0.1:8888";
             };
-            general.instance_name = "SearXNG";
-            ui.static_use_hash = true;
+            settings = {
+              server = {
+                secret_key = "$SEARX_SECRET_KEY";
+                limiter = true;
+                public_instance = false;
+              };
+              general.instance_name = "SearXNG";
+              ui.static_use_hash = true;
+            };
           };
-        };
 
-        services.caddy = {
-          enable = true;
-          virtualHosts.":80" = {
-            extraConfig = ''
-              reverse_proxy 127.0.0.1:8888
-            '';
+          services.caddy = {
+            enable = true;
+            virtualHosts.":80" = {
+              extraConfig = ''
+                reverse_proxy 127.0.0.1:8888
+              '';
+            };
           };
+
+          networking.firewall.allowedTCPPorts = [ 80 ];
+
+          system.stateVersion = "25.11";
         };
-
-        networking.firewall.allowedTCPPorts = [ 80 ];
-
-        system.stateVersion = "25.11";
-      };
+    };
   };
 }

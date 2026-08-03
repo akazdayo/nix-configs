@@ -1,0 +1,282 @@
+{
+  inputs,
+  lib,
+  pkgs,
+  config,
+  ...
+}:
+let
+  minecraftData = config.local.minecraft.server;
+  botApiData = minecraftData.botApi or { };
+  botApiHttpPort = botApiData.httpPort or 8765;
+  botApiWebsocketPort = botApiData.websocketPort or 8766;
+  smpData = minecraftData.smp or { };
+  blueMapData = smpData.bluemap or { };
+  blueMapPort = blueMapData.port or 8100;
+  blueMapBindAddress = blueMapData.bindAddress or "0.0.0.0";
+
+  # === Minecraft Version & Package ===
+  # All fabric backend servers share the same MC version / fabric loader
+  fabricPackage = (pkgs.fabricServers.fabric-26_1_2.override { jre_headless = pkgs.jdk25; });
+
+  # === Common Mods (shared by all fabric backend servers) ===
+  commonMods = {
+    FabricApi = pkgs.fetchurl {
+      url = "https://cdn.modrinth.com/data/P7dR8mSH/versions/yALY9gHM/fabric-api-0.151.0%2B26.1.2.jar";
+      sha512 = "d087349842b962414ba89248f9ef7bc75f537848f4d783435de633ddae8924cd50fd9bffc606aae0f1c2c3ed9b4339623244e1fd34c6b9c17f977528d1303cdd";
+    };
+    Lithium = pkgs.fetchurl {
+      url = "https://cdn.modrinth.com/data/gvQqBUqZ/versions/Nt50x0fz/lithium-fabric-0.24.3%2Bmc26.1.2.jar";
+      sha512 = "b6f948576b062f83f1b13033c3f1121a3d4add8f8294415f8d283caeb91ca28acc1e19fb021a8807a034ff9875ef0dd9b6054734d552e072336aa060a106044f";
+    };
+    Carpet = pkgs.fetchurl {
+      url = "https://github.com/gnembon/fabric-carpet/releases/download/v26.1/fabric-carpet-26.1+v260402.jar";
+      sha256 = "59bd225d12423a7d7a635ca0c94fa786f97ccebb116922b16d76072da4ee67e7";
+    };
+    CarpetBotApi = pkgs.fetchurl {
+      url = "https://github.com/zunoser/carpet-ws/releases/download/v0.1.3/carpet-bot-api-0.1.3.jar";
+      sha256 = "722babc31d5992bea55b49682e389696e61d91e5e515db7f5c74eb866cc9404b";
+    };
+    Servux = pkgs.fetchurl {
+      url = "https://cdn.modrinth.com/data/zQhsx8KF/versions/eu63Kj9A/servux-fabric-26.1.2-0.10.2.jar";
+      sha512 = "78566cebcc5e181c68fc7f78c2f34213d634ae930f82cdfad19dd65ac4e6b24ae6d541a200b069e07e32e90b5c827d1cc1e80809da376bfbabfc8b302f9f256a";
+    };
+    Vivecraft = pkgs.fetchurl {
+      url = "https://cdn.modrinth.com/data/wGoQDPN5/versions/dAFnGtKk/vivecraft-26.1.2-1.3.8-fabric.jar";
+      sha512 = "3228489a2ff1191d90a47c0a50d11aa19c6a818032c8657bd530e7c1fbd7cdfca5c2e3062c9da2de868407b83e94f16c57bc44d4537d9538b08f1d9f584037a9";
+    };
+    FabricProxyLite = pkgs.fetchurl {
+      url = "https://github.com/OKTW-Network/FabricProxy-Lite/releases/download/v2.12.0/FabricProxy-Lite-2.12.0.jar";
+      sha256 = "dca0d05685afaa25d554372ad118d90b6b27f85ded93e6db0b85d822aa29342a";
+    };
+    Polymer = pkgs.fetchurl {
+      url = "https://github.com/Patbox/polymer/releases/download/0.16.5%2B26.1.2/polymer-bundled-0.16.5%2B26.1.2.jar";
+      sha512 = "e9438712eecfd7560e9e4b67e8ff0907cddf024ecdea93fae7e8caab0a00a041a674040770bf7b25eef2220813baca1ee5b797f3b88de4b9f0f0449189d08642";
+    };
+    UniversalGraves = pkgs.fetchurl {
+      url = "https://cdn.modrinth.com/data/yn9u3ypm/versions/hI8eYRJ3/graves-3.11.1%2B26.1.2.jar";
+      sha512 = "3caa63bb7d8f4ae3623310d13149de950e87f3b9083fce8a7dfe3083eea92dd2ab9721fabf27ebb6121deffc6f48af8b85f3543980381d588e6dcd667a7bf5e4";
+    };
+    Syncmatica = pkgs.fetchurl {
+      url = "https://cdn.modrinth.com/data/bfneejKo/versions/hiDPXGGO/syncmatica-fabric-26.1.1-0.3.18.jar";
+      sha512 = "c48f6e658ffc8cdce8647a149237f5aa7c35bb0cb5037024eb2bb6e6f3e2be863a733a010543ad206e295c5088d9bb400f2bb7a6d47f6b24a61921868491e9f2";
+    };
+    NakasyouBakeryMod = pkgs.fetchurl {
+      url = "https://github.com/zunoser/nakasyou-bakery-mod/releases/download/v1.9/nakasyou-bakery-mod-1.9.jar";
+      sha256 = "c3195e3116527c4894e6bf5704f1116a5a7381cdd533d7191434510b9f3ffc6e";
+    };
+    DiscordIntegrationFabricBackend = pkgs.fetchurl {
+      url = "https://github.com/zunoser/discord-integration-velocity/releases/download/v1.0.2/discord-integration-fabric-backend-1.0.2.jar";
+      sha256 = "2e5c205084dbb5d25e35907329b74c045475114e9b65650ab9cba71050892620";
+    };
+  };
+
+  # Derive a linkFarm from the mod attribute set
+  blueMapCoreConfig = pkgs.writeText "bluemap-core.conf" ''
+    accept-download: true
+  '';
+  blueMapWebserverConfig = pkgs.writeText "bluemap-webserver.conf" ''
+    enabled: true
+    ip: "${blueMapBindAddress}"
+    port: ${toString blueMapPort}
+  '';
+
+  smpModsLink = pkgs.linkFarmFromDrvs "smp-mods" (
+    builtins.attrValues (
+      commonMods
+      // {
+        BlueMap = pkgs.fetchurl {
+          url = "https://cdn.modrinth.com/data/swbUV1cr/versions/D9j76thC/bluemap-5.20-fabric.jar";
+          sha512 = "b140390c505655491130f74653fc0e9cd9501f35f001c174965c13bccf45bb91900c4ed439ecdb8d824723fb57688a20ce37582b7b3a4a04623af09854f6fb2d";
+        };
+        SimpleVoiceChat = pkgs.fetchurl {
+          url = "https://cdn.modrinth.com/data/9eGKb6K1/versions/DpT86E4Q/voicechat-fabric-2.6.18%2B26.1.2.jar";
+          sha512 = "9d9f38185c66fc57f03363a37d4559e58442bccb27414a4bd7c5a2b8bb046813afbcdf1bf6279b22f941f9cb4d2ed9d5e6dc4929714e73ae914a03557fb087af";
+        };
+      }
+    )
+  );
+  creativeModsLink = pkgs.linkFarmFromDrvs "creative-mods" (
+    builtins.attrValues (
+      commonMods
+      // {
+        Axiom = pkgs.fetchurl {
+          url = "https://cdn.modrinth.com/data/N6n5dqoA/versions/AfA2Emww/Axiom-5.4.2-for-MC26.1.jar";
+          sha512 = "dac0681e5b377a8824153249559849eafb3a1e085b07c4586f10f3dd146a3aae935b998faef11c0bad1fbfb9e21d950ee21992af53790296bad8e7cc20b78a59";
+        };
+      }
+    )
+  );
+
+  whitelist = {
+    aomona = "02992baf-9329-4c6a-b893-3e4b5ce37ca1";
+    akaz_dango = "644d4fc6-1525-4426-9eb9-7c7877883e81";
+    tokuzou0829 = "67ddca9d-42aa-4522-adc8-ab904eff34cd";
+    shu_tti = "379c2f07-08d5-4b0e-9fe6-6fd044723d64";
+    t4ko_uwu = "aedb2b9b-2fd3-415b-aa29-bac9a430a618";
+    moons14 = "ede38872-25c5-414f-a04e-278b521d9f41";
+    fa0311 = "7dfc7f95-df6f-435f-85f4-71513cc8fa87";
+    yuta_kobayashi = "cfcc92a7-7b55-4b45-a13f-0eebf716e5f3";
+    nakasyou0 = "9f2055d0-ff7f-4f27-adf2-c7793ebdff6a";
+    crocus_966 = "b4c6cdd7-3425-432d-9db5-4b0687393de2";
+    TmakMrst = "a0ee7eb9-1db2-4c19-ae97-ebe1606e1751";
+    tukiminn = "49df5f84-ccd6-4639-a4f4-11b6df52c333";
+    marukun_ = "5dd7cfe6-340f-4e3d-96e5-16d98d22c720";
+    EdamAmex = "864b2f8a-3dd9-42a2-9c4b-e399740b9e33";
+    kibune16 = "da937ed0-498f-43fc-b1b7-a678ee531b8b";
+  };
+
+  # Helper: create a fabric server module fragment
+  mkFabricServer =
+    serverName:
+    {
+      port,
+      jvmOpts,
+      gamemode,
+      motd,
+      maxPlayers,
+      operators,
+      whitelist,
+    }:
+    let
+      serverData = minecraftData.${serverName} or { };
+    in
+    {
+      enable = true;
+      autoStart = true;
+      package = fabricPackage;
+      jvmOpts = serverData.jvmOpts or jvmOpts;
+      serverProperties = {
+        server-port = serverData.serverPort or port;
+        motd = motd;
+        gamemode = gamemode;
+        difficulty = "normal";
+        max-players = maxPlayers;
+        white-list = true;
+        online-mode = false;
+        enforce-secure-profile = false;
+        view-distance = 10;
+        simulation-distance = 10;
+      };
+      inherit whitelist operators;
+      symlinks = {
+        mods = creativeModsLink;
+      };
+    };
+in
+{
+  imports = [ inputs.minecraft-nix.nixosModules.minecraft-servers ];
+  options.local.minecraft.server = lib.mkOption { type = lib.types.attrs; };
+  config = {
+    nixpkgs.overlays = [ inputs.minecraft-nix.overlay ];
+
+    sops = {
+      secrets.velocity-forwarding-secret = {
+        sopsFile = minecraftData.forwardingSecretSopsFile;
+        owner = config.services.minecraft-servers.user or "minecraft";
+        mode = "0400";
+      };
+
+      templates = {
+        "fabric-smp-proxy-config" = {
+          content = ''
+            disconnectMessage = "This server requires you to connect with Velocity."
+            secret = "${config.sops.placeholder.velocity-forwarding-secret}"
+          '';
+          owner = config.services.minecraft-servers.user or "minecraft";
+          mode = "0400";
+        };
+
+        "fabric-creative-proxy-config" = {
+          content = ''
+            disconnectMessage = "This server requires you to connect with Velocity."
+            secret = "${config.sops.placeholder.velocity-forwarding-secret}"
+          '';
+          owner = config.services.minecraft-servers.user or "minecraft";
+          mode = "0400";
+        };
+      };
+    };
+
+    services.minecraft-servers = {
+      enable = true;
+      eula = true;
+      openFirewall = true;
+      dataDir = minecraftData.dataDir;
+
+      servers.fabric-smp = {
+        enable = true;
+        autoStart = true;
+        package = fabricPackage;
+        jvmOpts = smpData.jvmOpts or "-Xms4G -Xmx8G";
+        files = {
+          "server-icon.png" = ./server-icon.png;
+        };
+
+        serverProperties = {
+          server-port = smpData.serverPort or 25565;
+          motd = "§cn§6a§ek§aa§bs§9y§do§cu §6b§ea§ak§be§9r§dy §cM§6i§en§ae§bc§9r§da§cf§6t §eS§ae§br§9v§de§cr";
+          gamemode = "survival";
+          difficulty = "normal";
+          max-players = 20;
+          white-list = true;
+          online-mode = false;
+          enforce-secure-profile = false;
+          view-distance = 10;
+          simulation-distance = 10;
+          resource-pack = "https://github.com/zunoser/nakasyou-bakery-mod/releases/download/v1.8/nakasyou-bakery-resourcepack-1.8.zip";
+          resource-pack-sha1 = "e34a756b52ee51fb5013c32849125f33eb66ad33";
+        };
+
+        inherit whitelist;
+
+        operators = {
+          akaz_dango = {
+            uuid = "644d4fc6-1525-4426-9eb9-7c7877883e81";
+            level = 4;
+            bypassesPlayerLimit = true;
+          };
+        };
+
+        symlinks = {
+          mods = smpModsLink;
+          "config/bluemap/core.conf" = blueMapCoreConfig;
+          "config/bluemap/webserver.conf" = blueMapWebserverConfig;
+          "config/FabricProxy-Lite.toml" = config.sops.templates."fabric-smp-proxy-config".path;
+        };
+      };
+
+      # === Creative Server ===
+      servers.fabric-creative =
+        mkFabricServer "creative" {
+          port = 25568;
+          jvmOpts = "-Xms4G -Xmx8G";
+          gamemode = "creative";
+          motd = "NixOS Fabric Creative";
+          maxPlayers = 20;
+
+          inherit whitelist;
+
+          operators = builtins.mapAttrs (_: uuid: {
+            inherit uuid;
+            level = 4;
+            bypassesPlayerLimit = true;
+          }) whitelist;
+        }
+        // {
+          symlinks = {
+            mods = creativeModsLink;
+            "config/FabricProxy-Lite.toml" = config.sops.templates."fabric-creative-proxy-config".path;
+          };
+        };
+    };
+
+    # Simple Voice Chat mod uses UDP 24454 by default.
+    networking.firewall.allowedTCPPorts = [
+      blueMapPort
+      botApiHttpPort
+      botApiWebsocketPort
+    ];
+    networking.firewall.allowedUDPPorts = [ 24454 ];
+  };
+}

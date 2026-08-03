@@ -3,7 +3,6 @@
   home.file = {
     ".bashrc".source = ../../dotfiles/bashrc;
     ".bash_profile".source = ../../dotfiles/bash_profile;
-    #".config/zed/settings.json".source = ../../dotfiles/zed_settings.json;
     ".config/git/ignore".source = ../../dotfiles/gitignore;
     ".agents/skills/nix-flake-safety".source = ../../.agents/skills/nix-flake-safety;
     ".config/starship.toml".source = pkgs.fetchurl {

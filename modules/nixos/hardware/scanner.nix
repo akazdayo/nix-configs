@@ -1,4 +1,4 @@
-{ pkgs, hostMeta, ... }: {
+{ config, pkgs, ... }: {
   hardware.sane = {
     enable = true;
     extraBackends = [ pkgs.sane-airscan ];
@@ -18,7 +18,7 @@
     sane-backends
   ];
 
-  users.users.${hostMeta.primaryUser}.extraGroups = [
+  users.users.${config.local.users.primary.name}.extraGroups = [
     "scanner"
     "lp"
   ];

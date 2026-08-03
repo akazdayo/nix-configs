@@ -1,13 +1,8 @@
 {
   pkgs,
   config,
-  lib,
-  hostMeta,
   ...
 }:
-let
-  isDesktop = hostMeta.hostName == "milk";
-in
 {
   hardware.nvidia = {
     modesetting.enable = true;
@@ -47,7 +42,7 @@ in
   };
 
   # NVIDIA関連のユーザー環境（ホームマネージャー経由）
-  home-manager.sharedModules = lib.optionals isDesktop [
+  home-manager.sharedModules = [
     ({ pkgs, ... }: {
       home.packages = with pkgs; [
         nvtopPackages.nvidia

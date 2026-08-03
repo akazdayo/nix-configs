@@ -6,7 +6,7 @@
   ...
 }:
 let
-  isDesktop = hostMeta.hostName == "milk";
+  isDesktop = hostMeta.platform == "nixos" && hostMeta.role == "desktop";
   isLinux = pkgs.stdenv.isLinux;
 in
 {

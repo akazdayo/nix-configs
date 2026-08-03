@@ -5,10 +5,7 @@
   ...
 }:
 let
-  enableImSelect = builtins.elem hostMeta.hostName [
-    "milk"
-    "chiffon"
-  ];
+  enableImSelect = hostMeta.role == "desktop";
 in
 {
   programs.nixvim = lib.mkIf enableImSelect {

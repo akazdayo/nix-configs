@@ -1,22 +1,30 @@
-{ config, ... }:
+{ config, lib, ... }:
+let
+  cfg = config.local.networking.wireguard;
+in
 {
-  sops.secrets.maril-wireguard-private-key = {
-    sopsFile = ../../../secrets/common/wireguard.yaml;
-    key = "maril_wireguard_sk";
-    owner = "root";
-    mode = "0400";
+  options.local.networking.wireguard = {
+    sopsFile = lib.mkOption { type = lib.types.path; };
+    secretKey = lib.mkOption { type = lib.types.str; };
+    interface = lib.mkOption {
+      type = lib.types.str;
+      default = "wg0";
+    };
+    ips = lib.mkOption { type = lib.types.listOf lib.types.str; };
+    peers = lib.mkOption { type = lib.types.listOf lib.types.attrs; };
   };
 
-  networking.wireguard.interfaces.wg0 = {
-    ips = [ "10.0.10.3/24" ];
-    privateKeyFile = config.sops.secrets.maril-wireguard-private-key.path;
-    peers = [
-      {
-        publicKey = "p0cQLr7R7xqDYHH/eZSz2wAMjJGF+NGLFocMXXs/dEQ=";
-        endpoint = "maril.blue:51821";
-        allowedIPs = [ "10.0.10.0/24" ];
-        persistentKeepalive = 25;
-      }
-    ];
+  config = {
+    sops.secrets.local-wireguard-private-key = {
+      inherit (cfg) sopsFile;
+      key = cfg.secretKey;
+      owner = "root";
+      mode = "0400";
+    };
+
+    networking.wireguard.interfaces.${cfg.interface} = {
+      inherit (cfg) ips peers;
+      privateKeyFile = config.sops.secrets.local-wireguard-private-key.path;
+    };
   };
 }

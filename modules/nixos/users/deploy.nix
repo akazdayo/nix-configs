@@ -1,26 +1,30 @@
-{ hostMeta, ... }:
+{ config, lib, ... }:
 let
-  hostData = hostMeta.hostData;
-  primaryUser = hostMeta.primaryUser;
+  cfg = config.local.users.deploy;
 in
 {
-  users.users.deploy = {
-    isNormalUser = true;
-    description = "deploy-rs deployment user";
-    extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keys =
-      hostData.users.deploy.authorizedKeys or hostData.users.${primaryUser}.authorizedKeys;
+  options.local.users.deploy.authorizedKeys = lib.mkOption {
+    type = lib.types.listOf lib.types.str;
   };
 
-  security.sudo.extraRules = [
-    {
-      users = [ "deploy" ];
-      commands = [
-        {
-          command = "ALL";
-          options = [ "NOPASSWD" ];
-        }
-      ];
-    }
-  ];
+  config = {
+    users.users.deploy = {
+      isNormalUser = true;
+      description = "deploy-rs deployment user";
+      extraGroups = [ "wheel" ];
+      openssh.authorizedKeys.keys = cfg.authorizedKeys;
+    };
+
+    security.sudo.extraRules = [
+      {
+        users = [ "deploy" ];
+        commands = [
+          {
+            command = "ALL";
+            options = [ "NOPASSWD" ];
+          }
+        ];
+      }
+    ];
+  };
 }

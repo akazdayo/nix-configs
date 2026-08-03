@@ -1,5 +1,0 @@
-[Flatpak Ref]
-Name=ALVR
-Branch=stable
-Url=https://github.com/alvr-org/ALVR-nightly/releases/download/v21.0.0-dev12%2Bnightly.2025.12.22/com.valvesoftware.Steam.Utility.alvr.flatpak
-IsRuntime=false

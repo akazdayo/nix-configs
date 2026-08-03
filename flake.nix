@@ -22,39 +22,29 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
-
-    # QuickShell
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-
     llm-agents.url = "github:numtide/llm-agents.nix";
-
     minecraft-nix = {
       url = "github:akazdayo/nix-minecraft";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
-
     wivrn-nix.url = "github:akazdayo/wivrn-nix";
-
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     git-hooks = {
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -69,22 +59,29 @@
       home-manager,
       nix-darwin,
       nixvim,
-      lanzaboote,
       deploy-rs,
-      nix-flatpak,
-      noctalia,
       llm-agents,
-      minecraft-nix,
-      nix-cachyos-kernel,
-      wivrn-nix,
-      nixos-wsl,
-      sops-nix,
       treefmt-nix,
       git-hooks,
+      ...
     }@inputs:
     let
       lib = nixpkgs.lib;
       defaultPrimaryUser = "akazdayo";
+
+      supportedSystems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
+      ];
+      forAllSystems = lib.genAttrs supportedSystems;
+
+      mkPkgs =
+        system:
+        import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
 
       mkPkgsUnstable =
         system:
@@ -101,337 +98,123 @@
           overlays = [ llm-agents.overlays.default ];
         };
 
-      mkHost =
-        hostName:
-        {
-          system ? "x86_64-linux",
-          primaryUser ? defaultPrimaryUser,
-          flakeRoot ? null,
-          ...
-        }:
+      nixosHosts = {
+        milk = {
+          role = "desktop";
+          deploy.hostname = "192.168.11.48";
+        };
+        hinata = {
+          role = "server";
+          deploy = {
+            hostname = "192.168.11.50";
+            sshUser = "deploy";
+            remoteBuild = true;
+            activationTimeout = 600;
+          };
+        };
+        gateway = {
+          role = "openstack";
+          deploy = {
+            sshUser = "deploy";
+            remoteBuild = true;
+            activationTimeout = 600;
+          };
+        };
+        minecraft = {
+          role = "openstack";
+          deploy = {
+            sshUser = "deploy";
+            remoteBuild = true;
+            activationTimeout = 600;
+          };
+        };
+        milfy.role = "wsl";
+      };
+
+      darwinHosts.chiffon = {
+        system = "aarch64-darwin";
+        role = "desktop";
+      };
+
+      mkHostMeta =
+        platform: hostName: spec:
         let
-          resolvedFlakeRoot = if flakeRoot == null then "/home/${primaryUser}/configs" else flakeRoot;
-          baseHostMeta = {
-            inherit hostName system primaryUser;
-            flakeRoot = resolvedFlakeRoot;
-          };
-          hostData =
-            (import (./hosts + "/${hostName}/host-data.nix") { hostMeta = baseHostMeta; })._module.args.hostData
-              or { };
-          hostMeta = baseHostMeta // {
-            inherit hostData;
-          };
-          pkgs-unstable = mkPkgsUnstable system;
-          pkgs-with-llm-agents = mkPkgsWithLlmAgents system;
+          primaryUser = spec.primaryUser or defaultPrimaryUser;
+          system = spec.system or (if platform == "darwin" then "aarch64-darwin" else "x86_64-linux");
+          flakeRoot =
+            spec.flakeRoot or (
+              if platform == "darwin" then "/Users/${primaryUser}/configs" else "/home/${primaryUser}/configs"
+            );
         in
-        lib.nixosSystem {
-          inherit system;
-          specialArgs = {
-            inherit
-              self
-              inputs
-              pkgs-unstable
-              hostMeta
-              ;
-          };
-          modules = [
-            ./packages
-            (./hosts + "/${hostName}")
-            lanzaboote.nixosModules.lanzaboote
-            sops-nix.nixosModules.default
-            home-manager.nixosModules.home-manager
-            nix-flatpak.nixosModules.nix-flatpak
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.${primaryUser} = import ./home/profiles/desktop.nix;
-              home-manager.extraSpecialArgs = {
-                inherit
-                  self
-                  pkgs-unstable
-                  pkgs-with-llm-agents
-                  inputs
-                  hostMeta
-                  ;
-                nixvim-module = nixvim.homeModules.nixvim;
-              };
-            }
-          ];
+        {
+          inherit
+            hostName
+            system
+            platform
+            primaryUser
+            flakeRoot
+            ;
+          inherit (spec) role;
         };
 
-      mkServer =
-        hostName:
-        {
-          system ? "x86_64-linux",
-          primaryUser ? defaultPrimaryUser,
-          flakeRoot ? null,
-          ...
-        }:
+      mkHomeManagerConfig =
+        hostMeta:
         let
-          resolvedFlakeRoot = if flakeRoot == null then "/home/${primaryUser}/configs" else flakeRoot;
-          baseHostMeta = {
-            inherit hostName system primaryUser;
-            flakeRoot = resolvedFlakeRoot;
-          };
-          hostData =
-            (import (./hosts + "/${hostName}/host-data.nix") { hostMeta = baseHostMeta; })._module.args.hostData
-              or { };
-          hostMeta = baseHostMeta // {
-            inherit hostData;
-          };
-          pkgs-unstable = mkPkgsUnstable system;
-          pkgs-with-llm-agents = mkPkgsWithLlmAgents system;
+          inherit (hostMeta) system;
         in
-        lib.nixosSystem {
-          inherit system;
-          specialArgs = {
-            inherit
-              self
-              inputs
-              pkgs-unstable
-              hostMeta
-              ;
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.extraSpecialArgs = {
+            inherit self inputs hostMeta;
+            pkgs-unstable = mkPkgsUnstable system;
+            pkgs-with-llm-agents = mkPkgsWithLlmAgents system;
+            nixvim-module = nixvim.homeModules.nixvim;
           };
-          modules = [
-            ./packages
-            (./hosts + "/${hostName}")
-            lanzaboote.nixosModules.lanzaboote
-            sops-nix.nixosModules.default
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.${primaryUser} = import ./home/profiles/server.nix;
-              home-manager.extraSpecialArgs = {
-                inherit
-                  self
-                  pkgs-unstable
-                  pkgs-with-llm-agents
-                  inputs
-                  hostMeta
-                  ;
-                nixvim-module = nixvim.homeModules.nixvim;
-              };
-            }
-          ];
         };
 
-      mkOpenStackHost =
-        hostName:
-        {
-          system ? "x86_64-linux",
-          primaryUser ? defaultPrimaryUser,
-          flakeRoot ? null,
-          ...
-        }:
+      mkNixosHost =
+        hostName: spec:
         let
-          resolvedFlakeRoot = if flakeRoot == null then "/home/${primaryUser}/configs" else flakeRoot;
-          baseHostMeta = {
-            inherit hostName system primaryUser;
-            flakeRoot = resolvedFlakeRoot;
-          };
-          hostData =
-            (import (./hosts/openstack + "/${hostName}/host-data.nix") { hostMeta = baseHostMeta; })
-            ._module.args.hostData or { };
-          hostMeta = baseHostMeta // {
-            inherit hostData;
-          };
-          pkgs-unstable = mkPkgsUnstable system;
-          pkgs-with-llm-agents = mkPkgsWithLlmAgents system;
+          hostMeta = mkHostMeta "nixos" hostName spec;
+          inherit (hostMeta) system;
         in
         lib.nixosSystem {
           inherit system;
           specialArgs = {
-            inherit
-              self
-              inputs
-              pkgs-unstable
-              hostMeta
-              ;
+            inherit self inputs hostMeta;
+            pkgs-unstable = mkPkgsUnstable system;
           };
           modules = [
-            ./packages
-            (./hosts/openstack + "/${hostName}")
-            lanzaboote.nixosModules.lanzaboote
-            sops-nix.nixosModules.default
             home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.${primaryUser} = import (./home/profiles/openstack + "/${hostName}");
-              home-manager.extraSpecialArgs = {
-                inherit
-                  self
-                  pkgs-unstable
-                  pkgs-with-llm-agents
-                  inputs
-                  hostMeta
-                  ;
-                nixvim-module = nixvim.homeModules.nixvim;
-              };
-            }
-          ];
-        };
-
-      mkWslHost =
-        hostName:
-        {
-          system ? "x86_64-linux",
-          primaryUser ? defaultPrimaryUser,
-          flakeRoot ? null,
-          ...
-        }:
-        let
-          resolvedFlakeRoot = if flakeRoot == null then "/home/${primaryUser}/configs" else flakeRoot;
-          baseHostMeta = {
-            inherit hostName system primaryUser;
-            flakeRoot = resolvedFlakeRoot;
-          };
-          hostData =
-            (import (./hosts + "/${hostName}/host-data.nix") { hostMeta = baseHostMeta; })._module.args.hostData
-              or { };
-          hostMeta = baseHostMeta // {
-            inherit hostData;
-          };
-          pkgs-unstable = mkPkgsUnstable system;
-          pkgs-with-llm-agents = mkPkgsWithLlmAgents system;
-        in
-        lib.nixosSystem {
-          inherit system;
-          specialArgs = {
-            inherit
-              self
-              inputs
-              pkgs-unstable
-              hostMeta
-              ;
-          };
-          modules = [
-            ./packages
+            (mkHomeManagerConfig hostMeta)
             (./hosts + "/${hostName}")
-            nixos-wsl.nixosModules.default
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.${primaryUser} = import ./home/profiles/wsl.nix;
-              home-manager.extraSpecialArgs = {
-                inherit
-                  self
-                  pkgs-unstable
-                  pkgs-with-llm-agents
-                  inputs
-                  hostMeta
-                  ;
-                nixvim-module = nixvim.homeModules.nixvim;
-              };
-            }
           ];
         };
 
       mkDarwinHost =
-        hostName:
-        {
-          system ? "aarch64-darwin",
-          primaryUser ? defaultPrimaryUser,
-          flakeRoot ? null,
-        }:
+        hostName: spec:
         let
-          resolvedFlakeRoot = if flakeRoot == null then "/Users/${primaryUser}/configs" else flakeRoot;
-          baseHostMeta = {
-            inherit hostName system primaryUser;
-            flakeRoot = resolvedFlakeRoot;
-          };
-          hostData =
-            (import (./hosts + "/${hostName}/host-data.nix") { hostMeta = baseHostMeta; })._module.args.hostData
-              or { };
-          hostMeta = baseHostMeta // {
-            inherit hostData;
-          };
-          pkgs-unstable = mkPkgsUnstable system;
-          pkgs-with-llm-agents = mkPkgsWithLlmAgents system;
+          hostMeta = mkHostMeta "darwin" hostName spec;
+          inherit (hostMeta) system;
         in
         nix-darwin.lib.darwinSystem {
           inherit system;
           specialArgs = {
-            inherit
-              self
-              inputs
-              pkgs-unstable
-              hostMeta
-              ;
+            inherit self inputs hostMeta;
+            pkgs-unstable = mkPkgsUnstable system;
           };
           modules = [
-            ./packages
-            (./hosts + "/${hostName}")
             home-manager.darwinModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.${primaryUser} = import ./home/profiles/darwin.nix;
-              home-manager.extraSpecialArgs = {
-                inherit
-                  self
-                  pkgs-unstable
-                  pkgs-with-llm-agents
-                  inputs
-                  hostMeta
-                  ;
-                nixvim-module = nixvim.homeModules.nixvim;
-              };
-            }
+            (mkHomeManagerConfig hostMeta)
+            (./hosts + "/${hostName}")
           ];
         };
-
-      hosts = {
-        milk = {
-          deployHostname = "192.168.11.48";
-        };
-      };
-
-      servers = {
-        hinata = {
-          deployHostname = "192.168.11.50";
-          sshUser = "deploy";
-          remoteBuild = true;
-          activationTimeout = 600;
-        };
-      };
-
-      openstackHosts = {
-        gateway = {
-          sshUser = "deploy";
-          remoteBuild = true;
-          activationTimeout = 600;
-        };
-        minecraft = {
-          sshUser = "deploy";
-          remoteBuild = true;
-          activationTimeout = 600;
-        };
-      };
-
-      wslHosts = {
-        milfy = { };
-      };
-
-      darwinHosts = {
-        chiffon = { };
-      };
-
-      forAllSystems = lib.genAttrs [
-        "x86_64-linux"
-        "aarch64-linux"
-        "aarch64-darwin"
-      ];
 
       mkPreCommitCheck =
         system:
         let
-          pkgs = import nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
-          };
+          pkgs = mkPkgs system;
           treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
           preCommitFmt = pkgs.writeShellApplication {
             name = "pre-commit-fmt";
@@ -455,18 +238,15 @@
           };
         };
 
+      deployHosts = lib.filterAttrs (_: spec: spec ? deploy) nixosHosts;
       mkDeployNode =
-        hostName:
+        hostName: spec:
+        let
+          deploy = spec.deploy;
+          system = spec.system or "x86_64-linux";
+        in
         {
-          deployHostname ? hostName,
-          sshUser ? defaultPrimaryUser,
-          system ? "x86_64-linux",
-          remoteBuild ? false,
-          activationTimeout ? null,
-          ...
-        }:
-        {
-          hostname = deployHostname;
+          hostname = deploy.hostname or hostName;
           sshOpts = [
             "-i"
             "~/.ssh/id_ed25519_sk_rk"
@@ -478,24 +258,20 @@
             "ControlPath=~/.ssh/deploy-rs-%C"
           ];
           profiles.system = {
-            inherit sshUser;
+            sshUser = deploy.sshUser or defaultPrimaryUser;
             user = "root";
             path = deploy-rs.lib.${system}.activate.nixos self.nixosConfigurations.${hostName};
           };
         }
-        // lib.optionalAttrs remoteBuild { inherit remoteBuild; }
-        // lib.optionalAttrs (activationTimeout != null) { inherit activationTimeout; };
+        // lib.optionalAttrs (deploy.remoteBuild or false) { remoteBuild = true; }
+        // lib.optionalAttrs (deploy ? activationTimeout) {
+          inherit (deploy) activationTimeout;
+        };
     in
     {
-      nixosConfigurations =
-        (lib.mapAttrs mkHost hosts)
-        // (lib.mapAttrs mkServer servers)
-        // (lib.mapAttrs mkOpenStackHost openstackHosts)
-        // (lib.mapAttrs mkWslHost wslHosts);
-
+      nixosConfigurations = lib.mapAttrs mkNixosHost nixosHosts;
       darwinConfigurations = lib.mapAttrs mkDarwinHost darwinHosts;
-
-      deploy.nodes = lib.mapAttrs mkDeployNode (hosts // servers // openstackHosts);
+      deploy.nodes = lib.mapAttrs mkDeployNode deployHosts;
 
       packages = forAllSystems (system: {
         deploy-rs = deploy-rs.packages.${system}.default;
@@ -504,10 +280,7 @@
       apps = forAllSystems (
         system:
         let
-          pkgs = import nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
-          };
+          pkgs = mkPkgs system;
           deploy-openstack-script = pkgs.writeShellScript "deploy-openstack" ''
             set -euo pipefail
             TARGET_HOST="''${1:-}"
@@ -531,10 +304,7 @@
       devShells = forAllSystems (
         system:
         let
-          pkgs = import nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
-          };
+          pkgs = mkPkgs system;
           preCommit = mkPreCommitCheck system;
         in
         {
@@ -555,23 +325,13 @@
       );
 
       formatter = forAllSystems (
-        system:
-        let
-          pkgs = import nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
-          };
-        in
-        (treefmt-nix.lib.evalModule pkgs ./treefmt.nix).config.build.wrapper
+        system: ((treefmt-nix.lib.evalModule (mkPkgs system) ./treefmt.nix).config.build.wrapper)
       );
 
       checks = forAllSystems (
         system:
         let
-          pkgs = import nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
-          };
+          pkgs = mkPkgs system;
           treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
         in
         {

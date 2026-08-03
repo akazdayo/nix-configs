@@ -5,7 +5,7 @@
   ...
 }:
 let
-  isDesktop = hostMeta.hostName == "milk";
+  isDesktop = hostMeta.platform == "nixos" && hostMeta.role == "desktop";
 in
 {
   home.packages = (

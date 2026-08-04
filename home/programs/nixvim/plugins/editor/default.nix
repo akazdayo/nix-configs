@@ -12,5 +12,6 @@
     ./conform-nvim.nix
     ./lazygit.nix
     ./agentic.nix
+    ./lean.nix
   ];
 }

@@ -26,6 +26,7 @@
     ../../modules/nixos/containers/pihole-unbound.nix
     ../../modules/nixos/containers/searxng.nix
     ../../modules/nixos/containers/attic.nix
+    ../../modules/nixos/containers/podman.nix
   ];
 
   networking.hostName = hostMeta.hostName;
@@ -157,6 +158,16 @@
         dataRoot = "/var/lib/attic-container";
         environmentSopsFile = ../../secrets/hinata/attic.yaml;
       };
+      podman = {
+        user = hostMeta.primaryUser;
+        containers.debian = {
+          image = "docker.io/library/debian:bookworm";
+          cmd = [
+            "sleep"
+            "infinity"
+          ];
+        };
+      };
     };
   };
 
@@ -173,6 +184,5 @@
     home.stateVersion = "25.11";
   };
 
-  virtualisation.oci-containers.backend = "docker";
   system.stateVersion = "25.11";
 }

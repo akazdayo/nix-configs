@@ -161,10 +161,16 @@
       podman = {
         user = hostMeta.primaryUser;
         containers.debian = {
-          image = "docker.io/library/debian:bookworm";
+          image = "docker.io/library/debian:trixie";
           cmd = [
             "sleep"
             "infinity"
+          ];
+          ports = [
+            "192.168.11.50:18789:18789"
+          ];
+          volumes = [
+            "/home/${hostMeta.primaryUser}/.openclaw:/root/.openclaw"
           ];
         };
       };

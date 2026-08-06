@@ -1,59 +1,45 @@
-# AGENTS.md
+# Repository Guidelines
 
-## Build and verification
-
-- Apply NixOS: `nh os switch` or `sudo nixos-rebuild switch --flake .#<host>`
-- Dry-build NixOS: `nixos-rebuild dry-build --flake .#<host>`
-- Apply Darwin: `nix run nix-darwin -- switch --flake .#chiffon`
-- Check: `nix flake check`
-- Format: `nix fmt`
-- Dev shell: `nix develop`
-- Update inputs: `nix flake update` or `nix flake lock --update-input <name>`
-
-When running a local Nix flake command, use `.` or `.#<attribute>`. Never use an explicit `path:` reference for this Git worktree.
-
-## Architecture
-
-The composition chain is deliberately short:
+## Project Structure & Architecture
 
 ```text
 flake.nix -> hosts/<name>/default.nix -> leaf modules
 ```
 
-- `flake.nix` owns inputs, generic NixOS/Darwin builders, `hostMeta`, deploy outputs, checks, and development tooling. It must not select host features.
-- `hosts/<name>/default.nix` is the only composition list for that host. It directly imports hardware, external modules, NixOS/Darwin leaf modules, and Home Manager program/package modules.
-- `hosts/<name>/default.nix` also owns every host-local literal and supplies reusable modules through `local.*` options.
-- `modules/nixos/` is organized by function. Multi-file domains use directories such as `networking/`, `hardware/`, `containers/`, `minecraft/`, and `nix/`; single-file features stay at the directory root.
-- `modules/darwin/` contains active nix-darwin leaf modules only. Do not add empty platform-mirroring placeholders.
-- `home/programs/` contains one Home Manager program concern per file.
-- `home/packages/` contains purpose-based package groups.
-- `infra/openstack/` is OpenTofu infrastructure and follows its nested `AGENTS.md`.
-- `dotfiles/` contains static files only; `secrets/` contains encrypted data only.
+`flake.nix` defines shared builders, checks, and tooling; it must not select host features. Each `hosts/<name>/default.nix` is the host's only composition list and owns local literals.
 
-There is no `profiles/` or `home/profiles/` layer. Do not recreate bundle modules or import-only `default.nix` files. A host import list may be long so that enabled features remain explicit.
+- `modules/{nixos,darwin}/`: system leaf modules.
+- `home/programs/` and `home/packages/`: Home Manager modules.
+- `dotfiles/`: static files; `secrets/`: encrypted data only.
+- `infra/openstack/`: OpenTofu configuration governed by its nested `AGENTS.md`.
 
-## Module rules
+Import leaf modules directly from applicable host definitions. Do not introduce profiles, bundles, import-only `default.nix` files, or imports between repository leaf modules. Required external flake imports are allowed.
 
-- New system or Home Manager modules must be imported directly by each applicable `hosts/<name>/default.nix`.
-- Repository leaf modules contain concrete settings and do not import other repository leaf modules. Importing a required external flake module is allowed.
-- Use lowercase kebab-case names. Add a subdirectory only when a feature has multiple independent files or accompanying assets.
-- Reusable modules expose host-specific inputs as `local.<feature>.*` options. Importing a module enables that feature, so do not add a redundant `enable` option.
-- Use `hostMeta.platform` and `hostMeta.role` for platform/role behavior. Use `hostMeta.hostName` only for genuinely host-specific behavior.
-- Keep `system.stateVersion = "25.11"`, `home.stateVersion = "25.11"`, and Darwin `system.stateVersion = 6` in host defaults.
-- Use `pkgs-unstable` only when a package specifically needs the unstable set. `pkgs-with-llm-agents` is Home Manager-only.
-- Format Nix with `nixfmt-rfc-style`; repository formatting is defined by `treefmt.nix`.
+## Build, Test, and Development Commands
 
-## Safety boundaries
+- `nix develop`: enter the dev shell.
+- `nix fmt`: run treefmt.
+- `nix flake check`: evaluate checks and formatting.
+- `nixos-rebuild dry-build --flake .#<host>`: test a NixOS host.
+- `nh os switch` or `sudo nixos-rebuild switch --flake .#<host>`: apply NixOS.
+- `nix run nix-darwin -- switch --flake .#chiffon`: apply Darwin.
 
-- Do not modify the contents of any `hardware-configuration.nix`; hardware additions belong in a role module.
-- Do not hardcode host-specific IP addresses, interfaces, mount paths, authorized keys, or service paths in reusable modules. Put those literals in the applicable host's `default.nix` and pass them through `local.*` options.
-- Do not move, rename, decrypt, or rekey tracked encrypted files unless explicitly requested. Secret path rules live in `.sops.yaml`.
-- `/etc/nextcloud-adminpass` and `/etc/searx-env` are intentional legacy host-local secrets; do not migrate them without an explicit task.
-- Preserve unrelated worktree changes and ignored Terraform state. Never run OpenTofu `apply` without reviewing a plan.
+For this worktree, use `.` or `.#<attribute>` in local flake commands, never an explicit `path:` reference.
 
-## CI and deployment
+## Coding Style & Module Conventions
 
-- Pull requests run `nix flake check --no-build` and build Milk, Hinata, Gateway, Minecraft, and Chiffon.
-- Scheduled dependency updates build all hosts before committing `flake.lock`.
-- OpenStack deployments use `nix run .#deploy-openstack -- <host>`, which resolves the address from OpenTofu output.
-- Deploy-rs nodes cover Milk, Hinata, Gateway, and Minecraft. Milfy and Chiffon are not deploy-rs targets.
+Use lowercase kebab-case filenames. Add a directory only for multi-file features or assets. Pass host-specific values through `local.<feature>.*`; importing a module enables it, so omit redundant `enable` options. Prefer `hostMeta.platform` and `hostMeta.role` over hostname checks.
+
+`treefmt.nix` configures nixfmt, Stylua, shfmt, Prettier, and rustfmt. Keep NixOS/Home Manager `stateVersion` at `25.11` and Darwin at `6`. Use `pkgs-unstable` only when required; `pkgs-with-llm-agents` is Home Manager-only.
+
+## Testing & Pull Requests
+
+There is no unit-test suite; flake checks and host builds are the primary verification. Before a PR, run `nix fmt`, `nix flake check`, and dry-build affected hosts. CI checks the flake and builds Milk, Hinata, Gateway, Minecraft, and Chiffon.
+
+Recent commits use brief Japanese summaries, sometimes prefixed with `feat:`. Keep commits focused. PRs should list affected hosts, verification, deployment or secret implications, and screenshots for UI changes.
+
+## Safety & Deployment
+
+Never edit `hardware-configuration.nix`; put hardware additions in a role module. Keep IPs, interfaces, mount paths, keys, and service paths in host definitions and pass them through `local.*`. Do not move, decrypt, or rekey tracked secrets unless requested; `.sops.yaml` owns secret paths. Preserve legacy `/etc/nextcloud-adminpass` and `/etc/searx-env`, unrelated changes, and ignored Terraform state. Review an OpenTofu plan before applying.
+
+Deploy OpenStack hosts with `nix run .#deploy-openstack -- <host>`. Deploy-rs covers Milk, Hinata, Gateway, and Minecraft; Milfy and Chiffon are excluded.

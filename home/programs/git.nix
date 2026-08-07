@@ -10,7 +10,7 @@
     settings = {
       user = {
         name = "akazdayo";
-        email = "82073147+akazdayo@users.noreply.github.com";
+        email = "me@odango.app";
         signingKey = "~/.ssh/id_ed25519_sk_rk.pub";
       };
       init = {

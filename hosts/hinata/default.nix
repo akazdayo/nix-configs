@@ -18,6 +18,8 @@
     ../../modules/nixos/boot/systemd-boot.nix
     ../../modules/nixos/sops.nix
     ../../modules/nixos/docker.nix
+    ../../modules/nixos/caddy.nix
+    ../../modules/nixos/jellyfin.nix
     ../../modules/nixos/cloudflared.nix
     ../../modules/nixos/litellm.nix
     ../../modules/nixos/containers/network.nix
@@ -94,6 +96,11 @@
       keyFile = "/home/${hostMeta.primaryUser}/.config/sops/age/keys.txt";
       ageKeyCommandEnvironment = "$HOME/.config/sops/age/yubikey-priority.sh";
     };
+    caddy.virtualHosts.jellyfin = {
+      hostname = "http://jellyfin.home.arpa";
+      upstream = "127.0.0.1:8096";
+      openFirewall = true;
+    };
     cloudflared = {
       tunnelUuid = "9a22fd7b-44dd-4459-a360-52a5226b8216";
       credentialsSopsFile = ../../secrets/hinata/cloudflared.yaml;
@@ -135,6 +142,7 @@
           "192.168.11.62 dns.home.arpa"
           "192.168.11.63 nas.home.arpa"
           "192.168.11.64 search.home.arpa"
+          "192.168.11.50 jellyfin.home.arpa"
         ];
       };
       nextcloud = {

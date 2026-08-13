@@ -1,4 +1,5 @@
 {
+  inputs,
   pkgs-unstable,
   pkgs-with-llm-agents,
   hostMeta,
@@ -33,6 +34,7 @@ in
     (
       if isDesktop then
         [
+          inputs.chatgpt-desktop-app.packages.${hostMeta.system}.default
           lmstudio
         ]
       else

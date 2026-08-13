@@ -27,6 +27,10 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     llm-agents.url = "github:numtide/llm-agents.nix";
+    chatgpt-desktop-app = {
+      url = "github:poeck/chatgpt-desktop-app-nix-flake/92e93f7792de0d4f3c460bec19dd931afbd6c71a";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     minecraft-nix = {
       url = "github:akazdayo/nix-minecraft";
       inputs.nixpkgs.follows = "nixpkgs";

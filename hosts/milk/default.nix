@@ -44,6 +44,10 @@
 
   networking.hostName = hostMeta.hostName;
 
+  services.udev.extraRules = ''
+    SUBSYSTEM=="usb", ATTR{idVendor}=="0403", ATTR{idProduct}=="6010", MODE:="0660", GROUP:="users", TAG+="uaccess"
+  '';
+
   local = {
     nh.flake = hostMeta.flakeRoot;
     nix.cache = {

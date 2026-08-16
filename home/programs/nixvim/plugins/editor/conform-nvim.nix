@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 {
   programs.nixvim.plugins.conform-nvim = {
     enable = true;
@@ -15,6 +15,8 @@
         python = [ "ruff_format" ];
         rust = [ "rustfmt" ];
         sh = [ "shfmt" ];
+        systemverilog = [ "verible" ];
+        verilog = [ "verible" ];
         markdown = [
           "prettierd"
           "prettier"

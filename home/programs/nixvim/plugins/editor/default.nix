@@ -3,6 +3,7 @@
   imports = [
     ./telescope.nix
     ./treesitter.nix
+    ./spade-vim.nix
     ./cmp.nix
     ./gitsigns.nix
     ./comment.nix

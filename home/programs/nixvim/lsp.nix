@@ -39,6 +39,20 @@
       };
     };
 
+    lsp.servers.spade = {
+      enable = true;
+      package = pkgs.spade;
+      config = {
+        cmd = [ "${pkgs.spade}/bin/spade-language-server" ];
+        filetypes = [ "spade" ];
+        root_markers = [ "swim.toml" ];
+      };
+    };
+
+    extraConfigLua = ''
+      vim.filetype.add({ extension = { spade = "spade" } })
+    '';
+
     # 診断設定（カーソル位置の警告を自動表示）
     diagnostic.settings = {
       virtual_text = true;

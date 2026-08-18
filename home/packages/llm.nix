@@ -9,11 +9,6 @@ let
   isDesktop = hostMeta.platform == "nixos" && hostMeta.role == "desktop";
   # nixpkgs-unstable の lmstudio 0.4.15-2 は起動時に V8 snapshot エラーになるため、
   # 動作確認済みの 0.4.16-2 を直接指定する。
-  lmstudio = pkgs-unstable.lmstudio.override {
-    version = "0.4.16-2";
-    url = "https://installers.lmstudio.ai/linux/x64/0.4.16-2/LM-Studio-0.4.16-2-x64.AppImage";
-    hash = "sha256-faLtj/9M59KRdEMHHgTCPLG4Gl5C7hkdAgmaS/O5rOk=";
-  };
 
   pi-acp = pkgs-unstable.buildNpmPackage {
     pname = "pi-acp";
@@ -34,8 +29,9 @@ in
     (
       if isDesktop then
         [
-          inputs.chatgpt-desktop-app.packages.${hostMeta.system}.default
-          lmstudio
+          pkgs-unstable.bubblewrap
+          inputs.codex-desktop-linux.packages.${hostMeta.system}.default
+          pkgs-unstable.lmstudio
         ]
       else
         [ ]
@@ -43,8 +39,8 @@ in
     ++ (with pkgs-with-llm-agents.llm-agents; [
       # LLM Agents from numtide/llm-agents.nix
       opencode
-      codex
-      codex-acp
+      # codex
+      # codex-acp
       pi
     ])
     ++ [

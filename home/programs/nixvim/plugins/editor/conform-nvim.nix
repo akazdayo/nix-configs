@@ -72,8 +72,6 @@ in
           command = "${spadefmt}/bin/spadefmt";
           args = [ "$FILENAME" ];
           stdin = false;
-          cwd = ''require("conform.util").root_file({ "spadefmt.toml" }) '';
-          require_cwd = true;
         };
       };
     };

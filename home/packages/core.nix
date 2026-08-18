@@ -25,6 +25,8 @@ in
       lazygit
       gh
       attic-client
+      nmap
+      dig
     ])
     ++ lib.optionals isLinux (
       with pkgs;

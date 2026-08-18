@@ -27,8 +27,8 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     llm-agents.url = "github:numtide/llm-agents.nix";
-    chatgpt-desktop-app = {
-      url = "github:poeck/chatgpt-desktop-app-nix-flake/92e93f7792de0d4f3c460bec19dd931afbd6c71a";
+    codex-desktop-linux = {
+      url = "github:ilysenko/codex-desktop-linux";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     minecraft-nix = {
@@ -99,7 +99,7 @@
         import nixpkgs {
           inherit system;
           config.allowUnfree = true;
-          overlays = [ llm-agents.overlays.default ];
+          overlays = [ llm-agents.overlays.shared-nixpkgs ];
         };
 
       nixosHosts = {

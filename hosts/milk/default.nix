@@ -1,4 +1,13 @@
-{ inputs, hostMeta, ... }:
+{
+  inputs,
+  hostMeta,
+  pkgs,
+  ...
+}:
+let
+  nixBuildDir = "/nix/var/nix/builds";
+  kioxiaBuildDir = "/mnt/kioxia/nix-build";
+in
 {
   imports = [
     ./hardware-configuration.nix
@@ -40,7 +49,58 @@
     ../../modules/nixos/flatpak.nix
     ../../modules/nixos/steam.nix
     ../../modules/nixos/wivrn.nix
+    inputs.rebocap.nixosModules.default
   ];
+
+  programs.rebocap.enable = true;
+
+  nix.settings.build-dir = nixBuildDir;
+
+  systemd = {
+    services = {
+      nix-build-dir = {
+        description = "Select storage for the Nix build directory";
+        wantedBy = [ "multi-user.target" ];
+        before = [
+          "nix-daemon.service"
+          "nix-daemon.socket"
+        ];
+        after = [ "local-fs.target" ];
+        script = ''
+          ${pkgs.coreutils}/bin/install -d -m 0755 ${nixBuildDir}
+
+          if ${pkgs.util-linux}/bin/mountpoint -q ${nixBuildDir}; then
+            echo "The Nix build directory is already mounted"
+          elif ${pkgs.util-linux}/bin/mountpoint -q /mnt/kioxia; then
+            ${pkgs.coreutils}/bin/install -d -m 0755 ${kioxiaBuildDir}
+            ${pkgs.util-linux}/bin/mount --bind ${kioxiaBuildDir} ${nixBuildDir}
+            echo "Using Kioxia for Nix builds"
+          else
+            echo "Using the default Nix build directory"
+          fi
+        '';
+        preStop = ''
+          if ${pkgs.util-linux}/bin/mountpoint -q ${nixBuildDir}; then
+            ${pkgs.util-linux}/bin/umount ${nixBuildDir}
+          fi
+        '';
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+        };
+      };
+
+      nix-daemon = {
+        requires = [ "nix-build-dir.service" ];
+        after = [ "nix-build-dir.service" ];
+      };
+    };
+
+    sockets.nix-daemon = {
+      requires = [ "nix-build-dir.service" ];
+      after = [ "nix-build-dir.service" ];
+    };
+  };
 
   networking.hostName = hostMeta.hostName;
 
@@ -70,6 +130,7 @@
         "video"
         "render"
         "input"
+        "dialout"
       ];
       authorizedKeys = [
         "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIIuYLePldOwgtFXwo0sw48rBVzX2zHjzGshFq4V9xwMLAAAABHNzaDo= somanoda@25N1103630nodasoma.local"

@@ -550,6 +550,22 @@
     },
     "nixpkgs_5": {
       "locked": {
+        "lastModified": 1787900134,
+        "narHash": "sha256-VYXO0XZlgj06dxJZRhrD3WoSsvq/c7+/Akyoa22pefw=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "83199d0d373dd3ac2b9a1996b1d0263f76ab7a4c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_6": {
+      "locked": {
         "lastModified": 1786599213,
         "narHash": "sha256-yNJd40f11EzXBjSByCB7IPpeFFAdeoSKKM67dGkfFoU=",
         "owner": "NixOS",
@@ -627,6 +643,24 @@
         "type": "github"
       }
     },
+    "rebocap": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_5"
+      },
+      "locked": {
+        "lastModified": 1788165360,
+        "narHash": "sha256-3pPwMSrjKe+3LVwlFVECwzSwGa/gfwzQ4Gkj1vPfpdo=",
+        "owner": "akazdayo",
+        "repo": "rebocap-linux",
+        "rev": "5d8e0080a359d276f89e838e3792c8b07d16fea9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "akazdayo",
+        "repo": "rebocap-linux",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "codex-desktop-linux": "codex-desktop-linux",
@@ -644,6 +678,7 @@
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nixvim": "nixvim",
         "noctalia": "noctalia",
+        "rebocap": "rebocap",
         "sops-nix": "sops-nix",
         "treefmt-nix": "treefmt-nix_2",
         "wivrn-nix": "wivrn-nix"
@@ -826,7 +861,7 @@
     },
     "wivrn-nix": {
       "inputs": {
-        "nixpkgs": "nixpkgs_5"
+        "nixpkgs": "nixpkgs_6"
       },
       "locked": {
         "lastModified": 1786857811,

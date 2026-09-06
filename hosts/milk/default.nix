@@ -27,7 +27,6 @@ in
     ../../modules/nixos/users/primary.nix
     ../../modules/nixos/hardware/swap.nix
     ../../modules/nixos/hardware/file-systems.nix
-    ../../modules/nixos/hardware/cachyos-kernel.nix
     ../../modules/nixos/hardware/nvidia.nix
     ../../modules/nixos/hardware/pentablet.nix
     ../../modules/nixos/hardware/scanner.nix

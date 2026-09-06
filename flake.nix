@@ -35,7 +35,6 @@
       url = "github:akazdayo/nix-minecraft";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
     wivrn-nix.url = "github:akazdayo/wivrn-nix";
     rebocap.url = "github:akazdayo/rebocap-linux";
     nixos-wsl = {

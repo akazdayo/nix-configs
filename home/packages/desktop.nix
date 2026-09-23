@@ -13,5 +13,7 @@
     obsidian
     vesktop
     chromium
+    awww
+    rnote
   ];
 }

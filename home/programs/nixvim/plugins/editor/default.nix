@@ -3,16 +3,12 @@
   imports = [
     ./telescope.nix
     ./treesitter.nix
-    ./spade-vim.nix
     ./cmp.nix
     ./gitsigns.nix
     ./comment.nix
     ./nvim-autopairs.nix
     ./lsp-signature.nix
-    ./copilot.nix
     ./conform-nvim.nix
     ./lazygit.nix
-    ./agentic.nix
-    ./lean.nix
   ];
 }

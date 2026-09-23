@@ -59,6 +59,7 @@ in
     services = {
       nix-build-dir = {
         description = "Select storage for the Nix build directory";
+        unitConfig.DefaultDependencies = false;
         wantedBy = [ "multi-user.target" ];
         before = [
           "nix-daemon.service"

@@ -47,6 +47,7 @@ in
     ../../modules/nixos/pipewire.nix
     ../../modules/nixos/flatpak.nix
     ../../modules/nixos/steam.nix
+    ../../modules/nixos/gamemode.nix
     ../../modules/nixos/wivrn.nix
     inputs.rebocap.nixosModules.default
   ];
@@ -131,6 +132,7 @@ in
         "render"
         "input"
         "dialout"
+        "gamemode"
       ];
       authorizedKeys = [
         "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIIuYLePldOwgtFXwo0sw48rBVzX2zHjzGshFq4V9xwMLAAAABHNzaDo= somanoda@25N1103630nodasoma.local"

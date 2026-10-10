@@ -633,11 +633,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1791617838,
-        "narHash": "sha256-cSSCnERTUUOf18alIvgd+GYbMt01BWY1liK9w1fvAVw=",
+        "lastModified": 1791622748,
+        "narHash": "sha256-AIwy7N0w8iioYsj/rnYRC9CRUAOQHlhvc85iHqJELXY=",
         "owner": "bot-uichan",
         "repo": "repro2",
-        "rev": "961f047a84a6eb6f6a334d2eb9072d535b4c1db0",
+        "rev": "2ad2ac9f8c242b046e1abde39920a57ce95b78c0",
         "type": "github"
       },
       "original": {

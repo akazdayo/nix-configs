@@ -35,6 +35,8 @@
       url = "github:akazdayo/nix-minecraft";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Keep repro2's own pinned Rust toolchain; do not follow the host nixpkgs.
+    repro2.url = "github:bot-uichan/repro2/feat/tailscale-idp";
     wivrn-nix.url = "github:akazdayo/wivrn-nix";
     rebocap.url = "github:akazdayo/rebocap-linux";
     nixos-wsl = {

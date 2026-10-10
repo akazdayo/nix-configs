@@ -14,6 +14,7 @@ in
     inputs.lanzaboote.nixosModules.lanzaboote
     inputs.sops-nix.nixosModules.default
     inputs.nix-flatpak.nixosModules.nix-flatpak
+    inputs.repro2.nixosModules.default
     ../../modules/nixos/nix/core.nix
     ../../modules/nixos/nix/nix-ld.nix
     ../../modules/nixos/nix/nh.nix
@@ -53,6 +54,12 @@ in
   ];
 
   programs.rebocap.enable = true;
+
+  services.repro2-sender = {
+    enable = true;
+    registryUrl = "https://repro2-test-server.tail07452a.ts.net:8443/";
+    blobUrl = "https://repro2-test-server.tail07452a.ts.net:8444/";
+  };
 
   nix.settings.build-dir = nixBuildDir;
 

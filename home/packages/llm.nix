@@ -7,6 +7,24 @@
 }:
 let
   isDesktop = hostMeta.platform == "nixos" && hostMeta.role == "desktop";
+  # The nixpkgs t3code package otherwise accepts node-pty's upstream
+  # prebuilt binary. Force its install script to compile a NixOS-compatible
+  # addon, which node-pty prefers from build/Release at runtime.
+  t3code = pkgs-unstable.t3code.override {
+    t3code-unwrapped = pkgs-unstable.t3code.unwrapped.overrideAttrs (old: {
+      preBuild = ''
+        node_pty_prebuild="$(find node_modules/.pnpm -path '*/node-pty/scripts/prebuild.js' -print -quit)"
+        if [ -z "$node_pty_prebuild" ]; then
+          echo "node-pty prebuild script not found" >&2
+          exit 1
+        fi
+        substituteInPlace "$node_pty_prebuild" \
+          --replace-fail "process.env.npm_config_build_from_source === 'true'" "true"
+      ''
+      + (old.preBuild or "");
+    });
+  };
+
   # nixpkgs-unstable の lmstudio 0.4.15-2 は起動時に V8 snapshot エラーになるため、
   # 動作確認済みの 0.4.16-2 を直接指定する。
 
@@ -32,6 +50,7 @@ in
           pkgs-unstable.bubblewrap
           inputs.codex-desktop-linux.packages.${hostMeta.system}.default
           pkgs-unstable.lmstudio
+          t3code
         ]
       else
         [ ]

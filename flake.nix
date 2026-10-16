@@ -31,6 +31,7 @@
       url = "github:ilysenko/codex-desktop-linux";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    kopuz.url = "github:Kopuz-org/kopuz";
     minecraft-nix = {
       url = "github:akazdayo/nix-minecraft";
       inputs.nixpkgs.follows = "nixpkgs";

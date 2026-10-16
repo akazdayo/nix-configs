@@ -1,4 +1,9 @@
-{ pkgs, ... }:
+{
+  inputs,
+  pkgs,
+  hostMeta,
+  ...
+}:
 {
   home.packages = with pkgs; [
     xdg-utils
@@ -15,5 +20,6 @@
     chromium
     awww
     rnote
+    inputs.kopuz.packages.${hostMeta.system}.default
   ];
 }

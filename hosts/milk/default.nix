@@ -32,7 +32,8 @@ in
     ../../modules/nixos/hardware/pentablet.nix
     ../../modules/nixos/hardware/scanner.nix
     ../../modules/nixos/boot/lanzaboote.nix
-    ../../modules/nixos/niri/login.nix
+    ../../modules/nixos/ly.nix
+    ../../modules/nixos/gnome.nix
     ../../modules/nixos/niri/service.nix
     ../../modules/nixos/niri/session.nix
     ../../modules/nixos/niri/variables.nix

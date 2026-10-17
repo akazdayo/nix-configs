@@ -16,6 +16,7 @@ in
     inputs.nix-flatpak.nixosModules.nix-flatpak
     inputs.repro2.nixosModules.default
     ../../modules/nixos/nix/core.nix
+    ../../modules/nixos/boot/kernel.nix
     ../../modules/nixos/nix/nix-ld.nix
     ../../modules/nixos/nix/nh.nix
     ../../modules/nixos/nix/cache.nix
@@ -40,6 +41,7 @@ in
     ../../modules/nixos/sops.nix
     ../../modules/nixos/wakatime.nix
     ../../modules/nixos/docker.nix
+    ../../modules/nixos/libvirt.nix
     ../../modules/nixos/packages.nix
     ../../modules/nixos/one-password.nix
     ../../modules/nixos/firefox.nix
@@ -136,6 +138,8 @@ in
         "networkmanager"
         "wheel"
         "docker"
+        "libvirtd"
+        "kvm"
         "video"
         "render"
         "input"

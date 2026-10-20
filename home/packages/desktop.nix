@@ -21,5 +21,6 @@
     awww
     rnote
     inputs.kopuz.packages.${hostMeta.system}.default
+    baobab
   ];
 }

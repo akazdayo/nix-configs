@@ -58,6 +58,7 @@ in
     ++ (with pkgs-with-llm-agents.llm-agents; [
       # LLM Agents from numtide/llm-agents.nix
       opencode
+      opencode2
       # codex
       # codex-acp
       pi

@@ -318,7 +318,6 @@
           default = pkgs.mkShell {
             inherit (preCommit) shellHook;
             packages = preCommit.enabledPackages ++ [
-              deploy-rs.packages.${system}.default
               pkgs.nixfmt
               pkgs.opentofu
               pkgs.sops

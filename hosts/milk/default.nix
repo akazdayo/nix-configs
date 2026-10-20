@@ -35,6 +35,7 @@ in
     ../../modules/nixos/boot/lanzaboote.nix
     ../../modules/nixos/ly.nix
     ../../modules/nixos/gnome.nix
+    ../../modules/nixos/plasma.nix
     ../../modules/nixos/niri/service.nix
     ../../modules/nixos/niri/session.nix
     ../../modules/nixos/niri/variables.nix

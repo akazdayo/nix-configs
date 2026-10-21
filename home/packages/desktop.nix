@@ -20,7 +20,7 @@
     chromium
     awww
     rnote
-    inputs.kopuz.packages.${hostMeta.system}.default
+    #inputs.kopuz.packages.${hostMeta.system}.default
     baobab
   ];
 }

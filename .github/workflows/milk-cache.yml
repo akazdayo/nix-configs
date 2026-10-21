@@ -91,7 +91,7 @@ jobs:
             exit 0
           fi
           # Include build-time dependencies, but do not mirror substituted closures.
-          sort -u "$RUNNER_TEMP/attic-built-paths" | attic push --stdin --no-closure ci:odango
+          sort -u "$RUNNER_TEMP/attic-built-paths" | attic push --stdin --no-closure --jobs 10 ci:odango
 
       - name: Commit and push flake.lock after successful build and upload
         if: ${{ success() }}

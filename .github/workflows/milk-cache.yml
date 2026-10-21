@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: milk-attic-cache
@@ -15,10 +15,11 @@ concurrency:
 
 jobs:
   build:
+    if: github.ref_type == 'branch'
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: cachix/install-nix-action@v31
         with:
@@ -26,6 +27,9 @@ jobs:
           extra_nix_config: |
             extra-substituters = https://attic.odango.app/odango https://cache.numtide.com https://akazdayo-nixos-config.cachix.org
             extra-trusted-public-keys = odango:8blIZl1xfwVCsNo2vUDYP5OXgwWAcC5WJDI1HuoeKLk= niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g= akazdayo-nixos-config.cachix.org-1:beIgz4A31qNo0DBTEaTGbNy/xGuNJZZpH0n3BDc+JVk=
+
+      - name: Update flake inputs
+        run: nix flake update
 
       - name: Install Attic from the locked nixpkgs
         run: |
@@ -71,3 +75,17 @@ jobs:
           fi
           # Include build-time dependencies, but do not mirror substituted closures.
           sort -u "$RUNNER_TEMP/attic-built-paths" | attic push --stdin --no-closure ci:odango
+
+      - name: Commit and push flake.lock after successful build and upload
+        if: ${{ success() }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add flake.lock
+          if git diff --quiet --cached; then
+            echo "flake.lock unchanged since checkout; nothing to commit."
+            exit 0
+          fi
+          git commit -m "chore: update flake.lock after Milk cache build"
+          # Reject concurrent branch updates instead of publishing an untested merge.
+          git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"

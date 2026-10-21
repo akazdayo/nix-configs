@@ -1,5 +1,6 @@
 {
   inputs,
+  pkgs,
   pkgs-unstable,
   pkgs-with-llm-agents,
   hostMeta,
@@ -7,9 +8,6 @@
 }:
 let
   isDesktop = hostMeta.platform == "nixos" && hostMeta.role == "desktop";
-
-  # nixpkgs-unstable の lmstudio 0.4.15-2 は起動時に V8 snapshot エラーになるため、
-  # 動作確認済みの 0.4.16-2 を直接指定する。
 
   pi-acp = pkgs-unstable.buildNpmPackage {
     pname = "pi-acp";
@@ -32,7 +30,7 @@ in
         [
           pkgs-unstable.bubblewrap
           inputs.codex-desktop-linux.packages.${hostMeta.system}.default
-          pkgs-unstable.lmstudio
+          pkgs.lmstudio
         ]
       else
         [ ]

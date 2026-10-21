@@ -1,0 +1,73 @@
+name: Milk Attic Cache
+
+on:
+  schedule:
+    # 08:00 Asia/Tokyo (23:00 UTC on the previous day).
+    - cron: "0 23 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: milk-attic-cache
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            extra-substituters = https://attic.odango.app/odango https://cache.numtide.com https://akazdayo-nixos-config.cachix.org
+            extra-trusted-public-keys = odango:8blIZl1xfwVCsNo2vUDYP5OXgwWAcC5WJDI1HuoeKLk= niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g= akazdayo-nixos-config.cachix.org-1:beIgz4A31qNo0DBTEaTGbNy/xGuNJZZpH0n3BDc+JVk=
+
+      - name: Install Attic from the locked nixpkgs
+        run: |
+          nix build --inputs-from . nixpkgs#attic-client --no-update-lock-file --out-link "$RUNNER_TEMP/attic-client"
+          echo "$RUNNER_TEMP/attic-client/bin" >> "$GITHUB_PATH"
+
+      - name: Configure Attic and record locally built outputs
+        id: configure
+        env:
+          ATTIC_TOKEN: ${{ secrets.ATTIC_TOKEN }}
+        run: |
+          if [[ -z "$ATTIC_TOKEN" ]]; then
+            echo "::error::Set the ATTIC_TOKEN repository secret with pull/push access to the odango cache."
+            exit 1
+          fi
+          attic login ci https://attic.odango.app/ "$ATTIC_TOKEN"
+          attic cache info ci:odango
+          touch "$RUNNER_TEMP/attic-built-paths"
+          # The daemon runs this hook. Queue paths without requiring its credentials.
+          cat > "$RUNNER_TEMP/attic-post-build-hook" <<EOF
+          #!/bin/sh
+          set -efu
+          # Nix supplies space-separated store paths; globbing is disabled above.
+          # shellcheck disable=SC2086
+          printf '%s\n' \$OUT_PATHS >> "$RUNNER_TEMP/attic-built-paths"
+          EOF
+          chmod +x "$RUNNER_TEMP/attic-post-build-hook"
+
+      - name: Build Milk using available substitutes
+        # Leave time to push successful outputs even when this step times out.
+        timeout-minutes: 300
+        run: |
+          nix build .#nixosConfigurations.milk.config.system.build.toplevel \
+            --no-update-lock-file --no-link --keep-going --print-build-logs \
+            --option post-build-hook "$RUNNER_TEMP/attic-post-build-hook"
+
+      - name: Push locally built outputs to Attic
+        if: ${{ always() && steps.configure.outcome == 'success' }}
+        run: |
+          if [[ ! -s "$RUNNER_TEMP/attic-built-paths" ]]; then
+            echo "No locally built outputs to push."
+            exit 0
+          fi
+          # Include build-time dependencies, but do not mirror substituted closures.
+          sort -u "$RUNNER_TEMP/attic-built-paths" | attic push --stdin --no-closure ci:odango

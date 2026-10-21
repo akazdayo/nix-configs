@@ -16,11 +16,12 @@
     nh.flake = hostMeta.flakeRoot;
     nix.cache = {
       substituters = [
+        "https://attic.odango.app/odango"
         "https://cache.numtide.com"
         "https://akazdayo-nixos-config.cachix.org"
       ];
       trustedPublicKeys = [
-        "main:p1I0gblo5KOxd64LCmeOmENhGx/fRCVp5CS4aOQGY6w="
+        "odango:8blIZl1xfwVCsNo2vUDYP5OXgwWAcC5WJDI1HuoeKLk="
         "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
         "akazdayo-nixos-config.cachix.org-1:beIgz4A31qNo0DBTEaTGbNy/xGuNJZZpH0n3BDc+JVk="
       ];

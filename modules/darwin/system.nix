@@ -10,11 +10,11 @@
   nix.settings.always-allow-substitutes = true;
   nix.settings.extra-trusted-substituters = [
     "https://cache.lix.systems"
-    "https://attic.odango.app/main"
+    "https://attic.odango.app/odango"
   ];
   nix.settings.extra-trusted-public-keys = [
     "cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o="
-    "main:p1I0gblo5KOxd64LCmeOmENhGx/fRCVp5CS4aOQGY6w="
+    "odango:8blIZl1xfwVCsNo2vUDYP5OXgwWAcC5WJDI1HuoeKLk="
   ];
 
   nixpkgs.hostPlatform = hostMeta.system;

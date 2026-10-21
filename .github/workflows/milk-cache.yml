@@ -64,11 +64,28 @@ jobs:
         run: |
           nix build .#nixosConfigurations.milk.config.system.build.toplevel \
             --no-update-lock-file --no-link --keep-going --print-build-logs \
-            --option post-build-hook "$RUNNER_TEMP/attic-post-build-hook"
+            --option post-build-hook "$RUNNER_TEMP/attic-post-build-hook" &
+          build_pid=$!
+          # Keep the runner alive so the final upload can run after disk pressure.
+          (
+            while kill -0 "$build_pid" 2>/dev/null; do
+              available=$(df -B1 --output=avail /nix/store | tail -n 1)
+              if (( available < 3 * 1024 * 1024 * 1024 )); then
+                echo "::error::Less than 3 GiB free; stopping the build to preserve completed outputs for upload."
+                kill -TERM "$build_pid" 2>/dev/null || true
+                break
+              fi
+              sleep 10
+            done
+          ) &
+          monitor_pid=$!
+          trap 'kill "$monitor_pid" 2>/dev/null || true' EXIT
+          wait "$build_pid"
 
       - name: Push locally built outputs to Attic
         if: ${{ always() && steps.configure.outcome == 'success' }}
         run: |
+          df -h / /nix/store
           if [[ ! -s "$RUNNER_TEMP/attic-built-paths" ]]; then
             echo "No locally built outputs to push."
             exit 0

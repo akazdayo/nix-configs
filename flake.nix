@@ -106,15 +106,6 @@
           role = "desktop";
           deploy.hostname = "192.168.11.48";
         };
-        hinata = {
-          role = "server";
-          deploy = {
-            hostname = "192.168.11.50";
-            sshUser = "deploy";
-            remoteBuild = true;
-            activationTimeout = 600;
-          };
-        };
         milfy.role = "wsl";
       };
 

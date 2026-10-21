@@ -23,12 +23,6 @@
       ../../home/packages/darwin.nix
       ../../home/packages/llm.nix
     ];
-    programs.ssh.settings."192.168.11.50" = {
-      header = "Host 192.168.11.50";
-      User = "akazdayo";
-      IdentityFile = "~/.ssh/id_ed25519_sk_rk";
-      IdentityAgent = "none";
-    };
     home.stateVersion = "25.11";
   };
 

@@ -153,7 +153,6 @@ in
       ];
     };
     networking = {
-      networkManager.nameservers = [ "192.168.11.62" ];
       wireguard = {
         sopsFile = ../../secrets/common/wireguard.yaml;
         secretKey = "maril_wireguard_sk";
@@ -233,12 +232,6 @@ in
       ../../home/packages/gaming.nix
       ../../home/packages/llm.nix
     ];
-    programs.ssh.settings."192.168.11.50" = {
-      header = "Host 192.168.11.50";
-      User = "akazdayo";
-      IdentityFile = "~/.ssh/id_ed25519_sk_rk";
-      IdentityAgent = "none";
-    };
     home.sessionVariables.EDITOR = "nvim";
     home.stateVersion = "25.11";
   };

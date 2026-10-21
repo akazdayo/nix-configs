@@ -7,7 +7,6 @@ Host-centric Nix flake for NixOS, NixOS-WSL, nix-darwin, and Home Manager.
 | Host      | Platform / role | Apply                                            |
 | --------- | --------------- | ------------------------------------------------ |
 | `milk`    | NixOS desktop   | `nh os switch`                                   |
-| `hinata`  | NixOS server    | `nh os switch --hostname hinata`                 |
 | `milfy`   | NixOS-WSL       | `sudo nixos-rebuild switch --flake .#milfy`      |
 | `chiffon` | macOS desktop   | `nix run nix-darwin -- switch --flake .#chiffon` |
 

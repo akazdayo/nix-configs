@@ -5,8 +5,6 @@
 **/*.tfstate
 **/*.tfstate.*
 **/*.tfvars
-!infra/openstack/minecraft/terraform.tfvars
-!infra/openstack/gateway/terraform.tfvars
 **/*.tfvars.json
 **/crash.log
 **/crash.*.log

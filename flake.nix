@@ -32,10 +32,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     kopuz.url = "github:Kopuz-org/kopuz";
-    minecraft-nix = {
-      url = "github:akazdayo/nix-minecraft";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     # Keep repro2's own pinned Rust toolchain; do not follow the host nixpkgs.
     repro2.url = "github:bot-uichan/repro2/feat/tailscale-idp";
     wivrn-nix.url = "github:akazdayo/wivrn-nix";
@@ -114,22 +110,6 @@
           role = "server";
           deploy = {
             hostname = "192.168.11.50";
-            sshUser = "deploy";
-            remoteBuild = true;
-            activationTimeout = 600;
-          };
-        };
-        gateway = {
-          role = "openstack";
-          deploy = {
-            sshUser = "deploy";
-            remoteBuild = true;
-            activationTimeout = 600;
-          };
-        };
-        minecraft = {
-          role = "openstack";
-          deploy = {
             sshUser = "deploy";
             remoteBuild = true;
             activationTimeout = 600;
@@ -284,30 +264,6 @@
         deploy-rs = deploy-rs.packages.${system}.default;
       });
 
-      apps = forAllSystems (
-        system:
-        let
-          pkgs = mkPkgs system;
-          deploy-openstack-script = pkgs.writeShellScript "deploy-openstack" ''
-            set -euo pipefail
-            TARGET_HOST="''${1:-}"
-            if [ -z "$TARGET_HOST" ]; then
-              echo "Usage: nix run .#deploy-openstack -- <hostname>" >&2
-              exit 1
-            fi
-            HOST=$(${pkgs.opentofu}/bin/tofu -chdir=infra/openstack/$TARGET_HOST output -raw ssh_host)
-            exec ${deploy-rs.packages.${system}.default}/bin/deploy .#$TARGET_HOST --hostname "$HOST" "''${@:2}"
-          '';
-        in
-        {
-          deploy-openstack = {
-            type = "app";
-            program = "${deploy-openstack-script}";
-            meta.description = "Deploy an OpenStack host using deploy-rs, resolving SSH host from OpenTofu output";
-          };
-        }
-      );
-
       devShells = forAllSystems (
         system:
         let
@@ -319,12 +275,10 @@
             inherit (preCommit) shellHook;
             packages = preCommit.enabledPackages ++ [
               pkgs.nixfmt
-              pkgs.opentofu
               pkgs.sops
               pkgs.age
               pkgs.age-plugin-yubikey
               pkgs.ssh-to-age
-              pkgs.python3Packages.python-openstackclient
             ];
           };
         }

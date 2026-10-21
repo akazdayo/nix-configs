@@ -11,7 +11,6 @@ flake.nix -> hosts/<name>/default.nix -> leaf modules
 - `modules/{nixos,darwin}/`: system leaf modules.
 - `home/programs/` and `home/packages/`: Home Manager modules.
 - `dotfiles/`: static files; `secrets/`: encrypted data only.
-- `infra/openstack/`: OpenTofu configuration governed by its nested `AGENTS.md`.
 
 Import leaf modules directly from applicable host definitions. Do not introduce profiles, bundles, import-only `default.nix` files, or imports between repository leaf modules. Required external flake imports are allowed.
 
@@ -34,12 +33,12 @@ Use lowercase kebab-case filenames. Add a directory only for multi-file features
 
 ## Testing & Pull Requests
 
-There is no unit-test suite; flake checks and host builds are the primary verification. Before a PR, run `nix fmt`, `nix flake check`, and dry-build affected hosts. CI checks the flake and builds Milk, Hinata, Gateway, Minecraft, and Chiffon.
+There is no unit-test suite; flake checks and host builds are the primary verification. Before a PR, run `nix fmt`, `nix flake check`, and dry-build affected hosts. CI checks the flake and builds Milk, Hinata, and Chiffon.
 
 Recent commits use brief Japanese summaries, sometimes prefixed with `feat:`. Keep commits focused. PRs should list affected hosts, verification, deployment or secret implications, and screenshots for UI changes.
 
 ## Safety & Deployment
 
-Never edit `hardware-configuration.nix`; put hardware additions in a role module. Keep IPs, interfaces, mount paths, keys, and service paths in host definitions and pass them through `local.*`. Do not move, decrypt, or rekey tracked secrets unless requested; `.sops.yaml` owns secret paths. Preserve legacy `/etc/nextcloud-adminpass` and `/etc/searx-env`, unrelated changes, and ignored Terraform state. Review an OpenTofu plan before applying.
+Never edit `hardware-configuration.nix`; put hardware additions in a role module. Keep IPs, interfaces, mount paths, keys, and service paths in host definitions and pass them through `local.*`. Do not move, decrypt, or rekey tracked secrets unless requested; `.sops.yaml` owns secret paths. Preserve legacy `/etc/nextcloud-adminpass` and `/etc/searx-env`, unrelated changes, and ignored Terraform state.
 
-Deploy OpenStack hosts with `nix run .#deploy-openstack -- <host>`. Deploy-rs covers Milk, Hinata, Gateway, and Minecraft; Milfy and Chiffon are excluded.
+Deploy-rs covers Milk and Hinata; Milfy and Chiffon are excluded.

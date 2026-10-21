@@ -14,15 +14,14 @@ The YubiKey recipient and per-host creation rules are defined in `.sops.yaml`. P
 
 ## Inventory
 
-| Path                                      | Consumer                                 |
-| ----------------------------------------- | ---------------------------------------- |
-| `secrets/common/wireguard.yaml`           | `modules/nixos/networking/wireguard.nix` |
-| `secrets/milk/wakatime.yaml`              | `modules/nixos/wakatime.nix`             |
-| `secrets/hinata/attic.yaml`               | `modules/nixos/containers/attic.nix`     |
-| `secrets/hinata/cloudflared.yaml`         | `modules/nixos/cloudflared.nix`          |
-| `secrets/hinata/litellm.yaml`             | `modules/nixos/litellm.nix`              |
-| `secrets/hinata/litellm-chatgpt.yaml`     | `modules/nixos/litellm.nix`              |
-| `secrets/openstack/gateway/velocity.yaml` | Gateway and Minecraft server modules     |
+| Path                                  | Consumer                                 |
+| ------------------------------------- | ---------------------------------------- |
+| `secrets/common/wireguard.yaml`       | `modules/nixos/networking/wireguard.nix` |
+| `secrets/milk/wakatime.yaml`          | `modules/nixos/wakatime.nix`             |
+| `secrets/hinata/attic.yaml`           | `modules/nixos/containers/attic.nix`     |
+| `secrets/hinata/cloudflared.yaml`     | `modules/nixos/cloudflared.nix`          |
+| `secrets/hinata/litellm.yaml`         | `modules/nixos/litellm.nix`              |
+| `secrets/hinata/litellm-chatgpt.yaml` | `modules/nixos/litellm.nix`              |
 
 `home/programs/secrets.nix` configures Home Manager's sops/age tooling. Chiffon currently has a reserved creation rule but no tracked encrypted secret.
 

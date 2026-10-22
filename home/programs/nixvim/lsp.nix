@@ -34,7 +34,6 @@
         };
         gleam.enable = true;
         gopls.enable = true;
-        verible.enable = true;
         zls.enable = true;
       };
     };

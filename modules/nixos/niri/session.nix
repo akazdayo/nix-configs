@@ -16,10 +16,19 @@
 
   systemd.user.services.polkit-gnome-authentication-agent-1 = {
     description = "polkit-gnome-authentication-agent-1";
-    # GNOME Shell は認証エージェントを内蔵しているため Niri に限定する。
-    wantedBy = [ "niri.service" ];
-    partOf = [ "niri.service" ];
-    after = [ "niri.service" ];
+    # GNOME Shell は認証エージェントを内蔵しているため Niri / labwc に限定する。
+    wantedBy = [
+      "niri.service"
+      "labwc-session.target"
+    ];
+    partOf = [
+      "niri.service"
+      "labwc-session.target"
+    ];
+    after = [
+      "niri.service"
+      "labwc-session.target"
+    ];
     serviceConfig = {
       Type = "simple";
       ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";

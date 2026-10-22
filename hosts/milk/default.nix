@@ -36,6 +36,7 @@ in
     ../../modules/nixos/ly.nix
     ../../modules/nixos/gnome.nix
     ../../modules/nixos/plasma.nix
+    ../../modules/nixos/labwc.nix
     ../../modules/nixos/niri/service.nix
     ../../modules/nixos/niri/session.nix
     ../../modules/nixos/niri/variables.nix
@@ -213,6 +214,7 @@ in
       ../../home/programs/files.nix
       ../../home/programs/flameshot.nix
       ../../home/programs/noctalia.nix
+      ../../home/programs/labwc.nix
       ../../home/programs/niri.nix
       ../../home/programs/cursor.nix
       ../../home/programs/ghostty.nix
@@ -233,6 +235,7 @@ in
       ../../home/packages/llm.nix
     ];
     home.sessionVariables.EDITOR = "nvim";
+    local.labwc.outputModes."DP-1" = "1920x1080@239.757Hz";
     home.stateVersion = "25.11";
   };
 

@@ -7,10 +7,19 @@
     settings.shell.launch_apps_as_systemd_services = true;
   };
 
-  # GNOME では起動せず、Niri の終了とともに停止する。
+  # Niri / labwc のセッションとともに起動・停止する。
   systemd.user.services.noctalia = {
-    Unit.PartOf = lib.mkForce [ "niri.service" ];
-    Unit.After = lib.mkForce [ "niri.service" ];
-    Install.WantedBy = lib.mkForce [ "niri.service" ];
+    Unit.PartOf = lib.mkForce [
+      "niri.service"
+      "labwc-session.target"
+    ];
+    Unit.After = lib.mkForce [
+      "niri.service"
+      "labwc-session.target"
+    ];
+    Install.WantedBy = lib.mkForce [
+      "niri.service"
+      "labwc-session.target"
+    ];
   };
 }

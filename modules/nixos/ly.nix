@@ -1,6 +1,6 @@
 { ... }:
 {
-  # GNOME / Plasma / Niri の選択はログイン画面のセッション欄から行う。
+  # GNOME / Plasma / Niri / labwc の選択はログイン画面のセッション欄から行う。
   services.displayManager.ly = {
     enable = true;
     x11Support = false;

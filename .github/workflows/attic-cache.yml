@@ -1,4 +1,4 @@
-name: Milk Attic Cache
+name: Host Attic Cache
 
 on:
   schedule:
@@ -7,19 +7,65 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+
+defaults:
+  run:
+    shell: bash
 
 concurrency:
-  group: milk-attic-cache
+  group: host-attic-cache
   cancel-in-progress: false
 
 jobs:
-  build:
+  prepare:
     if: github.ref_type == 'branch'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - uses: cachix/install-nix-action@v31.11.2
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update flake inputs
+        run: nix flake update
+
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: updated-flake-lock
+          path: flake.lock
+          if-no-files-found: error
+          retention-days: 7
+
+  build:
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux
+            runner: ubuntu-latest
+            targets: .#nixosConfigurations.milk.config.system.build.toplevel .#nixosConfigurations.milfy.config.system.build.toplevel
+          - platform: darwin
+            runner: macos-15
+            targets: .#darwinConfigurations.chiffon.system
+    name: Build and cache (${{ matrix.platform }})
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 360
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - uses: actions/download-artifact@v8.0.2
+        with:
+          name: updated-flake-lock
 
       - uses: cachix/install-nix-action@v31.11.2
         with:
@@ -27,9 +73,6 @@ jobs:
           extra_nix_config: |
             extra-substituters = https://attic.odango.app/odango https://cache.numtide.com https://akazdayo-nixos-config.cachix.org
             extra-trusted-public-keys = odango:8blIZl1xfwVCsNo2vUDYP5OXgwWAcC5WJDI1HuoeKLk= niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g= akazdayo-nixos-config.cachix.org-1:beIgz4A31qNo0DBTEaTGbNy/xGuNJZZpH0n3BDc+JVk=
-
-      - name: Update flake inputs
-        run: nix flake update
 
       - name: Install Attic from the locked nixpkgs
         run: |
@@ -58,19 +101,22 @@ jobs:
           EOF
           chmod +x "$RUNNER_TEMP/attic-post-build-hook"
 
-      - name: Build Milk using available substitutes
+      - name: Build hosts using available substitutes
         # Leave time to push successful outputs even when this step times out.
         timeout-minutes: 300
+        env:
+          NIX_TARGETS: ${{ matrix.targets }}
         run: |
-          nix build .#nixosConfigurations.milk.config.system.build.toplevel \
+          read -r -a targets <<< "$NIX_TARGETS"
+          nix build "${targets[@]}" \
             --no-update-lock-file --no-link --keep-going --print-build-logs \
             --option post-build-hook "$RUNNER_TEMP/attic-post-build-hook" &
           build_pid=$!
           # Keep the runner alive so the final upload can run after disk pressure.
           (
             while kill -0 "$build_pid" 2>/dev/null; do
-              available=$(df -B1 --output=avail /nix/store | tail -n 1)
-              if (( available < 3 * 1024 * 1024 * 1024 )); then
+              available_kib=$(df -Pk /nix/store | awk 'END { print $4 }')
+              if (( available_kib < 3 * 1024 * 1024 )); then
                 echo "::error::Less than 3 GiB free; stopping the build to preserve completed outputs for upload."
                 kill -TERM "$build_pid" 2>/dev/null || true
                 break
@@ -93,8 +139,22 @@ jobs:
           # Include build-time dependencies, but do not mirror substituted closures.
           sort -u "$RUNNER_TEMP/attic-built-paths" | attic push --stdin --no-closure --jobs 20 ci:odango
 
-      - name: Commit and push flake.lock after successful build and upload
-        if: ${{ success() }}
+  publish-lock:
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.sha }}
+
+      - uses: actions/download-artifact@v8.0.2
+        with:
+          name: updated-flake-lock
+
+      - name: Commit and push flake.lock after all builds and uploads succeed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -103,6 +163,6 @@ jobs:
             echo "flake.lock unchanged since checkout; nothing to commit."
             exit 0
           fi
-          git commit -m "chore: update flake.lock after Milk cache build"
+          git commit -m "chore: update flake.lock after all host cache builds"
           # Reject concurrent branch updates instead of publishing an untested merge.
           git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"

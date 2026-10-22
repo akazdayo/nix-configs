@@ -677,7 +677,8 @@
         "repro2": "repro2",
         "sops-nix": "sops-nix",
         "treefmt-nix": "treefmt-nix_2",
-        "wivrn-nix": "wivrn-nix"
+        "wivrn-nix": "wivrn-nix",
+        "zen-browser": "zen-browser"
       }
     },
     "rust-overlay": {
@@ -909,6 +910,29 @@
       "original": {
         "owner": "akazdayo",
         "repo": "wivrn-nix",
+        "type": "github"
+      }
+    },
+    "zen-browser": {
+      "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792595242,
+        "narHash": "sha256-kH/E0uJDslOgYcnmU+c0cm6HrUjsEtvZQKZtuQ1+uvo=",
+        "owner": "0xc000022070",
+        "repo": "zen-browser-flake",
+        "rev": "f19490ac889eabb05bdb7e8dcb85225ee75bd87b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "0xc000022070",
+        "repo": "zen-browser-flake",
         "type": "github"
       }
     }

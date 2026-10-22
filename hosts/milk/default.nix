@@ -47,6 +47,7 @@ in
     ../../modules/nixos/packages.nix
     ../../modules/nixos/one-password.nix
     ../../modules/nixos/firefox.nix
+    ../../modules/nixos/zen-browser.nix
     ../../modules/nixos/printing.nix
     ../../modules/nixos/sunshine.nix
     ../../modules/nixos/zoom.nix

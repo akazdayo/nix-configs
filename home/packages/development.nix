@@ -11,7 +11,10 @@ in
   home.packages = (
     if isDesktop then
       (with pkgs; [
-        unityhub
+        (unityhub.override {
+          # Unity 6's shader compiler (libdxcompiler) needs libtinfo.so.6.
+          extraLibs = pkgs: [ pkgs.ncurses ];
+        })
         pkgs-unstable.pnpm
       ])
     else

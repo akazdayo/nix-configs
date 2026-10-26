@@ -3,6 +3,10 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
@@ -169,6 +173,7 @@
             pkgs-unstable = mkPkgsUnstable system;
           };
           modules = [
+            { nixpkgs.overlays = [ inputs.rust-overlay.overlays.default ]; }
             home-manager.nixosModules.home-manager
             (mkHomeManagerConfig hostMeta)
             (./hosts + "/${hostName}")
@@ -188,6 +193,7 @@
             pkgs-unstable = mkPkgsUnstable system;
           };
           modules = [
+            { nixpkgs.overlays = [ inputs.rust-overlay.overlays.default ]; }
             home-manager.darwinModules.home-manager
             (mkHomeManagerConfig hostMeta)
             (./hosts + "/${hostName}")

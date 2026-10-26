@@ -11,6 +11,13 @@ in
   home.packages = (
     if isDesktop then
       (with pkgs; [
+        (rust-bin.stable.latest.default.override {
+          extensions = [
+            "rust-analyzer"
+            "rustfmt"
+            "clippy"
+          ];
+        })
         (unityhub.override {
           # Unity 6's shader compiler (libdxcompiler) needs libtinfo.so.6.
           buildFHSEnv =
@@ -28,6 +35,13 @@ in
       ])
     else
       (with pkgs; [
+        (rust-bin.stable.latest.default.override {
+          extensions = [
+            "rust-analyzer"
+            "rustfmt"
+            "clippy"
+          ];
+        })
         pkgs-unstable.pnpm
         bun
         nodejs_24

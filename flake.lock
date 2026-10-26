@@ -675,6 +675,7 @@
         "noctalia": "noctalia",
         "rebocap": "rebocap",
         "repro2": "repro2",
+        "rust-overlay": "rust-overlay_4",
         "sops-nix": "sops-nix",
         "treefmt-nix": "treefmt-nix_2",
         "wivrn-nix": "wivrn-nix",
@@ -733,6 +734,26 @@
         "owner": "oxalica",
         "repo": "rust-overlay",
         "rev": "6ae57a71bcb0bebc7a66cc2bd76942c4cf649167",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "rust-overlay_4": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793000331,
+        "narHash": "sha256-6sLQgHX/V/yF8VrhmsJroujeRua1GY3nDTEpnY7tHF4=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "0d0575988e4bb9ebc4cf1afb1cec1ceac0b5914e",
         "type": "github"
       },
       "original": {

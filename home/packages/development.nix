@@ -13,7 +13,16 @@ in
       (with pkgs; [
         (unityhub.override {
           # Unity 6's shader compiler (libdxcompiler) needs libtinfo.so.6.
-          extraLibs = pkgs: [ pkgs.ncurses ];
+          buildFHSEnv =
+            args:
+            pkgs.buildFHSEnv (
+              args
+              // {
+                profile = (args.profile or "") + ''
+                  export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.ncurses ]}:''${LD_LIBRARY_PATH:-}"
+                '';
+              }
+            );
         })
         pkgs-unstable.pnpm
       ])

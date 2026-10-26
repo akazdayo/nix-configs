@@ -84,6 +84,9 @@
             <keybind key="W-comma"><action name="Execute" command="noctalia msg settings-toggle" /></keybind>
             <keybind key="W-Escape"><action name="Execute" command="noctalia msg panel-toggle session" /></keybind>
             <keybind key="W-S-e"><action name="Exit" /></keybind>
+            <keybind key="Print"><action name="Execute" command="flameshot gui" /></keybind>
+            <keybind key="C-Print"><action name="Execute" command="flameshot screen --clipboard" /></keybind>
+            <keybind key="A-Print"><action name="Execute" command="flameshot full --clipboard" /></keybind>
             <keybind key="XF86AudioRaiseVolume"><action name="Execute" command="noctalia msg volume-up" /></keybind>
             <keybind key="XF86AudioLowerVolume"><action name="Execute" command="noctalia msg volume-down" /></keybind>
             <keybind key="XF86AudioMute"><action name="Execute" command="noctalia msg volume-mute" /></keybind>

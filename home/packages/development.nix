@@ -32,6 +32,7 @@ in
             );
         })
         pkgs-unstable.pnpm
+        google-cloud-sdk
       ])
     else
       (with pkgs; [
@@ -45,6 +46,7 @@ in
         pkgs-unstable.pnpm
         bun
         nodejs_24
+        google-cloud-sdk
       ])
   );
 }

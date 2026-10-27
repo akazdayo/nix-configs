@@ -10,6 +10,7 @@
       qt6Packages.fcitx5-with-addons # Waylandサポート
       qt6Packages.fcitx5-configtool # GUI設定ツール
     ];
+    fcitx5.settings.globalOptions.Hotkey.AltTriggerKeys = "";
     fcitx5.settings.inputMethod = {
       "Groups/0" = {
         Name = "デフォルト";

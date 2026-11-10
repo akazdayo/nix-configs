@@ -1,6 +1,7 @@
 {
   inputs,
   hostMeta,
+  lib,
   pkgs,
   ...
 }:
@@ -16,6 +17,18 @@ in
     inputs.sops-nix.nixosModules.default
     inputs.nix-flatpak.nixosModules.nix-flatpak
     inputs.repro2.nixosModules.default
+    (inputs.translog-nix + /nix/modules)
+    {
+      options.nix.settings = lib.mkOption {
+        type = lib.types.submodule {
+          options.substituters = lib.mkOption {
+            apply = builtins.filter (
+              url: url != "https://cache.nixos.org/" && url != "https://cache.nixos.org"
+            );
+          };
+        };
+      };
+    }
     ../../modules/nixos/nix/core.nix
     ../../modules/nixos/boot/kernel.nix
     ../../modules/nixos/nix/nix-ld.nix
@@ -62,6 +75,12 @@ in
 
   programs.rebocap.enable = true;
   services.bootvine.enable = true;
+  services.translog-nix.proxy = {
+    enable = true;
+    logUrl = "https://translog-nix.tail07452a.ts.net/";
+  };
+
+  nix.settings.substituters = [ "http://127.0.0.1:8081" ];
 
   #services.repro2-sender = {
   #enable = true;

@@ -49,6 +49,10 @@
     repro2.url = "github:bot-uichan/repro2/feat/tailscale-idp";
     wivrn-nix.url = "github:akazdayo/wivrn-nix";
     rebocap.url = "github:akazdayo/rebocap-linux";
+    translog-nix = {
+      url = "github:akazdayo/translog-nix";
+      flake = false;
+    };
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";

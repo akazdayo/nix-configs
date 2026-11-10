@@ -715,6 +715,7 @@
         "repro2": "repro2",
         "rust-overlay": "rust-overlay_5",
         "sops-nix": "sops-nix",
+        "translog-nix": "translog-nix",
         "treefmt-nix": "treefmt-nix_2",
         "wivrn-nix": "wivrn-nix",
         "zen-browser": "zen-browser"
@@ -913,6 +914,22 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "translog-nix": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1794304771,
+        "narHash": "sha256-/Du9Zf5TJuLKN+zcN8ob9v7wb3GSfgzJxHXviYa7tA4=",
+        "owner": "akazdayo",
+        "repo": "translog-nix",
+        "rev": "c1cb84f92015336ce74a1fc3dc86d91704617ff9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "akazdayo",
+        "repo": "translog-nix",
         "type": "github"
       }
     },

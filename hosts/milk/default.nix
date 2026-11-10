@@ -12,6 +12,7 @@ in
   imports = [
     ./hardware-configuration.nix
     inputs.lanzaboote.nixosModules.lanzaboote
+    inputs.bootvine.nixosModules.default
     inputs.sops-nix.nixosModules.default
     inputs.nix-flatpak.nixosModules.nix-flatpak
     inputs.repro2.nixosModules.default
@@ -60,6 +61,7 @@ in
   ];
 
   programs.rebocap.enable = true;
+  services.bootvine.enable = true;
 
   #services.repro2-sender = {
   #enable = true;

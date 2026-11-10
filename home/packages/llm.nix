@@ -26,6 +26,7 @@ in
     ++ [
       # Use upstream's pinned dependencies to match the numtide binary cache.
       inputs.llm-agents.packages.${hostMeta.system}.t3code-desktop
+      inputs.llm-agents.packages.${hostMeta.system}.codex
       (pkgs-unstable.writeShellScriptBin "opencode" ''
         exec ${pkgs-with-llm-agents.llm-agents.opencode2}/bin/opencode2 "$@"
       '')

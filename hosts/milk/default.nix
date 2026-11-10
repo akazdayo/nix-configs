@@ -61,11 +61,11 @@ in
 
   programs.rebocap.enable = true;
 
-  services.repro2-sender = {
-    enable = true;
-    registryUrl = "https://repro2-test-server.tail07452a.ts.net:8443/";
-    blobUrl = "https://repro2-test-server.tail07452a.ts.net:8444/";
-  };
+  #services.repro2-sender = {
+  #enable = true;
+  #registryUrl = "https://repro2-test-server.tail07452a.ts.net:8443/";
+  #blobUrl = "https://repro2-test-server.tail07452a.ts.net:8444/";
+  #};
 
   nix.settings.build-dir = nixBuildDir;
 

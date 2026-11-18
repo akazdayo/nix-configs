@@ -1,5 +1,25 @@
 {
   "nodes": {
+    "agent-skills": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794456227,
+        "narHash": "sha256-qu7S1arVl+Q6H/yZhJ2VdeDY/kBxY8mK8m6U49M0alk=",
+        "owner": "Kyure-A",
+        "repo": "agent-skills-nix",
+        "rev": "93a02cb60eda167de8c5baa085e4a2bcfc71b885",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Kyure-A",
+        "repo": "agent-skills-nix",
+        "type": "github"
+      }
+    },
     "bootvine": {
       "inputs": {
         "crane": "crane",
@@ -373,6 +393,22 @@
         "type": "github"
       }
     },
+    "nix-cache-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1794964121,
+        "narHash": "sha256-HZfKYjeUt9TmfqkU/dURHkatJvxq1fDnFqsApxg58lk=",
+        "owner": "yutakobayashidev",
+        "repo": "skills",
+        "rev": "81851c6012bbb4877804f0f4ce25f88d7ae459fa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yutakobayashidev",
+        "repo": "skills",
+        "type": "github"
+      }
+    },
     "nix-darwin": {
       "inputs": {
         "nixpkgs": [
@@ -676,6 +712,7 @@
     },
     "root": {
       "inputs": {
+        "agent-skills": "agent-skills",
         "bootvine": "bootvine",
         "codex-desktop-linux": "codex-desktop-linux",
         "dms": "dms",
@@ -683,6 +720,7 @@
         "kopuz": "kopuz",
         "lanzaboote": "lanzaboote",
         "llm-agents": "llm-agents",
+        "nix-cache-skills": "nix-cache-skills",
         "nix-darwin": "nix-darwin",
         "nix-flatpak": "nix-flatpak",
         "nixos-wsl": "nixos-wsl",

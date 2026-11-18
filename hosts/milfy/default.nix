@@ -38,6 +38,8 @@
 
   home-manager.users.${hostMeta.primaryUser} = {
     imports = [
+      inputs.agent-skills.homeManagerModules.default
+      ../../home/programs/agent-skills.nix
       ../../home/programs/git.nix
       ../../home/programs/nushell.nix
       ../../home/programs/nixvim

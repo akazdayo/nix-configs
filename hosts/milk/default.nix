@@ -212,6 +212,8 @@ in
       inputs.noctalia.homeModules.default
       inputs.dms.homeModules.dank-material-shell
       inputs.sops-nix.homeManagerModules.default
+      inputs.agent-skills.homeManagerModules.default
+      ../../home/programs/agent-skills.nix
       ../../home/programs/git.nix
       ../../home/programs/ssh.nix
       ../../home/programs/files.nix

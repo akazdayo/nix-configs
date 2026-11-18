@@ -12,6 +12,8 @@
   home-manager.users.${hostMeta.primaryUser} = {
     imports = [
       inputs.sops-nix.homeManagerModules.default
+      inputs.agent-skills.homeManagerModules.default
+      ../../home/programs/agent-skills.nix
       ../../home/programs/git.nix
       ../../home/programs/ssh.nix
       ../../home/programs/nushell.nix

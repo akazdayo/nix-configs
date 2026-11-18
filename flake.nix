@@ -69,10 +69,6 @@
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    git-hooks = {
-      url = "github:cachix/git-hooks.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
@@ -86,7 +82,6 @@
       deploy-rs,
       llm-agents,
       treefmt-nix,
-      git-hooks,
       ...
     }@inputs:
     let
@@ -212,33 +207,6 @@
           ];
         };
 
-      mkPreCommitCheck =
-        system:
-        let
-          pkgs = mkPkgs system;
-          treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
-          preCommitFmt = pkgs.writeShellApplication {
-            name = "pre-commit-fmt";
-            runtimeInputs = [ treefmtEval.config.build.wrapper ];
-            text = ''
-              exec ${pkgs.lib.getExe treefmtEval.config.build.wrapper} --no-cache -- "$@"
-            '';
-          };
-        in
-        git-hooks.lib.${system}.run {
-          src = ./.;
-          hooks = {
-            nix-fmt = {
-              enable = true;
-              name = "nix fmt";
-              entry = pkgs.lib.getExe preCommitFmt;
-              files = "\\.(nix|lua|sh|md|json|toml|yaml|yml|rs)$";
-            };
-            check-added-large-files.enable = true;
-            check-merge-conflicts.enable = true;
-          };
-        };
-
       deployHosts = lib.filterAttrs (_: spec: spec ? deploy) nixosHosts;
       mkDeployNode =
         hostName: spec:
@@ -282,12 +250,10 @@
         system:
         let
           pkgs = mkPkgs system;
-          preCommit = mkPreCommitCheck system;
         in
         {
           default = pkgs.mkShell {
-            inherit (preCommit) shellHook;
-            packages = preCommit.enabledPackages ++ [
+            packages = [
               pkgs.nixfmt
               pkgs.sops
               pkgs.age
@@ -310,7 +276,6 @@
         in
         {
           formatting = treefmtEval.config.build.check self;
-          pre-commit-check = mkPreCommitCheck system;
         }
       );
     };

@@ -30,10 +30,6 @@
       url = "git+https://codeberg.org/wvhulle/bootvine";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    deploy-rs = {
-      url = "github:serokell/deploy-rs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
@@ -79,7 +75,6 @@
       home-manager,
       nix-darwin,
       nixvim,
-      deploy-rs,
       llm-agents,
       treefmt-nix,
       ...
@@ -118,10 +113,7 @@
         };
 
       nixosHosts = {
-        milk = {
-          role = "desktop";
-          deploy.hostname = "192.168.11.48";
-        };
+        milk.role = "desktop";
         milfy.role = "wsl";
       };
 
@@ -207,45 +199,10 @@
           ];
         };
 
-      deployHosts = lib.filterAttrs (_: spec: spec ? deploy) nixosHosts;
-      mkDeployNode =
-        hostName: spec:
-        let
-          deploy = spec.deploy;
-          system = spec.system or "x86_64-linux";
-        in
-        {
-          hostname = deploy.hostname or hostName;
-          sshOpts = [
-            "-i"
-            "~/.ssh/id_ed25519_sk_rk"
-            "-o"
-            "ControlMaster=auto"
-            "-o"
-            "ControlPersist=10m"
-            "-o"
-            "ControlPath=~/.ssh/deploy-rs-%C"
-          ];
-          profiles.system = {
-            sshUser = deploy.sshUser or defaultPrimaryUser;
-            user = "root";
-            path = deploy-rs.lib.${system}.activate.nixos self.nixosConfigurations.${hostName};
-          };
-        }
-        // lib.optionalAttrs (deploy.remoteBuild or false) { remoteBuild = true; }
-        // lib.optionalAttrs (deploy ? activationTimeout) {
-          inherit (deploy) activationTimeout;
-        };
     in
     {
       nixosConfigurations = lib.mapAttrs mkNixosHost nixosHosts;
       darwinConfigurations = lib.mapAttrs mkDarwinHost darwinHosts;
-      deploy.nodes = lib.mapAttrs mkDeployNode deployHosts;
-
-      packages = forAllSystems (system: {
-        deploy-rs = deploy-rs.packages.${system}.default;
-      });
-
       devShells = forAllSystems (
         system:
         let

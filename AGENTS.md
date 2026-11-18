@@ -40,5 +40,3 @@ Recent commits use brief Japanese summaries, sometimes prefixed with `feat:`. Ke
 ## Safety & Deployment
 
 Never edit `hardware-configuration.nix`; put hardware additions in a role module. Keep IPs, interfaces, mount paths, keys, and service paths in host definitions and pass them through `local.*`. Do not move, decrypt, or rekey tracked secrets unless requested; `.sops.yaml` owns secret paths. Preserve legacy `/etc/nextcloud-adminpass` and `/etc/searx-env`, unrelated changes, and ignored Terraform state.
-
-Deploy-rs covers Milk; Milfy and Chiffon are excluded.

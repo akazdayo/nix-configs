@@ -13,6 +13,18 @@
   };
 
   config = {
+    programs.dank-material-shell = {
+      enable = true;
+      systemd.enable = true;
+      systemd.target = "labwc-session.target";
+    };
+
+    programs.vicinae = {
+      enable = true;
+      systemd.enable = true;
+      systemd.target = "labwc-session.target";
+    };
+
     systemd.user.services.labwc-fcitx5 = {
       Unit = {
         Description = "Fcitx5 for labwc";
@@ -78,20 +90,24 @@
             <keybind key="W-S-3"><action name="SendToDesktop" to="3" /></keybind>
             <keybind key="W-S-4"><action name="SendToDesktop" to="4" /></keybind>
             <keybind key="W-Return"><action name="Execute" command="ghostty" /></keybind>
-            <keybind key="W-d"><action name="Execute" command="noctalia msg panel-toggle launcher" /></keybind>
-            <keybind key="W-space"><action name="Execute" command="noctalia msg panel-toggle launcher" /></keybind>
-            <keybind key="W-s"><action name="Execute" command="noctalia msg panel-toggle control-center" /></keybind>
-            <keybind key="W-comma"><action name="Execute" command="noctalia msg settings-toggle" /></keybind>
-            <keybind key="W-Escape"><action name="Execute" command="noctalia msg panel-toggle session" /></keybind>
+            <keybind key="W-t"><action name="Execute" command="ghostty" /></keybind>
+            <keybind key="W-q"><action name="Close" /></keybind>
+            <keybind key="W-f"><action name="ToggleFullscreen" /></keybind>
+            <keybind key="W-S-space"><action name="ToggleAlwaysOnTop" /></keybind>
+            <keybind key="W-d"><action name="Execute" command="vicinae vicinae://toggle" /></keybind>
+            <keybind key="W-space"><action name="Execute" command="vicinae vicinae://toggle" /></keybind>
+            <keybind key="W-s"><action name="Execute" command="dms ipc call control-center toggle" /></keybind>
+            <keybind key="W-comma"><action name="Execute" command="dms ipc call settings focusOrToggle" /></keybind>
+            <keybind key="W-Escape"><action name="Execute" command="dms ipc call powermenu toggle" /></keybind>
             <keybind key="W-S-e"><action name="Exit" /></keybind>
             <keybind key="Print"><action name="Execute" command="flameshot gui" /></keybind>
             <keybind key="C-Print"><action name="Execute" command="flameshot screen --clipboard" /></keybind>
             <keybind key="A-Print"><action name="Execute" command="flameshot full --clipboard" /></keybind>
-            <keybind key="XF86AudioRaiseVolume"><action name="Execute" command="noctalia msg volume-up" /></keybind>
-            <keybind key="XF86AudioLowerVolume"><action name="Execute" command="noctalia msg volume-down" /></keybind>
-            <keybind key="XF86AudioMute"><action name="Execute" command="noctalia msg volume-mute" /></keybind>
-            <keybind key="XF86MonBrightnessUp"><action name="Execute" command="noctalia msg brightness-up" /></keybind>
-            <keybind key="XF86MonBrightnessDown"><action name="Execute" command="noctalia msg brightness-down" /></keybind>
+            <keybind key="XF86AudioRaiseVolume"><action name="Execute" command="dms ipc call audio increment 3" /></keybind>
+            <keybind key="XF86AudioLowerVolume"><action name="Execute" command="dms ipc call audio decrement 3" /></keybind>
+            <keybind key="XF86AudioMute"><action name="Execute" command="dms ipc call audio mute" /></keybind>
+            <keybind key="XF86MonBrightnessUp"><action name="Execute" command="dms ipc call brightness increment 5" /></keybind>
+            <keybind key="XF86MonBrightnessDown"><action name="Execute" command="dms ipc call brightness decrement 5" /></keybind>
           </keyboard>
           <mouse><default /></mouse>
         </labwc_config>

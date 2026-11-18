@@ -230,6 +230,7 @@ in
   home-manager.users.${hostMeta.primaryUser} = {
     imports = [
       inputs.noctalia.homeModules.default
+      inputs.dms.homeModules.dank-material-shell
       inputs.sops-nix.homeManagerModules.default
       ../../home/programs/git.nix
       ../../home/programs/ssh.nix

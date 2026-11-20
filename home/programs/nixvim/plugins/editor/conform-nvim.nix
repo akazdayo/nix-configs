@@ -10,6 +10,7 @@
       };
 
       formatters_by_ft = {
+        go = [ "gofmt" ];
         nix = [ "nixfmt" ];
         lua = [ "stylua" ];
         python = [ "ruff_format" ];

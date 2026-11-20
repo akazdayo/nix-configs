@@ -24,7 +24,6 @@ in
     ../../modules/nixos/networking/ssh.nix
     ../../modules/nixos/networking/network-manager.nix
     ../../modules/nixos/networking/tailscale.nix
-    ../../modules/nixos/networking/wireguard.nix
     ../../modules/nixos/locale/common.nix
     ../../modules/nixos/locale/japanese-input.nix
     ../../modules/nixos/users/primary.nix
@@ -154,21 +153,6 @@ in
       authorizedKeys = [
         "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIIuYLePldOwgtFXwo0sw48rBVzX2zHjzGshFq4V9xwMLAAAABHNzaDo= somanoda@25N1103630nodasoma.local"
       ];
-    };
-    networking = {
-      wireguard = {
-        sopsFile = ../../secrets/common/wireguard.yaml;
-        secretKey = "maril_wireguard_sk";
-        ips = [ "10.0.10.3/24" ];
-        peers = [
-          {
-            publicKey = "p0cQLr7R7xqDYHH/eZSz2wAMjJGF+NGLFocMXXs/dEQ=";
-            endpoint = "maril.blue:51821";
-            allowedIPs = [ "10.0.10.0/24" ];
-            persistentKeepalive = 25;
-          }
-        ];
-      };
     };
     hardware = {
       swap.device = "/var/lib/swapfile";

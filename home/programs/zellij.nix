@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   programs.zellij = {
     enable = true;
@@ -61,7 +61,7 @@
           155
         ];
       };
-      default_shell = "nu";
+      default_shell = "${pkgs.zsh}/bin/zsh";
       mouse_mode = false;
       copy_on_select = true;
       scrollback_editor = "nvim";

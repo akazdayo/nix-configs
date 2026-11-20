@@ -15,7 +15,7 @@
 
       clipboard = "unnamedplus";
 
-      shell = "${pkgs.nushell}/bin/nu";
+      shell = "${pkgs.zsh}/bin/zsh";
 
       termguicolors = true;
 

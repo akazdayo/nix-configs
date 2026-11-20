@@ -28,13 +28,7 @@ in
       nmap
       dig
     ])
-    ++ lib.optionals isLinux (
-      with pkgs;
-      [
-        starship
-        tailscale
-      ]
-    )
+    ++ lib.optionals isLinux [ pkgs.tailscale ]
     ++ [
       pkgs-unstable.git-xet
       pkgs-unstable.wakatime-cli

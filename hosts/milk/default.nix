@@ -207,7 +207,7 @@ in
       ../../home/programs/niri.nix
       ../../home/programs/cursor.nix
       ../../home/programs/ghostty.nix
-      ../../home/programs/nushell.nix
+      ../../home/programs/zsh.nix
       ../../home/programs/zellij.nix
       ../../home/programs/nixvim
       ../../home/programs/obs.nix
@@ -223,7 +223,12 @@ in
       ../../home/packages/gaming.nix
       ../../home/packages/llm.nix
     ];
-    home.sessionVariables.EDITOR = "nvim";
+    programs.zsh.initContent = ''
+      case ":$NIX_LD_LIBRARY_PATH:" in
+        *:/run/opengl-driver/lib:*) ;;
+        *) export NIX_LD_LIBRARY_PATH="/run/opengl-driver/lib''${NIX_LD_LIBRARY_PATH:+:$NIX_LD_LIBRARY_PATH}" ;;
+      esac
+    '';
     local.labwc.outputModes."DP-1" = "1920x1080@239.757Hz";
     home.stateVersion = "25.11";
   };

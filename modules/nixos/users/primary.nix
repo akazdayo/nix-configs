@@ -25,11 +25,16 @@ in
   };
 
   config = {
+    programs.zsh = {
+      enable = true;
+      enableGlobalCompInit = false;
+    };
+
     users.users.${cfg.name} = {
       isNormalUser = true;
       description = cfg.name;
       inherit (cfg) extraGroups;
-      shell = pkgs.nushell;
+      shell = pkgs.zsh;
       openssh.authorizedKeys.keys = cfg.authorizedKeys;
     };
 

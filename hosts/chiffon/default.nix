@@ -16,7 +16,7 @@
       ../../home/programs/agent-skills.nix
       ../../home/programs/git.nix
       ../../home/programs/ssh.nix
-      ../../home/programs/nushell.nix
+      ../../home/programs/zsh.nix
       ../../home/programs/zellij.nix
       ../../home/programs/nixvim
       ../../home/programs/secrets.nix
@@ -43,6 +43,8 @@
       alwaysAllowSubstitutes = true;
     };
   };
+
+  programs.zsh.enableGlobalCompInit = false;
 
   system.stateVersion = 6;
 }

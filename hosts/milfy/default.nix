@@ -41,7 +41,7 @@
       inputs.agent-skills.homeManagerModules.default
       ../../home/programs/agent-skills.nix
       ../../home/programs/git.nix
-      ../../home/programs/nushell.nix
+      ../../home/programs/zsh.nix
       ../../home/programs/nixvim
       ../../home/packages/core.nix
       ../../home/packages/llm.nix

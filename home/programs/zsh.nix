@@ -29,6 +29,7 @@
 
     initContent = ''
       path=("$HOME/.bun/bin" "$path[@]")
+      ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 
       autoload -Uz add-zsh-hook
       function set_directory_prompt() {

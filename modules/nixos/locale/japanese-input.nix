@@ -1,5 +1,11 @@
 { pkgs, ... }:
 {
+  environment.sessionVariables = {
+    QT_IM_MODULE = "fcitx";
+    XMODIFIERS = "@im=fcitx";
+    GLFW_IM_MODULE = "ibus"; # ゲーム用
+  };
+
   i18n.inputMethod = {
     enable = true;
     type = "fcitx5";

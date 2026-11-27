@@ -1,13 +1,7 @@
-{ pkgs, ... }:
+{ pkgs-unstable, ... }:
 {
-  programs.labwc.enable = true;
-
-  xdg.portal = {
-    extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
-    config.labwc = {
-      default = [ "gtk" ];
-      "org.freedesktop.impl.portal.ScreenCast" = [ "wlr" ];
-      "org.freedesktop.impl.portal.Screenshot" = [ "wlr" ];
-    };
+  programs.labwc = {
+    enable = true;
+    package = pkgs-unstable.labwc; # ウィンドウ共有に必要な toplevel capture は 0.20 以降
   };
 }

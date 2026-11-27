@@ -28,6 +28,7 @@ in
     ../../modules/nixos/locale/common.nix
     ../../modules/nixos/locale/japanese-input.nix
     ../../modules/nixos/users/primary.nix
+    ../../modules/nixos/hardware/bluetooth.nix
     ../../modules/nixos/hardware/swap.nix
     ../../modules/nixos/hardware/file-systems.nix
     ../../modules/nixos/hardware/nvidia.nix
@@ -35,10 +36,11 @@ in
     ../../modules/nixos/hardware/scanner.nix
     ../../modules/nixos/boot/lanzaboote.nix
     ../../modules/nixos/ly.nix
+    ../../modules/nixos/wayland.nix
     ../../modules/nixos/labwc.nix
-    ../../modules/nixos/niri/service.nix
-    ../../modules/nixos/niri/session.nix
-    ../../modules/nixos/niri/variables.nix
+    ../../modules/nixos/labwc-portal.nix
+    ../../modules/nixos/gnome-keyring.nix
+    ../../modules/nixos/power-management.nix
     ../../modules/nixos/sops.nix
     ../../modules/nixos/wakatime.nix
     ../../modules/nixos/docker.nix
@@ -192,7 +194,6 @@ in
 
   home-manager.users.${hostMeta.primaryUser} = {
     imports = [
-      inputs.noctalia.homeModules.default
       inputs.dms.homeModules.dank-material-shell
       inputs.sops-nix.homeManagerModules.default
       inputs.agent-skills.homeManagerModules.default
@@ -201,9 +202,7 @@ in
       ../../home/programs/ssh.nix
       ../../home/programs/files.nix
       ../../home/programs/flameshot.nix
-      ../../home/programs/noctalia.nix
       ../../home/programs/labwc.nix
-      ../../home/programs/niri.nix
       ../../home/programs/cursor.nix
       ../../home/programs/ghostty.nix
       ../../home/programs/zsh.nix

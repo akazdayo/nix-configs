@@ -21,7 +21,10 @@
       url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixvim.url = "github:nix-community/nixvim/nixos-26.05";
+    nixvim = {
+      url = "github:nix-community/nixvim/nixos-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     lanzaboote = {
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -39,7 +42,11 @@
       url = "github:duxlabs-dev/dux-shell/stable";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    llm-agents.url = "github:numtide/llm-agents.nix";
+    llm-agents = {
+      url = "github:numtide/llm-agents.nix";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+    iets.url = "github:numtide/iets";
     agent-skills = {
       url = "github:Kyure-A/agent-skills-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -52,11 +59,23 @@
       url = "github:ilysenko/codex-desktop-linux";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    kopuz.url = "github:Kopuz-org/kopuz";
-    # Keep repro2's own pinned Rust toolchain; do not follow the host nixpkgs.
-    repro2.url = "github:bot-uichan/repro2/feat/tailscale-idp";
-    wivrn-nix.url = "github:akazdayo/wivrn-nix";
-    rebocap.url = "github:akazdayo/rebocap-linux";
+    kopuz = {
+      url = "github:Kopuz-org/kopuz";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+    repro2 = {
+      url = "github:bot-uichan/repro2/feat/tailscale-idp";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.rust-overlay.inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+    wivrn-nix = {
+      url = "github:akazdayo/wivrn-nix";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+    rebocap = {
+      url = "github:akazdayo/rebocap-linux";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";

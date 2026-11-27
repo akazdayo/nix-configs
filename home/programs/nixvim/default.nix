@@ -1,4 +1,4 @@
-{ nixvim-module, pkgs, ... }:
+{ inputs, nixvim-module, ... }:
 {
   imports = [
     nixvim-module
@@ -11,5 +11,6 @@
 
   programs.nixvim = {
     enable = true;
+    nixpkgs.source = inputs.nixpkgs;
   };
 }

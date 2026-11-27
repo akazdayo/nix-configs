@@ -1,6 +1,7 @@
 {
   inputs,
   hostMeta,
+  lib,
   pkgs,
   ...
 }:
@@ -55,6 +56,9 @@ in
   ];
 
   programs.rebocap.enable = true;
+  programs.rebocap.package = inputs.rebocap.packages.${hostMeta.system}.default.override {
+    inherit (pkgs) wineWow64Packages;
+  };
   services.bootvine.enable = true;
   #services.repro2-sender = {
   #enable = true;
@@ -217,6 +221,14 @@ in
       ../../home/packages/gaming.nix
       ../../home/packages/llm.nix
     ];
+    programs.nixvim.plugins = {
+      lsp.servers.rust_analyzer = {
+        package = null;
+        installCargo = lib.mkForce false;
+        installRustc = lib.mkForce false;
+      };
+      conform-nvim.autoInstall.overrides.rustfmt = null;
+    };
     programs.zsh.initContent = ''
       case ":$NIX_LD_LIBRARY_PATH:" in
         *:/run/opengl-driver/lib:*) ;;

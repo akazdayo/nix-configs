@@ -1,4 +1,5 @@
 {
+  inputs,
   pkgs,
   pkgs-unstable,
   lib,
@@ -30,6 +31,7 @@ in
     ])
     ++ lib.optionals isLinux [ pkgs.tailscale ]
     ++ [
+      inputs.iets.packages.${hostMeta.system}.default
       pkgs-unstable.git-xet
       pkgs-unstable.wakatime-cli
       (if isDesktop then pkgs.btop-cuda else pkgs.btop)

@@ -656,6 +656,26 @@
         "type": "github"
       }
     },
+    "proton-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1795782877,
+        "narHash": "sha256-iVqQJY2FdMSOy2UgbdlLDtWW+EkToGCn178TVyvyMlE=",
+        "owner": "akazdayo",
+        "repo": "proton-nix",
+        "rev": "b1440d601b66972d49ca688b4feceffd1d507aa4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "akazdayo",
+        "repo": "proton-nix",
+        "type": "github"
+      }
+    },
     "rebocap": {
       "inputs": {
         "nixpkgs": [
@@ -718,6 +738,7 @@
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nixvim": "nixvim",
         "noctalia": "noctalia",
+        "proton-nix": "proton-nix",
         "rebocap": "rebocap",
         "repro2": "repro2",
         "rust-overlay": "rust-overlay_5",

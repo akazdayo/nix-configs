@@ -72,6 +72,10 @@
       url = "github:akazdayo/wivrn-nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    proton-nix = {
+      url = "github:akazdayo/proton-nix";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     rebocap = {
       url = "github:akazdayo/rebocap-linux";
       inputs.nixpkgs.follows = "nixpkgs-unstable";

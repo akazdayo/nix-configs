@@ -5,22 +5,14 @@
       (prismlauncher.override {
         jdks = [
           jdk25
-          jdk21
-          jdk17
-          jdk8
         ];
       })
-      alcom
       osu-lazer-bin
-      heroic
       wineWow64Packages.stable # 64bit + 32bit対応
       winetricks
       vrcx
-      protonup-qt
     ])
     ++ (with pkgs-unstable; [
       wayvr
-      bs-manager
-      slimevr
     ]);
 }

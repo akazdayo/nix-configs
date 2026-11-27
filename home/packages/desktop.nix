@@ -20,10 +20,8 @@
         );
     })
     xdg-utils
-    slack
     libreoffice
     signal-desktop
-    mattermost-desktop
     tor-browser
     google-chrome
     nautilus
@@ -32,7 +30,6 @@
     vesktop
     chromium
     awww
-    rnote
     #inputs.kopuz.packages.${hostMeta.system}.default
     baobab
   ];

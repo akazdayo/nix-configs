@@ -34,8 +34,6 @@ in
     ../../modules/nixos/hardware/scanner.nix
     ../../modules/nixos/boot/lanzaboote.nix
     ../../modules/nixos/ly.nix
-    ../../modules/nixos/gnome.nix
-    ../../modules/nixos/plasma.nix
     ../../modules/nixos/labwc.nix
     ../../modules/nixos/niri/service.nix
     ../../modules/nixos/niri/session.nix
@@ -47,10 +45,7 @@ in
     ../../modules/nixos/packages.nix
     ../../modules/nixos/one-password.nix
     ../../modules/nixos/firefox.nix
-    ../../modules/nixos/zen-browser.nix
     ../../modules/nixos/printing.nix
-    ../../modules/nixos/sunshine.nix
-    ../../modules/nixos/zoom.nix
     ../../modules/nixos/pipewire.nix
     ../../modules/nixos/flatpak.nix
     ../../modules/nixos/steam.nix
@@ -214,7 +209,6 @@ in
       ../../home/programs/secrets.nix
       ../../home/programs/wakatime.nix
       ../../home/programs/wivrn.nix
-      ../../home/programs/zoom.nix
       ../../home/packages/core.nix
       ../../home/packages/desktop.nix
       ../../home/packages/development.nix

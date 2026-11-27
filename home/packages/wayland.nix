@@ -14,6 +14,5 @@
     libsForQt5.qt5ct # Qtテーマ設定
     kdePackages.qt6ct
     polkit_gnome # 認証エージェント
-    kdePackages.dolphin
   ];
 }

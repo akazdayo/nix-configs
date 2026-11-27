@@ -29,7 +29,22 @@
 
     initContent = ''
       path=("$HOME/.bun/bin" "$path[@]")
-      PROMPT='%F{cyan}%n@%m%f %F{blue}%~%f %# '
+
+      autoload -Uz add-zsh-hook
+      function set_directory_prompt() {
+        local git_root git_branch branch_label="" prompt_path='%~'
+        if git_root=$(command git rev-parse --show-toplevel 2>/dev/null); then
+          local current_dir="''${PWD:A}"
+          prompt_path="''${git_root:t}''${current_dir#"$git_root"}"
+          prompt_path="''${prompt_path//\%/%%}"
+          if git_branch=$(command git symbolic-ref --quiet HEAD 2>/dev/null); then
+            git_branch="''${git_branch#refs/heads/}"
+            branch_label=" (''${git_branch//\%/%%})"
+          fi
+        fi
+        PROMPT="%F{cyan}%n@%m%f %F{blue}$prompt_path%f$branch_label %# "
+      }
+      add-zsh-hook precmd set_directory_prompt
     '';
   };
 
